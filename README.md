@@ -4,8 +4,6 @@ Marketplace web para venda de calçados, desenvolvido como projeto acadêmico de
 
 Permite que **clientes** descubram e comprem calçados e que **vendedores** gerenciem seus produtos, estoque e pedidos — tudo em uma única plataforma integrada.
 
-> **Status do Projeto:** Sprint 1 (Fundação & Modelagem Base) concluída.
-
 ---
 
 ## 📋 Índice

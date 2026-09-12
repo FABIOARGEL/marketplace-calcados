@@ -22,7 +22,7 @@ Isso permite:
 
 ---
 
-### 🍕 Fatia 1 — Usuários
+### Fatia 1 — Usuários
 **Sprint sugerida:** Sprint 2
 
 **Objetivo:** Usuário pode criar conta, fazer login, logout e ver seu perfil.
@@ -45,7 +45,7 @@ Isso permite:
 
 ---
 
-### 🍕 Fatia 2 — Catálogo de Produtos
+### Fatia 2 — Catálogo de Produtos
 **Sprint sugerida:** Sprint 2 ou Sprint 3
 
 **Objetivo:** Vendedor cadastra produtos; cliente visualiza o catálogo e detalhes.
@@ -69,7 +69,7 @@ Isso permite:
 
 ---
 
-### 🍕 Fatia 3 — Busca e Filtros
+### Fatia 3 — Busca e Filtros
 **Sprint sugerida:** Sprint 3
 
 **Objetivo:** Cliente pesquisa e filtra produtos no catálogo.
@@ -89,7 +89,7 @@ Isso permite:
 
 ---
 
-### 🍕 Fatia 4 — Carrinho
+### Fatia 4 — Carrinho
 **Sprint sugerida:** Sprint 4
 
 **Objetivo:** Cliente adiciona, altera e remove itens do carrinho e vê o total.
@@ -111,7 +111,7 @@ Isso permite:
 
 ---
 
-### 🍕 Fatia 5 — Pedidos
+### Fatia 5 — Pedidos
 **Sprint sugerida:** Sprint 4 ou Sprint 5
 
 **Objetivo:** Cliente finaliza compra, pedido é registrado, estoque é descontado.
@@ -132,7 +132,7 @@ Isso permite:
 
 ---
 
-### 🍕 Fatia 6 — Área do Vendedor
+### Fatia 6 — Área do Vendedor
 **Sprint sugerida:** Sprint 5 ou Sprint 6
 
 **Objetivo:** Vendedor visualiza e atualiza status dos pedidos relacionados aos seus produtos.

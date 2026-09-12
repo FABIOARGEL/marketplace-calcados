@@ -9,31 +9,31 @@
 
 | ID    | Descrição | Status |
 |-------|-----------|--------|
-| RF01  | O sistema deve permitir que o usuário crie uma conta. | 📋 Planejado |
-| RF02  | O sistema deve permitir que o usuário faça login e logout. | 📋 Planejado |
-| RF03  | O sistema deve permitir que o usuário visualize e edite seus dados cadastrais. | 📋 Planejado |
-| RF04  | O sistema deve permitir visualizar os calçados disponíveis para venda. | 📋 Planejado |
-| RF05  | O sistema deve permitir visualizar os detalhes de um calçado, incluindo nome, descrição, preço, tamanho, marca e imagens. | 📋 Planejado |
-| RF06  | O sistema deve permitir pesquisar calçados por nome ou descrição. | 📋 Planejado |
-| RF07  | O sistema deve permitir filtrar calçados por categoria, tamanho, marca e faixa de preço. | 📋 Planejado |
-| RF08  | O sistema deve permitir que o vendedor cadastre novos calçados. | 📋 Planejado |
-| RF09  | O sistema deve permitir que o vendedor edite os dados de seus calçados. | 📋 Planejado |
-| RF10  | O sistema deve permitir que o vendedor remova ou desative um calçado. | 📋 Planejado |
-| RF11  | O sistema deve permitir que o usuário adicione calçados ao carrinho. | 📋 Planejado |
-| RF12  | O sistema deve permitir que o usuário altere a quantidade de itens no carrinho. | 📋 Planejado |
-| RF13  | O sistema deve permitir que o usuário remova itens do carrinho. | 📋 Planejado |
-| RF14  | O sistema deve calcular o valor total da compra. | 📋 Planejado |
-| RF15  | O sistema deve permitir que o usuário finalize uma compra. | 📋 Planejado |
-| RF16  | O sistema deve registrar os pedidos realizados. | 📋 Planejado |
-| RF17  | O sistema deve permitir que o usuário consulte seu histórico de pedidos. | 📋 Planejado |
-| RF18  | O sistema deve permitir que o vendedor visualize os pedidos relacionados aos seus produtos. | 📋 Planejado |
-| RF19  | O sistema deve permitir atualizar o status de um pedido. | 📋 Planejado |
-| RF20  | O sistema deve controlar a quantidade disponível de cada calçado em estoque. | 📋 Planejado |
+| RF01  | O sistema deve permitir que o usuário crie uma conta. | Planejado |
+| RF02  | O sistema deve permitir que o usuário faça login e logout. | Planejado |
+| RF03  | O sistema deve permitir que o usuário visualize e edite seus dados cadastrais. | Planejado |
+| RF04  | O sistema deve permitir visualizar os calçados disponíveis para venda. | Planejado |
+| RF05  | O sistema deve permitir visualizar os detalhes de um calçado, incluindo nome, descrição, preço, tamanho, marca e imagens. | Planejado |
+| RF06  | O sistema deve permitir pesquisar calçados por nome ou descrição. | Planejado |
+| RF07  | O sistema deve permitir filtrar calçados por categoria, tamanho, marca e faixa de preço. | Planejado |
+| RF08  | O sistema deve permitir que o vendedor cadastre novos calçados. | Planejado |
+| RF09  | O sistema deve permitir que o vendedor edite os dados de seus calçados. | Planejado |
+| RF10  | O sistema deve permitir que o vendedor remova ou desative um calçado. | Planejado |
+| RF11  | O sistema deve permitir que o usuário adicione calçados ao carrinho. | Planejado |
+| RF12  | O sistema deve permitir que o usuário altere a quantidade de itens no carrinho. | Planejado |
+| RF13  | O sistema deve permitir que o usuário remova itens do carrinho. | Planejado |
+| RF14  | O sistema deve calcular o valor total da compra. | Planejado |
+| RF15  | O sistema deve permitir que o usuário finalize uma compra. | Planejado |
+| RF16  | O sistema deve registrar os pedidos realizados. | Planejado |
+| RF17  | O sistema deve permitir que o usuário consulte seu histórico de pedidos. | Planejado |
+| RF18  | O sistema deve permitir que o vendedor visualize os pedidos relacionados aos seus produtos. | Planejado |
+| RF19  | O sistema deve permitir atualizar o status de um pedido. | Planejado |
+| RF20  | O sistema deve controlar a quantidade disponível de cada calçado em estoque. | Planejado |
 
 ### Legenda de Status
-- ✅ Implementado
-- 🔄 Em progresso
-- 📋 Planejado
+- Implementado
+- Em progresso
+- Planejado
 
 ---
 

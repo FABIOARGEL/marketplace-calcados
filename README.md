@@ -1,4 +1,4 @@
-# 👟 Marketplace de Calçados
+# Marketplace de Calçados
 
 Marketplace web para venda de calçados, desenvolvido como projeto acadêmico de desenvolvimento de software.
 
@@ -6,7 +6,7 @@ Permite que **clientes** descubram e comprem calçados e que **vendedores** gere
 
 ---
 
-## 📋 Índice
+## Índice
 
 - [Objetivo](#objetivo)
 - [Funcionalidades Previstas](#funcionalidades-previstas)
@@ -28,7 +28,7 @@ Permite que **clientes** descubram e comprem calçados e que **vendedores** gere
 ---
 
 <a id="objetivo"></a>
-## 🎯 Objetivo
+## Objetivo
 
 Construir um marketplace web de calçados com dois perfis de usuário:
 
@@ -38,7 +38,7 @@ Construir um marketplace web de calçados com dois perfis de usuário:
 ---
 
 <a id="funcionalidades-previstas"></a>
-## ✅ Funcionalidades Previstas
+## Funcionalidades Previstas
 
 ### Cliente
 - Criar conta e realizar autenticação (login/logout)
@@ -57,7 +57,7 @@ Construir um marketplace web de calçados com dois perfis de usuário:
 ---
 
 <a id="stack-tecnologica"></a>
-## 🛠️ Stack Tecnológica
+## Stack Tecnológica
 
 | Camada | Tecnologia | Versão / Descrição |
 |--------|-----------|--------------------|
@@ -73,7 +73,7 @@ Construir um marketplace web de calçados com dois perfis de usuário:
 ---
 
 <a id="estrutura-do-projeto"></a>
-## 📁 Estrutura do Projeto
+## Estrutura do Projeto
 
 ```
 marketplace-calcados/
@@ -113,7 +113,7 @@ marketplace-calcados/
 ---
 
 <a id="pre-requisitos"></a>
-## 📦 Pré-requisitos
+## Pré-requisitos
 
 Certifique-se de ter instalado em sua máquina:
 
@@ -124,7 +124,7 @@ Certifique-se de ter instalado em sua máquina:
 ---
 
 <a id="instalacao"></a>
-## 🚀 Instalação
+## Instalação
 
 ### 1. Clonar o repositório
 
@@ -166,7 +166,7 @@ pip install -r requirements.txt
 ---
 
 <a id="configuracao-do-ambiente"></a>
-## ⚙️ Configuração do Ambiente
+## Configuração do Ambiente
 
 ### 1. Criar o arquivo `.env` a partir do modelo
 
@@ -204,7 +204,7 @@ DB_PORT=5432
 ---
 
 <a id="configuracao-do-postgresql"></a>
-## 🐘 Configuração do PostgreSQL
+## Configuração do PostgreSQL
 
 ### 1. Acessar o terminal do PostgreSQL (psql)
 
@@ -228,7 +228,7 @@ GRANT ALL PRIVILEGES ON DATABASE marketplace_calcados TO marketplace_user;
 ---
 
 <a id="execucao-local"></a>
-## ▶️ Execução Local
+## Execução Local
 
 ### 1. Iniciar o servidor de desenvolvimento
 
@@ -245,7 +245,7 @@ python manage.py runserver
 ---
 
 <a id="migrations"></a>
-## 🗄️ Migrations
+## Migrations
 
 ### Aplicar migrations ao banco de dados
 
@@ -268,7 +268,7 @@ python manage.py showmigrations
 ---
 
 <a id="superusuario"></a>
-## 👤 Superusuário
+## Superusuário
 
 Para acessar o painel Django Admin (`/admin/`), crie um usuário administrador:
 
@@ -281,7 +281,7 @@ Siga as instruções para definir username, e-mail e senha.
 ---
 
 <a id="testes-automatizados"></a>
-## 🧪 Testes Automatizados
+## Testes Automatizados
 
 ### Executar a suíte completa de testes
 
@@ -304,7 +304,7 @@ python manage.py check
 ---
 
 <a id="fluxo-de-contribuicao"></a>
-## 🤝 Fluxo de Contribuição
+## Fluxo de Contribuição
 
 1. **Atualize sua base local:**
    ```bash
@@ -336,7 +336,7 @@ python manage.py check
 ---
 
 <a id="estrategia-de-branches"></a>
-## 🌿 Estratégia de Branches
+## Estratégia de Branches
 
 | Branch | Finalidade |
 |--------|------------|
@@ -356,7 +356,7 @@ feature/seller-dashboard
 ---
 
 <a id="documentacao"></a>
-## 📚 Documentação Técnica
+## Documentação Técnica
 
 | Documento | Descrição |
 |-----------|-----------|
@@ -369,7 +369,7 @@ feature/seller-dashboard
 ---
 
 <a id="licenca"></a>
-## 📄 Licença
+## Licença
 
 Projeto acadêmico desenvolvido para fins educacionais. Todos os direitos reservados aos autores.
 

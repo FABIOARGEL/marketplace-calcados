@@ -1,0 +1,13 @@
+# ============================================================
+# Dependências do Projeto — Marketplace de Calçados
+# Sprint 1 — Fundação
+# ============================================================
+
+# Framework principal
+Django>=4.2,<5.0
+
+# Adaptador PostgreSQL
+psycopg2-binary>=2.9
+
+# Carregamento seguro de variáveis de ambiente
+django-environ>=0.11

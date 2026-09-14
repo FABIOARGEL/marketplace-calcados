@@ -362,7 +362,7 @@ feature/seller-dashboard
 |-----------|-----------|
 | [docs/REQUISITOS.md](docs/REQUISITOS.md) | Lista oficial de requisitos funcionais (RF) e não funcionais (RNF) |
 | [docs/requirements.md](docs/requirements.md) | Requisitos funcionais (RF), status e rastreabilidade por Sprint |
-| [docs/architecture.md](docs/architecture.md) | Arquitetura do sistema, diagrama e responsabilidades |
+| [docs/architecture.md](docs/architecture.md) | Arquitetura do sistema, diagrama DER (Mermaid) e responsabilidades |
 | [docs/vertical-slicing.md](docs/vertical-slicing.md) | Planejamento de fatias verticais por Sprint |
 | [docs/development.md](docs/development.md) | Padrões de código PEP 8, convenções de commits e Git |
 

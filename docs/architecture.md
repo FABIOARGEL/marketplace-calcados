@@ -86,41 +86,263 @@ users  ←──── products  ←──── cart
 
 ---
 
-## Modelo de Dados — Entidades Principais
+## Modelo de Dados — Entidades Principais e DER
 
+### Diagrama de Entidade e Relacionamento (Mermaid)
+
+```mermaid
+erDiagram
+    %% ==========================================
+    %% RELACIONAMENTOS E CARDINALIDADES
+    %% ==========================================
+    CUSTOM_USER ||--o| SELLER_PROFILE : "possui perfil (se SELLER)"
+    CUSTOM_USER ||--o{ PRODUCT : "cadastra como vendedor"
+    CUSTOM_USER ||--o| CART : "possui carrinho"
+    CUSTOM_USER ||--o{ ORDER : "realiza pedidos"
+
+    CATEGORY ||--o{ PRODUCT : "categoriza"
+
+    PRODUCT ||--o{ PRODUCT_IMAGE : "possui imagens"
+    PRODUCT ||--o{ STOCK : "possui grade de tamanhos"
+    PRODUCT ||--o{ CART_ITEM : "adicionado em"
+    PRODUCT ||--o{ ORDER_ITEM : "adquirido em"
+
+    CART ||--o{ CART_ITEM : "contem itens"
+    ORDER ||--|{ ORDER_ITEM : "contem itens"
+
+    %% ==========================================
+    %% ENTIDADES E ATRIBUTOS
+    %% ==========================================
+
+    CUSTOM_USER {
+        bigint id PK
+        string username UK
+        string email
+        string password
+        string first_name
+        string last_name
+        string user_type "CLIENT ou SELLER"
+        boolean is_active
+        boolean is_staff
+        datetime date_joined
+    }
+
+    SELLER_PROFILE {
+        bigint id PK
+        bigint user_id FK,UK "1:1 CustomUser"
+        string store_name
+        string cnpj
+        text description
+        boolean is_active
+        datetime created_at
+        datetime updated_at
+    }
+
+    CATEGORY {
+        bigint id PK
+        string name UK
+        string slug UK "amigavel para URL"
+        text description
+        datetime created_at
+        datetime updated_at
+    }
+
+    PRODUCT {
+        bigint id PK
+        bigint seller_id FK "CustomUser (SELLER)"
+        bigint category_id FK "Category (SET_NULL)"
+        string name
+        string brand
+        decimal price
+        text description
+        boolean is_active "soft delete"
+        datetime created_at
+        datetime updated_at
+    }
+
+    PRODUCT_IMAGE {
+        bigint id PK
+        bigint product_id FK "Product"
+        string image "caminho upload"
+        string alt_text
+        smallint order "ordem exibicao"
+    }
+
+    STOCK {
+        bigint id PK
+        bigint product_id FK "Product (UK composta)"
+        string size "Tamanho (UK composta)"
+        integer quantity
+        datetime updated_at
+    }
+
+    CART {
+        bigint id PK
+        bigint user_id FK,UK "1:1 CustomUser"
+        datetime created_at
+        datetime updated_at
+    }
+
+    CART_ITEM {
+        bigint id PK
+        bigint cart_id FK "Cart (UK composta)"
+        bigint product_id FK "Product (UK composta)"
+        string size "Tamanho (UK composta)"
+        integer quantity
+        datetime added_at
+    }
+
+    ORDER {
+        bigint id PK
+        bigint user_id FK "CustomUser (Cliente)"
+        string status "PENDING|CONFIRMED|SHIPPED|DELIVERED|CANCELLED"
+        decimal total "valor total no fechamento"
+        datetime created_at
+        datetime updated_at
+    }
+
+    ORDER_ITEM {
+        bigint id PK
+        bigint order_id FK "Order"
+        bigint product_id FK "Product (SET_NULL)"
+        string size
+        integer quantity
+        decimal unit_price "snapshot do preco no pedido"
+    }
 ```
-CustomUser
-├── user_type (CLIENT | SELLER)
-└── SellerProfile (1:1, apenas vendedores)
-    └── store_name, cnpj, description
 
-Category
-└── name, slug, description
+<details>
+<summary><b>Clique para expandir e copiar o código-fonte Mermaid</b></summary>
 
-Product
-├── FK → CustomUser (vendedor)
-├── FK → Category
-├── name, brand, price, is_active
-├── ProductImage (1:N)
-│   └── image, alt_text, order
-└── Stock (1:N, por tamanho)
-    └── size, quantity
+```text
+erDiagram
+    CUSTOM_USER ||--o| SELLER_PROFILE : "possui perfil (se SELLER)"
+    CUSTOM_USER ||--o{ PRODUCT : "cadastra como vendedor"
+    CUSTOM_USER ||--o| CART : "possui carrinho"
+    CUSTOM_USER ||--o{ ORDER : "realiza pedidos"
 
-Cart (1:1 com usuário)
-└── CartItem (1:N)
-    ├── FK → Product
-    ├── size, quantity
-    └── subtotal (property)
+    CATEGORY ||--o{ PRODUCT : "categoriza"
 
-Order
-├── FK → CustomUser (cliente)
-├── status (PENDING|CONFIRMED|SHIPPED|DELIVERED|CANCELLED)
-├── total (snapshot)
-└── OrderItem (1:N)
-    ├── FK → Product (SET_NULL)
-    ├── size, quantity
-    └── unit_price (snapshot)
+    PRODUCT ||--o{ PRODUCT_IMAGE : "possui imagens"
+    PRODUCT ||--o{ STOCK : "possui grade de tamanhos"
+    PRODUCT ||--o{ CART_ITEM : "adicionado em"
+    PRODUCT ||--o{ ORDER_ITEM : "adquirido em"
+
+    CART ||--o{ CART_ITEM : "contem itens"
+    ORDER ||--|{ ORDER_ITEM : "contem itens"
+
+    CUSTOM_USER {
+        bigint id PK
+        string username UK
+        string email
+        string password
+        string first_name
+        string last_name
+        string user_type "CLIENT ou SELLER"
+        boolean is_active
+        boolean is_staff
+        datetime date_joined
+    }
+
+    SELLER_PROFILE {
+        bigint id PK
+        bigint user_id FK,UK "1:1 CustomUser"
+        string store_name
+        string cnpj
+        text description
+        boolean is_active
+        datetime created_at
+        datetime updated_at
+    }
+
+    CATEGORY {
+        bigint id PK
+        string name UK
+        string slug UK "amigavel para URL"
+        text description
+        datetime created_at
+        datetime updated_at
+    }
+
+    PRODUCT {
+        bigint id PK
+        bigint seller_id FK "CustomUser (SELLER)"
+        bigint category_id FK "Category (SET_NULL)"
+        string name
+        string brand
+        decimal price
+        text description
+        boolean is_active "soft delete"
+        datetime created_at
+        datetime updated_at
+    }
+
+    PRODUCT_IMAGE {
+        bigint id PK
+        bigint product_id FK "Product"
+        string image "caminho upload"
+        string alt_text
+        smallint order "ordem exibicao"
+    }
+
+    STOCK {
+        bigint id PK
+        bigint product_id FK "Product (UK composta)"
+        string size "Tamanho (UK composta)"
+        integer quantity
+        datetime updated_at
+    }
+
+    CART {
+        bigint id PK
+        bigint user_id FK,UK "1:1 CustomUser"
+        datetime created_at
+        datetime updated_at
+    }
+
+    CART_ITEM {
+        bigint id PK
+        bigint cart_id FK "Cart (UK composta)"
+        bigint product_id FK "Product (UK composta)"
+        string size "Tamanho (UK composta)"
+        integer quantity
+        datetime added_at
+    }
+
+    ORDER {
+        bigint id PK
+        bigint user_id FK "CustomUser (Cliente)"
+        string status "PENDING|CONFIRMED|SHIPPED|DELIVERED|CANCELLED"
+        decimal total "valor total no fechamento"
+        datetime created_at
+        datetime updated_at
+    }
+
+    ORDER_ITEM {
+        bigint id PK
+        bigint order_id FK "Order"
+        bigint product_id FK "Product (SET_NULL)"
+        string size
+        integer quantity
+        decimal unit_price "snapshot do preco no pedido"
+    }
 ```
+</details>
+
+### Dicionário de Entidades e Restrições de Dados
+
+| Entidade / Tabela | App Django | Descrição | Principais Restrições e Chaves |
+|---|---|---|---|
+| **`CUSTOM_USER`** | `users` | Usuário central (`AbstractUser`) | `user_type`: `CLIENT` ou `SELLER`. Chave primária `id`. |
+| **`SELLER_PROFILE`** | `users` | Perfil da loja do vendedor | Relação `1:1` com `CustomUser` (`limit_choices_to={'user_type': 'SELLER'}`). |
+| **`CATEGORY`** | `products` | Categorias de calçados (ex: Tênis, Bota) | `name` e `slug` únicos (`UK`). |
+| **`PRODUCT`** | `products` | Calçado ofertado no catálogo | `FK` para `CustomUser` (vendedor) e `FK` anulável para `Category`. Campo `is_active` para desativação lógica (*soft delete*). |
+| **`PRODUCT_IMAGE`** | `products` | Galeria de fotos do produto | `FK` para `Product`, ordenação via `order`. |
+| **`STOCK`** | `products` | Grade de estoque por tamanho | `FK` para `Product`. `unique_together = ('product', 'size')`. |
+| **`CART`** | `cart` | Carrinho de compras | Relação `1:1` com `CustomUser`. |
+| **`CART_ITEM`** | `cart` | Itens no carrinho | `FK` para `Cart` e `Product`. `unique_together = ('cart', 'product', 'size')`. |
+| **`ORDER`** | `orders` | Pedido realizado pelo cliente | `FK` para `CustomUser`. `status` (`PENDING`, `CONFIRMED`, `SHIPPED`, `DELIVERED`, `CANCELLED`) e snapshot do total. |
+| **`ORDER_ITEM`** | `orders` | Itens dentro de um pedido | `FK` para `Order` e `FK` para `Product` com `on_delete=SET_NULL`. Snapshot de preço (`unit_price`) no momento da compra. |
 
 ---
 

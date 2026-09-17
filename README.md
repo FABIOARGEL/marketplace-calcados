@@ -23,6 +23,7 @@ Permite que **clientes** descubram e comprem calçados e que **vendedores** gere
 - [Fluxo de Contribuição](#fluxo-de-contribuicao)
 - [Estratégia de Branches](#estrategia-de-branches)
 - [Documentação](#documentacao)
+- [Design System](#design-system)
 - [Licença](#licenca)
 
 ---
@@ -103,7 +104,8 @@ marketplace-calcados/
 │   ├── requirements.md     ← Requisitos funcionais (RF), status e rastreabilidade
 │   ├── architecture.md     ← Arquitetura do sistema e responsabilidades
 │   ├── vertical-slicing.md ← Planejamento de fatias verticais por Sprint
-│   └── development.md      ← Padrões de código, Git e convenção de commits
+│   ├── development.md      ← Padrões de código, Git e convenção de commits
+│   └── design-system.md    ← Design System: paleta, tipografia, componentes e padrões visuais
 │
 └── tests/                  ← Testes automatizados
     ├── __init__.py
@@ -365,6 +367,31 @@ feature/seller-dashboard
 | [docs/architecture.md](docs/architecture.md) | Arquitetura do sistema, diagrama DER (Mermaid) e responsabilidades |
 | [docs/vertical-slicing.md](docs/vertical-slicing.md) | Planejamento de fatias verticais por Sprint |
 | [docs/development.md](docs/development.md) | Padrões de código PEP 8, convenções de commits e Git |
+| [docs/design-system.md](docs/design-system.md) | **Design System** — paleta de cores, tipografia, componentes, padrões visuais e checklist de telas |
+
+---
+
+<a id="design-system"></a>
+## Design System
+
+O projeto adota um **Design System** oficial que define a identidade visual e os padrões de implementação para toda a equipe.
+
+**Conceito:** Neo-Brutalism + Streetwear + E-commerce moderno
+
+**O documento cobre:**
+- Paleta de cores com tokens CSS (`--color-bg`, `--color-primary`, `--color-accent` …)
+- Hierarquia tipográfica (Space Grotesk + Inter)
+- Sistema de espaçamento em escala de 4px
+- Bordas 2px e sombras sólidas (sem blur) — estilo neo-brutalista
+- Especificação completa de componentes: Navbar, Botões, Inputs, Cards, Badges, Alerts, Toasts, Modais
+- Padrão do Product Card com HTML de exemplo
+- Nomenclatura de produtos, imagens e campos de cadastro
+- Estrutura de arquivos CSS e templates Django
+- Regras de responsividade (mobile-first, 375 / 768 / 1280px)
+- Requisitos de acessibilidade (WCAG AA)
+- Design Tokens e checklist de 40+ itens para validação de novas telas
+
+> **Consulte [docs/design-system.md](docs/design-system.md) antes de criar qualquer nova tela ou componente.**
 
 ---
 

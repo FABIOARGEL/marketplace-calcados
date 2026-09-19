@@ -109,6 +109,19 @@ DATABASES = {
 # Modelo de usuário customizado — DEVE ser definido antes da primeira migration
 AUTH_USER_MODEL = 'users.CustomUser'
 
+# Backend de autenticação por e-mail.
+# EmailBackend autentica via e-mail + senha (substituindo o padrão username).
+# ModelBackend é mantido como fallback para o admin do Django.
+AUTHENTICATION_BACKENDS = [
+    'apps.users.backends.EmailBackend',
+    'django.contrib.auth.backends.ModelBackend',
+]
+
+# Rotas de autenticação
+LOGIN_URL = '/usuarios/login/'
+LOGIN_REDIRECT_URL = '/'
+LOGOUT_REDIRECT_URL = '/'
+
 AUTH_PASSWORD_VALIDATORS = [
     {'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator'},
     {'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator'},

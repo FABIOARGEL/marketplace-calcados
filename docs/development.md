@@ -1,7 +1,7 @@
 # Padrões de Desenvolvimento — Marketplace de Calçados
 
 > Guia de referência para o time de desenvolvimento.
-> Versão: 1.0 | Sprint 1
+> Versão: 1.1 | Sprint 2 (atualizado com decisões de negócio: login por e-mail, endereços, frete, pagamento simulado)
 
 ---
 

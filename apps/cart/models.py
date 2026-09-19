@@ -35,7 +35,7 @@ class Cart(models.Model):
         verbose_name_plural = _('Carrinhos')
 
     def __str__(self):
-        return f'Carrinho de {self.user.username}'
+        return f'Carrinho de {self.user.email}'
 
     @property
     def total(self):

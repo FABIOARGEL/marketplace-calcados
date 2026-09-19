@@ -368,6 +368,8 @@ feature/seller-dashboard
 | [docs/vertical-slicing.md](docs/vertical-slicing.md) | Planejamento de fatias verticais por Sprint |
 | [docs/development.md](docs/development.md) | Padrões de código PEP 8, convenções de commits e Git |
 | [docs/design-system.md](docs/design-system.md) | **Design System** — paleta de cores, tipografia, componentes, padrões visuais e checklist de telas |
+| [docs/AI-STANDARDS.md](docs/AI-STANDARDS.md) | **Contrato da IA** — padrões, decisões, lacunas e checklist completo para desenvolvimento com IA |
+| [docs/PROMPT-RULES.md](docs/PROMPT-RULES.md) | **Regras compactas para IA** — versão resumida para colar no chat do Antigravity |
 
 ---
 
@@ -392,6 +394,32 @@ O projeto adota um **Design System** oficial que define a identidade visual e os
 - Design Tokens e checklist de 40+ itens para validação de novas telas
 
 > **Consulte [docs/design-system.md](docs/design-system.md) antes de criar qualquer nova tela ou componente.**
+
+---
+
+<a id="ia"></a>
+## Desenvolvimento com IA (Antigravity)
+
+Este projeto utiliza o **Antigravity IDE** como assistente de desenvolvimento. Para garantir consistência entre sessões, o projeto inclui um sistema de regras automáticas.
+
+### Como funciona
+
+| Arquivo | Função | Quando usar |
+|---|---|---|
+| `GEMINI.md` | Regras carregadas **automaticamente** pelo Antigravity em toda nova conversa | Sempre ativo — não precisa fazer nada |
+| `docs/AI-STANDARDS.md` | Referência completa com todos os padrões e decisões | Consulte para dúvidas detalhadas |
+
+### Regras automáticas (GEMINI.md)
+
+O arquivo `GEMINI.md` na raiz do projeto é carregado automaticamente pelo Antigravity em toda nova conversa. Ele instrui a IA a:
+
+- Consultar `docs/` antes de implementar qualquer coisa
+- Seguir a stack: Django 4.2 LTS + PostgreSQL + CSS vanilla
+- Respeitar o Design System Neo-Brutalism (bordas 2px, sombras sólidas, tokens CSS)
+- Não criar APIs REST, não usar SQLite, não usar jQuery
+- Registrar lacunas explicitamente em vez de inventar padrões
+
+> **Para o Antigravity:** as regras já estão ativas via `GEMINI.md`. Nenhuma configuração adicional é necessária.
 
 ---
 

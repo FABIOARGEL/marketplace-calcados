@@ -128,6 +128,10 @@ USE_TZ = True
 # Arquivos estáticos e de mídia
 # ----------------------------------------------------------
 STATIC_URL = '/static/'
+
+STATICFILES_DIRS = [
+    BASE_DIR / 'templates' / 'static',
+]
 STATIC_ROOT = BASE_DIR / 'staticfiles'
 
 MEDIA_URL = '/media/'

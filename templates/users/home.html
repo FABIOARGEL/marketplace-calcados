@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Passos</title>
+</head>
+
+<body>
+
+    <h1>PASSOS</h1>
+
+    <p>Bem-vindo ao Passos!</p>
+
+    {% if user.is_authenticated %}
+
+        <p>Você está logado como {{ user.email }}.</p>
+
+    {% else %}
+
+        <a href="{% url 'users:login' %}">Entrar</a>
+
+        <br>
+
+        <a href="{% url 'users:register' %}">Criar conta</a>
+
+    {% endif %}
+
+</body>
+</html>

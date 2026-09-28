@@ -1,0 +1,104 @@
+/* Cards */
+.card {
+    background-color: var(--color-surface);
+    border: var(--border-width) solid var(--border-color);
+    border-radius: var(--border-radius);
+    box-shadow: var(--shadow-lg);
+    padding: var(--space-6);
+    transition:
+        transform var(--transition-fast) ease,
+        box-shadow var(--transition-fast) ease;
+}
+
+.card:hover {
+    transform: translate(-2px, -2px);
+    box-shadow: var(--shadow-hover);
+}
+
+/* Alertas */
+.alert {
+    width: 100%;
+    padding: var(--space-4);
+    border: var(--border-width) solid var(--border-color);
+    border-left-width: var(--border-width-thick);
+    border-radius: var(--border-radius);
+    background-color: var(--color-surface);
+    font-size: var(--text-sm);
+}
+
+.alert--success {
+    border-left-color: var(--color-success);
+}
+
+.alert--error {
+    border-left-color: var(--color-error);
+}
+
+.alert--warning {
+    border-left-color: var(--color-warning);
+}
+
+.alert--info {
+    border-left-color: var(--color-info);
+}
+
+/* Formulários */
+.form-group {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-2);
+    margin-bottom: var(--space-4);
+}
+
+.form-field {
+    display: block;
+}
+
+.form-error {
+    margin-top: var(--space-1);
+    color: var(--color-error);
+    font-size: var(--text-sm);
+}
+
+/* Badges */
+.badge {
+    display: inline-flex;
+    align-items: center;
+    min-height: var(--space-6);
+    padding: var(--space-1) var(--space-2);
+    border: var(--border-width) solid var(--border-color);
+    border-radius: var(--border-radius-sm);
+    background-color: var(--color-primary);
+    color: var(--color-surface);
+    font-size: var(--text-badge);
+    font-weight: var(--font-weight-semibold);
+    line-height: 1;
+    box-shadow: var(--shadow-sm);
+}
+
+.badge--accent {
+    background-color: var(--color-accent);
+}
+
+.badge--success {
+    background-color: var(--color-success);
+}
+
+.badge--error {
+    background-color: var(--color-error);
+}
+
+.badge--warning {
+    background-color: var(--color-warning);
+}
+
+.badge--info {
+    background-color: var(--color-info);
+}
+
+/* Responsividade */
+@media (min-width: 768px) {
+    .form-group {
+        margin-bottom: var(--space-6);
+    }
+}

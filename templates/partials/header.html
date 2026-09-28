@@ -1,0 +1,63 @@
+<!-- Header -->
+<header class="navbar">
+    <div class="navbar__container container">
+
+        <!-- Logo -->
+        <a href="/" class="navbar__logo">SOLESTEP</a>
+
+        <!-- Navegação -->
+        <nav class="navbar__links" aria-label="Navegação principal">
+            <a href="/" class="navbar__link navbar__link--active">Início</a>
+            <a href="/produtos/" class="navbar__link">Produtos</a>
+            <a href="/categorias/" class="navbar__link">Categorias</a>
+        </nav>
+
+        <!-- Ações -->
+        <div class="navbar__actions">
+            <a href="/busca/" class="navbar__icon-btn" aria-label="Buscar">
+                Busca
+            </a>
+
+            <a href="/carrinho/" class="navbar__icon-btn" aria-label="Carrinho">
+                Carrinho
+            </a>
+
+            <a href="/perfil/" class="navbar__icon-btn" aria-label="Conta">
+                Conta
+            </a>
+        </div>
+
+        <!-- Menu mobile -->
+        <button type="button" class="navbar__hamburger" aria-label="Abrir menu" aria-expanded="false"
+            aria-controls="mobile-menu">
+            <span></span>
+            <span></span>
+            <span></span>
+        </button>
+    </div>
+
+    <!-- Menu mobile -->
+    <nav id="mobile-menu" class="navbar__mobile-menu" aria-label="Navegação mobile">
+        <a href="/" class="navbar__link">Início</a>
+        <a href="/produtos/" class="navbar__link">Produtos</a>
+        <a href="/categorias/" class="navbar__link">Categorias</a>
+        <a href="/busca/" class="navbar__link">Busca</a>
+        <a href="/carrinho/" class="navbar__link">Carrinho</a>
+        <a href="/perfil/" class="navbar__link">Conta</a>
+    </nav>
+</header>
+
+<script>
+    /* Menu mobile */
+    const hamburger = document.querySelector(".navbar__hamburger");
+    const mobileMenu = document.querySelector(".navbar__mobile-menu");
+
+    if (hamburger && mobileMenu) {
+        hamburger.addEventListener("click", () => {
+            const isOpen = hamburger.getAttribute("aria-expanded") === "true";
+
+            hamburger.setAttribute("aria-expanded", String(!isOpen));
+            mobileMenu.classList.toggle("navbar__mobile-menu--open");
+        });
+    }
+</script>

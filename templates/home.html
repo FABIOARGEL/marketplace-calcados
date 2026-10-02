@@ -1,0 +1,18 @@
+
+{% extends "base.html" %}
+
+{% block title %}Início | SoleStep{% endblock %}
+
+{% block content %}
+<section class="container home-content">
+    <h1>Bem-vindo à SoleStep</h1>
+    <p>Encontre calçados para o seu estilo.</p>
+
+    {% if user.is_authenticated %}
+        <p>Olá, {{ user.get_full_name|default:user.email }}!</p>
+    {% else %}
+        <p>Entre na sua conta para continuar.</p>
+        <a href="{% url 'users:user-login' %}">Fazer login</a>
+    {% endif %}
+</section>
+{% endblock %}

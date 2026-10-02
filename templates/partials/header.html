@@ -1,3 +1,4 @@
+
 <!-- Header -->
 <header class="navbar">
     <div class="navbar__container container">
@@ -12,24 +13,40 @@
             <a href="/categorias/" class="navbar__link">Categorias</a>
         </nav>
 
-        <!-- Ações -->
+        <!-- Autenticação -->
         <div class="navbar__actions">
-            <a href="/busca/" class="navbar__icon-btn" aria-label="Buscar">
-                Busca
-            </a>
+            <a href="/busca/" class="navbar__icon-btn">Busca</a>
+            <a href="/carrinho/" class="navbar__icon-btn">Carrinho</a>
 
-            <a href="/carrinho/" class="navbar__icon-btn" aria-label="Carrinho">
-                Carrinho
-            </a>
+            {% if user.is_authenticated %}
+                <span class="navbar__link">
+                    Olá, {{ user.get_full_name|default:user.email }}
+                </span>
 
-            <a href="/perfil/" class="navbar__icon-btn" aria-label="Conta">
-                Conta
-            </a>
+                <form method="post" action="{% url 'users:user-logout' %}">
+                    {% csrf_token %}
+                    <button type="submit" class="navbar__link">
+                        Sair
+                    </button>
+                </form>
+            {% else %}
+                <a href="{% url 'users:user-login' %}" class="navbar__link">
+                    Login
+                </a>
+                <a href="/usuarios/cadastro/" class="navbar__link">
+                    Cadastro
+                </a>
+            {% endif %}
         </div>
 
-        <!-- Menu mobile -->
-        <button type="button" class="navbar__hamburger" aria-label="Abrir menu" aria-expanded="false"
-            aria-controls="mobile-menu">
+        <!-- Botão do menu mobile -->
+        <button
+            type="button"
+            class="navbar__hamburger"
+            aria-label="Abrir menu"
+            aria-expanded="false"
+            aria-controls="mobile-menu"
+        >
             <span></span>
             <span></span>
             <span></span>
@@ -37,13 +54,34 @@
     </div>
 
     <!-- Menu mobile -->
-    <nav id="mobile-menu" class="navbar__mobile-menu" aria-label="Navegação mobile">
+    <nav
+        id="mobile-menu"
+        class="navbar__mobile-menu"
+        aria-label="Navegação mobile"
+    >
         <a href="/" class="navbar__link">Início</a>
         <a href="/produtos/" class="navbar__link">Produtos</a>
         <a href="/categorias/" class="navbar__link">Categorias</a>
         <a href="/busca/" class="navbar__link">Busca</a>
         <a href="/carrinho/" class="navbar__link">Carrinho</a>
-        <a href="/perfil/" class="navbar__link">Conta</a>
+
+        {% if user.is_authenticated %}
+            <a href="/perfil/" class="navbar__link">Minha conta</a>
+
+            <form method="post" action="{% url 'users:user-logout' %}">
+                {% csrf_token %}
+                <button type="submit" class="navbar__link">
+                    Sair
+                </button>
+            </form>
+        {% else %}
+            <a href="{% url 'users:user-login' %}" class="navbar__link">
+                Login
+            </a>
+            <a href="/usuarios/cadastro/" class="navbar__link">
+                Cadastro
+            </a>
+        {% endif %}
     </nav>
 </header>
 
@@ -54,10 +92,17 @@
 
     if (hamburger && mobileMenu) {
         hamburger.addEventListener("click", () => {
-            const isOpen = hamburger.getAttribute("aria-expanded") === "true";
+            const isOpen =
+                hamburger.getAttribute("aria-expanded") === "true";
 
-            hamburger.setAttribute("aria-expanded", String(!isOpen));
-            mobileMenu.classList.toggle("navbar__mobile-menu--open");
+            hamburger.setAttribute(
+                "aria-expanded",
+                String(!isOpen)
+            );
+
+            mobileMenu.classList.toggle(
+                "navbar__mobile-menu--open"
+            );
         });
     }
 </script>

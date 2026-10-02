@@ -1,0 +1,317 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+{% load static %}
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Login - Passos</title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background: #f7f7f5;
+            color: #171717;
+
+            display: flex;
+            justify-content: center;
+            align-items: center;
+
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 400px;
+
+            background: white;
+            padding: 35px;
+
+            border-radius: 16px;
+
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.08);
+        }
+
+        /* LOGO */
+
+        .logo {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 25px;
+        }
+
+        .logo img {
+            width: 120px;
+            height: auto;
+            display: block;
+        }
+
+        h1 {
+            text-align: center;
+            font-size: 28px;
+            margin-bottom: 28px;
+        }
+
+        .field {
+            margin-bottom: 18px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 7px;
+
+            font-weight: 600;
+            font-size: 14px;
+        }
+
+        input {
+            width: 100%;
+
+            padding: 12px 13px;
+
+            border: 1px solid #d5d5d5;
+            border-radius: 8px;
+
+            font-size: 15px;
+
+            outline: none;
+        }
+
+        input:focus {
+            border-color: #111111;
+        }
+
+        .messages {
+            margin-bottom: 18px;
+        }
+
+        .message {
+            padding: 11px;
+
+            border-radius: 8px;
+
+            background: #f8d7da;
+            color: #721c24;
+
+            font-size: 14px;
+        }
+
+        button {
+            width: 100%;
+
+            padding: 13px;
+
+            border: none;
+            border-radius: 9px;
+
+            background: #111111;
+            color: white;
+
+            font-size: 16px;
+            font-weight: 600;
+
+            cursor: pointer;
+        }
+
+        button:hover {
+            background: #333333;
+        }
+
+        .forgot-password {
+            text-align: right;
+            margin-top: 8px;
+            margin-bottom: 20px;
+        }
+
+        .forgot-password a {
+            color: #666666;
+            font-size: 13px;
+            text-decoration: none;
+        }
+
+        .forgot-password a:hover {
+            color: #111111;
+            text-decoration: underline;
+        }
+
+        .register-link {
+            text-align: center;
+            margin-top: 22px;
+
+            font-size: 14px;
+            color: #555555;
+        }
+
+        .register-link a {
+            color: #111111;
+            font-weight: 700;
+            text-decoration: none;
+        }
+
+        .register-link a:hover {
+            text-decoration: underline;
+        }
+
+        .back-home {
+            text-align: center;
+            margin-top: 15px;
+        }
+
+        .back-home a {
+            color: #777777;
+            text-decoration: none;
+            font-size: 13px;
+        }
+
+        .back-home a:hover {
+            color: #111111;
+        }
+
+        @media (max-width: 600px) {
+
+            body {
+                padding: 15px;
+            }
+
+            .container {
+                padding: 25px 20px;
+            }
+
+            .logo img {
+                width: 100px;
+            }
+
+            h1 {
+                font-size: 25px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="container">
+
+        <!-- LOGO -->
+
+        <a href="/" class="logo">
+            <img
+                src="{% static 'images/logo-passos.png' %}"
+                alt="Passos"
+            >
+        </a>
+
+
+        <h1>
+            Entrar
+        </h1>
+
+
+        {% if messages %}
+
+            <div class="messages">
+
+                {% for message in messages %}
+
+                    <div class="message">
+                        {{ message }}
+                    </div>
+
+                {% endfor %}
+
+            </div>
+
+        {% endif %}
+
+
+        <form method="post">
+
+            {% csrf_token %}
+
+
+            <!-- E-MAIL -->
+
+            <div class="field">
+
+                <label for="username">
+                    E-mail
+                </label>
+
+                <input
+                    type="email"
+                    id="username"
+                    name="username"
+                    placeholder="Digite seu e-mail"
+                    required
+                >
+
+            </div>
+
+
+            <!-- SENHA -->
+
+            <div class="field">
+
+                <label for="password">
+                    Senha
+                </label>
+
+                <input
+                    type="password"
+                    id="password"
+                    name="password"
+                    placeholder="Digite sua senha"
+                    required
+                >
+
+            </div>
+
+
+            <div class="forgot-password">
+
+                <a href="#">
+                    Esqueci minha senha
+                </a>
+
+            </div>
+
+
+            <button type="submit">
+                Entrar
+            </button>
+
+        </form>
+
+
+        <div class="register-link">
+
+            Ainda não possui uma conta?
+
+            <a href="{% url 'users:register' %}">
+                Criar conta
+            </a>
+
+        </div>
+
+
+        <div class="back-home">
+
+            <a href="/">
+                Voltar para o início
+            </a>
+
+        </div>
+
+    </div>
+
+</body>
+
+</html>

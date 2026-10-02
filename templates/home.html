@@ -1,0 +1,806 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+{% load static %}
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Passos | Marketplace de Calçados</title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            background: #f7f7f5;
+            color: #171717;
+        }
+
+        /* =========================
+           HEADER
+        ========================= */
+
+        header {
+            background: #ffffff;
+            border-bottom: 1px solid #e8e8e8;
+            position: sticky;
+            top: 0;
+            z-index: 10;
+        }
+
+        .header-container {
+            max-width: 1200px;
+            margin: auto;
+            min-height: 72px;
+            padding: 0 24px;
+
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 30px;
+        }
+
+        /* LOGO */
+
+        .logo {
+            display: flex;
+            align-items: center;
+            text-decoration: none;
+        }
+
+        .logo img {
+            width: 120px;
+            height: auto;
+            display: block;
+        }
+
+        /* NAVEGAÇÃO */
+
+        nav {
+            display: flex;
+            gap: 24px;
+        }
+
+        nav a {
+            color: #444444;
+            text-decoration: none;
+            font-size: 15px;
+            font-weight: 600;
+        }
+
+        nav a:hover {
+            color: #000000;
+        }
+
+        /* AÇÕES DO HEADER */
+
+        .header-actions {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .login {
+            color: #222222;
+            text-decoration: none;
+            font-weight: 600;
+            padding: 10px 14px;
+        }
+
+        .login:hover {
+            color: #000000;
+        }
+
+        .register {
+            background: #111111;
+            color: white;
+            text-decoration: none;
+            padding: 11px 18px;
+            border-radius: 10px;
+            font-weight: 600;
+        }
+
+        .register:hover {
+            background: #333333;
+        }
+
+        /* =========================
+           HERO
+        ========================= */
+
+        .hero {
+            max-width: 1200px;
+            margin: 40px auto;
+            padding: 70px 50px;
+
+            background: #e9e5dc;
+            border-radius: 20px;
+
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 40px;
+        }
+
+        .hero-content {
+            max-width: 550px;
+        }
+
+        .hero-label {
+            font-size: 13px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            color: #666666;
+            margin-bottom: 16px;
+        }
+
+        .hero h1 {
+            font-size: 52px;
+            line-height: 1.05;
+            letter-spacing: -2px;
+            margin-bottom: 20px;
+        }
+
+        .hero p {
+            color: #555555;
+            font-size: 17px;
+            line-height: 1.6;
+            margin-bottom: 28px;
+        }
+
+        .hero-button {
+            display: inline-block;
+            background: #111111;
+            color: white;
+            text-decoration: none;
+            padding: 14px 24px;
+            border-radius: 10px;
+            font-weight: 700;
+        }
+
+        .hero-button:hover {
+            background: #333333;
+        }
+
+        .hero-shoe {
+            font-size: 130px;
+            min-width: 220px;
+            text-align: center;
+        }
+
+        /* =========================
+           SEÇÕES
+        ========================= */
+
+        .section {
+            max-width: 1200px;
+            margin: 70px auto;
+            padding: 0 24px;
+        }
+
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 25px;
+        }
+
+        .section h2 {
+            font-size: 28px;
+            letter-spacing: -1px;
+        }
+
+        .section-link {
+            color: #555555;
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: 600;
+        }
+
+        .section-link:hover {
+            color: #000000;
+        }
+
+        /* =========================
+           CATEGORIAS
+        ========================= */
+
+        .categories {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 16px;
+        }
+
+        .category {
+            background: white;
+            border: 1px solid #e8e8e8;
+            border-radius: 14px;
+            padding: 30px 20px;
+            text-align: center;
+
+            transition: 0.2s;
+        }
+
+        .category:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.07);
+        }
+
+        .category-icon {
+            font-size: 38px;
+            margin-bottom: 14px;
+        }
+
+        .category h3 {
+            font-size: 16px;
+        }
+
+        /* =========================
+           PRODUTOS
+        ========================= */
+
+        .products {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 20px;
+        }
+
+        .product {
+            background: white;
+            border: 1px solid #e8e8e8;
+            border-radius: 16px;
+            overflow: hidden;
+            transition: 0.2s;
+        }
+
+        .product:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+        }
+
+        .product-image {
+            height: 220px;
+            background: #f0f0ed;
+
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            font-size: 70px;
+        }
+
+        .product-info {
+            padding: 18px;
+        }
+
+        .product-name {
+            font-size: 16px;
+            font-weight: 700;
+            margin-bottom: 8px;
+        }
+
+        .product-description {
+            font-size: 13px;
+            color: #777777;
+            margin-bottom: 15px;
+        }
+
+        .product-price {
+            font-size: 20px;
+            font-weight: 800;
+            margin-bottom: 15px;
+        }
+
+        .product-button {
+            width: 100%;
+            border: none;
+            background: #111111;
+            color: white;
+            padding: 11px;
+            border-radius: 9px;
+            font-weight: 600;
+            cursor: pointer;
+        }
+
+        .product-button:hover {
+            background: #333333;
+        }
+
+        /* =========================
+           FOOTER
+        ========================= */
+
+        footer {
+            background: #111111;
+            color: white;
+            margin-top: 80px;
+            padding: 50px 24px;
+        }
+
+        .footer-container {
+            max-width: 1200px;
+            margin: auto;
+
+            display: flex;
+            justify-content: space-between;
+            gap: 40px;
+        }
+
+        .footer-logo {
+            font-size: 28px;
+            font-weight: 800;
+            margin-bottom: 12px;
+        }
+
+        .footer-text {
+            color: #aaaaaa;
+            max-width: 350px;
+            line-height: 1.6;
+        }
+
+        .footer-links {
+            display: flex;
+            gap: 50px;
+        }
+
+        .footer-links a {
+            color: #cccccc;
+            text-decoration: none;
+            font-size: 14px;
+        }
+
+        .footer-links a:hover {
+            color: #ffffff;
+        }
+
+        /* =========================
+           RESPONSIVO
+        ========================= */
+
+        @media (max-width: 900px) {
+
+            .header-container {
+                gap: 15px;
+            }
+
+            nav {
+                display: none;
+            }
+
+            .hero {
+                margin: 25px 20px;
+                padding: 45px 30px;
+            }
+
+            .hero h1 {
+                font-size: 40px;
+            }
+
+            .hero-shoe {
+                font-size: 90px;
+            }
+
+            .categories,
+            .products {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (max-width: 600px) {
+
+            .header-container {
+                padding: 0 16px;
+            }
+
+            .logo img {
+                width: 100px;
+            }
+
+            .header-actions .login {
+                display: none;
+            }
+
+            .hero {
+                margin: 20px 15px;
+                padding: 35px 25px;
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .hero h1 {
+                font-size: 36px;
+            }
+
+            .hero-shoe {
+                width: 100%;
+                font-size: 70px;
+            }
+
+            .categories,
+            .products {
+                grid-template-columns: 1fr;
+            }
+
+            .section {
+                margin: 50px auto;
+            }
+
+            .footer-container {
+                flex-direction: column;
+            }
+
+            .footer-links {
+                flex-direction: column;
+                gap: 15px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- =========================
+         HEADER
+    ========================= -->
+
+    <header>
+
+        <div class="header-container">
+
+            <a href="/" class="logo">
+                <img
+                    src="{% static 'images/logo-passos.png' %}"
+                    alt="Passos"
+                >
+            </a>
+
+            <nav>
+                <a href="/">Início</a>
+                <a href="#">Produtos</a>
+                <a href="#">Categorias</a>
+            </nav>
+
+            <div class="header-actions">
+
+                {% if user.is_authenticated %}
+
+                    <a href="/" class="login">
+                        Minha conta
+                    </a>
+
+                {% else %}
+
+                    <a href="{% url 'users:login' %}" class="login">
+                        Entrar
+                    </a>
+
+                    <a href="{% url 'users:register' %}" class="register">
+                        Criar conta
+                    </a>
+
+                {% endif %}
+
+            </div>
+
+        </div>
+
+    </header>
+
+
+    <!-- =========================
+         HERO
+    ========================= -->
+
+    <main>
+
+        <section class="hero">
+
+            <div class="hero-content">
+
+                <div class="hero-label">
+                    Marketplace de calçados
+                </div>
+
+                <h1>
+                    Encontre seu próximo passo.
+                </h1>
+
+                <p>
+                    Descubra calçados para todos os estilos,
+                    momentos e caminhos.
+                </p>
+
+                <a href="#" class="hero-button">
+                    Explorar produtos
+                </a>
+
+            </div>
+
+            <div class="hero-shoe">
+                👟
+            </div>
+
+        </section>
+
+
+        <!-- =========================
+             CATEGORIAS
+        ========================= -->
+
+        <section class="section">
+
+            <div class="section-header">
+
+                <h2>
+                    Categorias
+                </h2>
+
+                <a href="#" class="section-link">
+                    Ver todas
+                </a>
+
+            </div>
+
+            <div class="categories">
+
+                <div class="category">
+
+                    <div class="category-icon">
+                        👟
+                    </div>
+
+                    <h3>
+                        Tênis
+                    </h3>
+
+                </div>
+
+
+                <div class="category">
+
+                    <div class="category-icon">
+                        👞
+                    </div>
+
+                    <h3>
+                        Sociais
+                    </h3>
+
+                </div>
+
+
+                <div class="category">
+
+                    <div class="category-icon">
+                        🥾
+                    </div>
+
+                    <h3>
+                        Botas
+                    </h3>
+
+                </div>
+
+
+                <div class="category">
+
+                    <div class="category-icon">
+                        🩴
+                    </div>
+
+                    <h3>
+                        Sandálias
+                    </h3>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!-- =========================
+             PRODUTOS
+        ========================= -->
+
+        <section class="section">
+
+            <div class="section-header">
+
+                <h2>
+                    Produtos em destaque
+                </h2>
+
+                <a href="#" class="section-link">
+                    Ver produtos
+                </a>
+
+            </div>
+
+            <div class="products">
+
+                <!-- PRODUTO 1 -->
+
+                <div class="product">
+
+                    <div class="product-image">
+                        👟
+                    </div>
+
+                    <div class="product-info">
+
+                        <div class="product-name">
+                            Tênis Casual
+                        </div>
+
+                        <div class="product-description">
+                            Conforto para o dia a dia
+                        </div>
+
+                        <div class="product-price">
+                            R$ 199,90
+                        </div>
+
+                        <button class="product-button">
+                            Adicionar ao carrinho
+                        </button>
+
+                    </div>
+
+                </div>
+
+
+                <!-- PRODUTO 2 -->
+
+                <div class="product">
+
+                    <div class="product-image">
+                        👞
+                    </div>
+
+                    <div class="product-info">
+
+                        <div class="product-name">
+                            Sapato Social
+                        </div>
+
+                        <div class="product-description">
+                            Estilo clássico e elegante
+                        </div>
+
+                        <div class="product-price">
+                            R$ 249,90
+                        </div>
+
+                        <button class="product-button">
+                            Adicionar ao carrinho
+                        </button>
+
+                    </div>
+
+                </div>
+
+
+                <!-- PRODUTO 3 -->
+
+                <div class="product">
+
+                    <div class="product-image">
+                        🥾
+                    </div>
+
+                    <div class="product-info">
+
+                        <div class="product-name">
+                            Bota Adventure
+                        </div>
+
+                        <div class="product-description">
+                            Resistência para qualquer ocasião
+                        </div>
+
+                        <div class="product-price">
+                            R$ 299,90
+                        </div>
+
+                        <button class="product-button">
+                            Adicionar ao carrinho
+                        </button>
+
+                    </div>
+
+                </div>
+
+
+                <!-- PRODUTO 4 -->
+
+                <div class="product">
+
+                    <div class="product-image">
+                        🩴
+                    </div>
+
+                    <div class="product-info">
+
+                        <div class="product-name">
+                            Sandália Casual
+                        </div>
+
+                        <div class="product-description">
+                            Leveza e conforto
+                        </div>
+
+                        <div class="product-price">
+                            R$ 129,90
+                        </div>
+
+                        <button class="product-button">
+                            Adicionar ao carrinho
+                        </button>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </section>
+
+    </main>
+
+
+    <!-- =========================
+         FOOTER
+    ========================= -->
+
+    <footer>
+
+        <div class="footer-container">
+
+            <div>
+
+                <div class="footer-logo">
+                    passos
+                </div>
+
+                <p class="footer-text">
+                    Marketplace de calçados para encontrar
+                    produtos que combinam com você.
+                </p>
+
+            </div>
+
+            <div class="footer-links">
+
+                <a href="#">
+                    Sobre nós
+                </a>
+
+                <a href="#">
+                    Contato
+                </a>
+
+                <a href="#">
+                    Termos
+                </a>
+
+                <a href="#">
+                    Privacidade
+                </a>
+
+            </div>
+
+        </div>
+
+    </footer>
+
+</body>
+
+</html>

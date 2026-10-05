@@ -1,0 +1,278 @@
+/* ================================================
+   Profile Page — Marketplace de Calçados
+   Design: Neo-Brutalism + Streetwear
+   ================================================ */
+
+/* Layout geral da página */
+.profile-page {
+    padding-block: var(--space-10);
+}
+
+/* Cabeçalho da página */
+.profile-page__header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: var(--space-4);
+    margin-bottom: var(--space-8);
+    padding-bottom: var(--space-6);
+    border-bottom: var(--border-width) solid var(--border-color);
+}
+
+.profile-page__title {
+    margin-bottom: var(--space-1);
+    font-size: var(--text-2xl);
+}
+
+.profile-page__subtitle {
+    margin: 0;
+    color: var(--color-muted);
+    font-size: var(--text-sm);
+}
+
+.profile-page__badge {
+    flex-shrink: 0;
+    align-self: center;
+}
+
+/* Layout de duas colunas (main + aside) */
+.profile-layout {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: var(--space-6);
+    align-items: start;
+}
+
+/* Coluna principal */
+.profile-layout__main {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-6);
+}
+
+/* Barra lateral */
+.profile-layout__aside {
+    position: sticky;
+    top: calc(var(--navbar-height) + var(--space-4));
+}
+
+/* ================================================
+   Seções do formulário
+   ================================================ */
+.profile-section {
+    background-color: var(--color-surface);
+    border: var(--border-width) solid var(--border-color);
+    border-radius: var(--border-radius);
+    box-shadow: var(--shadow-lg);
+    overflow: hidden;
+}
+
+.profile-section--seller {
+    border-top: 4px solid var(--color-accent);
+}
+
+.profile-section__header {
+    padding: var(--space-6);
+    border-bottom: var(--border-width) solid var(--border-color);
+    background-color: var(--color-bg);
+}
+
+.profile-section__title {
+    margin-bottom: var(--space-1);
+    font-size: var(--text-lg);
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+}
+
+.profile-section__title-icon {
+    font-size: var(--text-xl);
+}
+
+.profile-section__desc {
+    margin: 0;
+    color: var(--color-muted);
+    font-size: var(--text-sm);
+}
+
+.profile-section__body {
+    padding: var(--space-6);
+}
+
+/* Row de duas colunas nos formulários */
+.profile-form__row {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: var(--space-4);
+}
+
+/* ================================================
+   Alert inline (dentro de seção)
+   ================================================ */
+.profile-alert {
+    margin-bottom: var(--space-4);
+    padding: var(--space-3) var(--space-4);
+    border: var(--border-width) solid var(--border-color);
+    font-size: var(--text-sm);
+}
+
+.profile-alert p {
+    margin: 0;
+}
+
+.profile-alert--error {
+    border-left: 4px solid var(--color-error);
+    background-color: color-mix(in srgb, var(--color-error) 5%, var(--color-surface));
+    color: var(--color-error);
+}
+
+/* ================================================
+   Seção de frete
+   ================================================ */
+.profile-shipping {
+    margin-top: var(--space-6);
+    padding-top: var(--space-6);
+    border-top: var(--border-width) dashed var(--border-color);
+}
+
+.profile-shipping__title {
+    margin-bottom: var(--space-2);
+    font-size: var(--text-base);
+    font-weight: var(--font-weight-semibold);
+}
+
+.profile-shipping__desc {
+    margin-bottom: var(--space-4);
+    padding: var(--space-3) var(--space-4);
+    border: var(--border-width) solid var(--border-color);
+    background-color: var(--color-bg);
+    font-size: var(--text-sm);
+    color: var(--color-muted);
+}
+
+/* Preview do frete calculado em tempo real */
+.profile-shipping__preview {
+    display: flex;
+    align-items: center;
+    gap: var(--space-3);
+    margin-top: var(--space-4);
+    padding: var(--space-4);
+    border: var(--border-width) solid var(--border-color);
+    background-color: var(--color-bg);
+    box-shadow: var(--shadow-sm);
+}
+
+.profile-shipping__preview-label {
+    font-size: var(--text-sm);
+    font-weight: var(--font-weight-semibold);
+}
+
+.profile-shipping__preview-value {
+    font-family: var(--font-heading);
+    font-size: var(--text-lg);
+    font-weight: var(--font-weight-bold);
+    color: var(--color-accent);
+    transition: opacity var(--transition-fast) ease;
+}
+
+/* ================================================
+   Sidebar
+   ================================================ */
+.profile-sidebar {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--space-4);
+    padding: var(--space-6);
+    background-color: var(--color-surface);
+    border: var(--border-width) solid var(--border-color);
+    border-radius: var(--border-radius);
+    box-shadow: var(--shadow-lg);
+    text-align: center;
+}
+
+/* Avatar com iniciais */
+.profile-sidebar__avatar {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 80px;
+    height: 80px;
+    border: var(--border-width-thick) solid var(--border-color);
+    border-radius: var(--border-radius);
+    background-color: var(--color-primary);
+    color: var(--color-surface);
+    font-family: var(--font-heading);
+    font-size: var(--text-xl);
+    font-weight: var(--font-weight-extrabold);
+    box-shadow: var(--shadow-md);
+    letter-spacing: 0.02em;
+    user-select: none;
+}
+
+.profile-sidebar__name {
+    margin: 0;
+    font-family: var(--font-heading);
+    font-size: var(--text-base);
+    font-weight: var(--font-weight-bold);
+}
+
+.profile-sidebar__email {
+    margin: 0;
+    font-size: var(--text-sm);
+    word-break: break-all;
+}
+
+.profile-sidebar__actions {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-2);
+    width: 100%;
+}
+
+.profile-sidebar__save-btn,
+.profile-sidebar__cancel-btn {
+    width: 100%;
+    justify-content: center;
+}
+
+.profile-sidebar__info {
+    width: 100%;
+    border-top: var(--border-width) solid var(--border-color);
+    padding-top: var(--space-4);
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-2);
+}
+
+.profile-sidebar__info-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin: 0;
+    font-size: var(--text-sm);
+}
+
+.profile-sidebar__info-label {
+    color: var(--color-muted);
+}
+
+/* ================================================
+   Responsividade
+   ================================================ */
+@media (min-width: 640px) {
+    .profile-form__row {
+        grid-template-columns: 1fr 1fr;
+    }
+}
+
+@media (min-width: 1024px) {
+    .profile-page {
+        padding-block: var(--space-12);
+    }
+
+    .profile-layout {
+        grid-template-columns: 1fr 280px;
+        gap: var(--space-8);
+    }
+}

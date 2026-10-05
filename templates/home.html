@@ -1,18 +1,219 @@
+﻿{% extends "base.html" %}
+{% load static %}
 
-{% extends "base.html" %}
+{% block title %}SoleStep — Calçados para o seu estilo{% endblock %}
 
-{% block title %}Início | SoleStep{% endblock %}
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/home.css' %}">
+<meta name="description" content="SoleStep é o marketplace de calçados com as melhores marcas e preços. Encontre tênis, botas, sandálias e muito mais.">
+{% endblock %}
 
 {% block content %}
-<section class="container home-content">
-    <h1>Bem-vindo à SoleStep</h1>
-    <p>Encontre calçados para o seu estilo.</p>
 
-    {% if user.is_authenticated %}
-        <p>Olá, {{ user.get_full_name|default:user.email }}!</p>
-    {% else %}
-        <p>Entre na sua conta para continuar.</p>
-        <a href="{% url 'users:user-login' %}">Fazer login</a>
-    {% endif %}
+<!-- ================================================
+     HERO SECTION
+     ================================================ -->
+<section class="hero" aria-label="Destaque principal">
+    <div class="hero__container container">
+        <div class="hero__content">
+            <span class="hero__eyebrow">&#x2605; Novo marketplace de calçados</span>
+            <h1 class="hero__title">
+                Calçados que<br>
+                definem o seu<br>
+                <span>estilo.</span>
+            </h1>
+            <p class="hero__subtitle">
+                Do streetwear ao esportivo, encontre os melhores modelos
+                de vendedores verificados. Entrega rápida, preço justo.
+            </p>
+            <div class="hero__cta-group">
+                <a href="/produtos/" id="hero-cta-explorar" class="btn hero__btn--primary">
+                    Explorar produtos
+                </a>
+                {% if not user.is_authenticated %}
+                <a href="{% url 'users:user-register' %}" id="hero-cta-cadastrar" class="btn hero__btn--outline">
+                    Criar conta grátis
+                </a>
+                {% endif %}
+            </div>
+            <div class="hero__stats">
+                <div class="hero__stat">
+                    <span class="hero__stat-value">500+</span>
+                    <span class="hero__stat-label">Produtos</span>
+                </div>
+                <div class="hero__stat">
+                    <span class="hero__stat-value">120+</span>
+                    <span class="hero__stat-label">Vendedores</span>
+                </div>
+                <div class="hero__stat">
+                    <span class="hero__stat-value">98%</span>
+                    <span class="hero__stat-label">Satisfação</span>
+                </div>
+            </div>
+        </div>
+        <div class="hero__visual">
+            <div class="hero__image-frame">
+                <div style="width:100%;height:100%;background:linear-gradient(135deg,#1a1a1a 0%,#2d2d2d 40%,#FF3B00 100%);display:flex;align-items:center;justify-content:center;font-size:8rem;opacity:0.8;">&#x1F45F;</div>
+                <div class="hero__deco-square"></div>
+                <div class="hero__image-badge">Nova coleção 2026</div>
+            </div>
+        </div>
+    </div>
 </section>
+
+<!-- ================================================
+     USUÁRIO AUTENTICADO — Boas-vindas
+     ================================================ -->
+{% if user.is_authenticated %}
+<div class="home-section--alt" style="padding-block: var(--space-4);">
+    <div class="container">
+        <p style="margin:0;font-size:var(--text-sm);color:var(--color-muted);">
+            &#x1F44B; Bem-vindo(a) de volta, <strong>{{ user.get_full_name|default:user.email }}</strong>!
+            {% if user.user_type == 'SELLER' %}
+            <a href="/painel/" style="color:var(--color-accent);font-weight:600;margin-left:var(--space-2);">
+                Ir para o painel do vendedor &rarr;
+            </a>
+            {% endif %}
+        </p>
+    </div>
+</div>
+{% endif %}
+
+<!-- ================================================
+     PRODUTOS EM DESTAQUE (Placeholder — Sprint 3)
+     ================================================ -->
+<section class="home-section" aria-labelledby="produtos-destaque-titulo">
+    <div class="container">
+        <div class="section-header">
+            <div class="section-header__content">
+                <span class="section-header__label">Curadoria</span>
+                <h2 class="section-header__title" id="produtos-destaque-titulo">Produtos em destaque</h2>
+            </div>
+            <a href="/produtos/" class="section-header__link">Ver todos &rarr;</a>
+        </div>
+        <div class="products-grid" aria-label="Produtos em destaque">
+            <article class="product-placeholder">
+                <div class="product-placeholder__image">
+                    <span class="product-placeholder__badge">Novo</span>
+                    <div style="width:100%;height:100%;background:linear-gradient(135deg,#1a1a1a,#2d2d2d);display:flex;align-items:center;justify-content:center;color:rgba(255,255,255,.15);font-size:4rem;">&#x1F45F;</div>
+                </div>
+                <div class="product-placeholder__info">
+                    <span class="product-placeholder__category">Tênis</span>
+                    <h3 class="product-placeholder__name">Urban Runner Pro</h3>
+                    <span class="product-placeholder__price">R$&nbsp;349,90</span>
+                </div>
+            </article>
+            <article class="product-placeholder">
+                <div class="product-placeholder__image">
+                    <span class="product-placeholder__badge">Oferta</span>
+                    <div style="width:100%;height:100%;background:linear-gradient(135deg,#FF3B00,#1a1a1a);display:flex;align-items:center;justify-content:center;color:rgba(255,255,255,.15);font-size:4rem;">&#x1F45E;</div>
+                </div>
+                <div class="product-placeholder__info">
+                    <span class="product-placeholder__category">Bota</span>
+                    <h3 class="product-placeholder__name">Street Boot Original</h3>
+                    <span class="product-placeholder__price">R$&nbsp;289,00</span>
+                </div>
+            </article>
+            <article class="product-placeholder">
+                <div class="product-placeholder__image">
+                    <div style="width:100%;height:100%;background:linear-gradient(135deg,#2d2d2d,#0D0D0D);display:flex;align-items:center;justify-content:center;color:rgba(255,255,255,.15);font-size:4rem;">&#x1F461;</div>
+                </div>
+                <div class="product-placeholder__info">
+                    <span class="product-placeholder__category">Sandália</span>
+                    <h3 class="product-placeholder__name">Slide Premium Comfort</h3>
+                    <span class="product-placeholder__price">R$&nbsp;129,90</span>
+                </div>
+            </article>
+            <article class="product-placeholder">
+                <div class="product-placeholder__image">
+                    <span class="product-placeholder__badge">Top</span>
+                    <div style="width:100%;height:100%;background:linear-gradient(135deg,#1a1a1a,#FF3B00 60%,#1a1a1a);display:flex;align-items:center;justify-content:center;color:rgba(255,255,255,.15);font-size:4rem;">&#x1F462;</div>
+                </div>
+                <div class="product-placeholder__info">
+                    <span class="product-placeholder__category">Tênis</span>
+                    <h3 class="product-placeholder__name">Classic Low Grunge</h3>
+                    <span class="product-placeholder__price">R$&nbsp;199,00</span>
+                </div>
+            </article>
+        </div>
+        <div class="coming-soon-banner" role="note">
+            <span class="coming-soon-banner__icon">&#x1F6A7;</span>
+            <span><strong>Sprint 3:</strong> Esta seção será populada com produtos reais do banco de dados. Os cards acima são placeholders visuais.</span>
+        </div>
+    </div>
+</section>
+
+<!-- ================================================
+     CATEGORIAS EM DESTAQUE (Placeholder — Sprint 3)
+     ================================================ -->
+<section class="home-section home-section--alt" aria-labelledby="categorias-titulo">
+    <div class="container">
+        <div class="section-header">
+            <div class="section-header__content">
+                <span class="section-header__label">Navegue por</span>
+                <h2 class="section-header__title" id="categorias-titulo">Categorias</h2>
+            </div>
+            <a href="/categorias/" class="section-header__link">Ver todas &rarr;</a>
+        </div>
+        <div class="categories-grid" aria-label="Categorias de produtos">
+            <a href="/produtos/?categoria=tenis" class="category-card category-card--featured" id="cat-tenis" aria-label="Categoria Tênis">
+                <div class="category-card__content">
+                    <span class="category-card__name">Tênis</span>
+                    <span class="category-card__count">200+ modelos</span>
+                </div>
+            </a>
+            <a href="/produtos/?categoria=botas" class="category-card" id="cat-botas" aria-label="Categoria Botas">
+                <div class="category-card__content">
+                    <span class="category-card__name">Botas</span>
+                    <span class="category-card__count">80+ modelos</span>
+                </div>
+            </a>
+            <a href="/produtos/?categoria=sandalia" class="category-card category-card--accent" id="cat-sandalia" aria-label="Categoria Sandálias">
+                <div class="category-card__content">
+                    <span class="category-card__name">Sandálias</span>
+                    <span class="category-card__count">60+ modelos</span>
+                </div>
+            </a>
+            <a href="/produtos/?categoria=social" class="category-card" id="cat-social" aria-label="Categoria Social">
+                <div class="category-card__content">
+                    <span class="category-card__name">Social</span>
+                    <span class="category-card__count">45+ modelos</span>
+                </div>
+            </a>
+            <a href="/produtos/?categoria=esportivo" class="category-card" id="cat-esportivo" aria-label="Categoria Esportivo">
+                <div class="category-card__content">
+                    <span class="category-card__name">Esportivo</span>
+                    <span class="category-card__count">110+ modelos</span>
+                </div>
+            </a>
+        </div>
+    </div>
+</section>
+
+<!-- ================================================
+     CTA BANNER — Venda na SoleStep
+     ================================================ -->
+{% if not user.is_authenticated or user.user_type == 'CLIENT' %}
+<section class="cta-banner" aria-labelledby="cta-vendedor-titulo">
+    <div class="container">
+        <div class="cta-banner__inner">
+            <div>
+                <span class="cta-banner__label">Para vendedores</span>
+                <h2 class="cta-banner__title" id="cta-vendedor-titulo">
+                    Venda seus calçados<br>na SoleStep.
+                </h2>
+            </div>
+            <div class="cta-banner__actions">
+                {% if not user.is_authenticated %}
+                <a href="{% url 'users:user-register' %}" id="cta-cadastro-vendedor" class="btn cta-banner__btn">Criar conta de vendedor</a>
+                <a href="{% url 'users:user-login' %}" id="cta-login-vendedor" class="btn cta-banner__btn--outline">Já tenho conta</a>
+                {% else %}
+                <a href="/painel/" id="cta-ir-painel" class="btn cta-banner__btn">Acessar painel</a>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</section>
+{% endif %}
+
 {% endblock %}

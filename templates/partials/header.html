@@ -33,7 +33,7 @@
                 <a href="{% url 'users:user-login' %}" class="navbar__link">
                     Login
                 </a>
-                <a href="/usuarios/cadastro/" class="navbar__link">
+                <a href="{% url 'users:user-register' %}" class="navbar__link">
                     Cadastro
                 </a>
             {% endif %}
@@ -78,7 +78,7 @@
             <a href="{% url 'users:user-login' %}" class="navbar__link">
                 Login
             </a>
-            <a href="/usuarios/cadastro/" class="navbar__link">
+            <a href="{% url 'users:user-register' %}" class="navbar__link">
                 Cadastro
             </a>
         {% endif %}

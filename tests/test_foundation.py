@@ -296,12 +296,11 @@ class SellerShippingFieldsTest(TestCase):
             password='senha-123',
             user_type='SELLER',
         )
-        profile = SellerProfile.objects.create(
-            user=seller_user,
-            store_name='Loja Teste',
-            shipping_rate_per_km=Decimal('2.50'),
-            shipping_distance_km=Decimal('30.00'),
-        )
+        profile = seller_user.seller_profile
+        profile.store_name = 'Loja Teste'
+        profile.shipping_rate_per_km = Decimal('2.50')
+        profile.shipping_distance_km = Decimal('30.00')
+        profile.save()
         expected_shipping = Decimal('75.00')  # 30 × 2.50
         self.assertEqual(profile.calculate_shipping(), expected_shipping)
 

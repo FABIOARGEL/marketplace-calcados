@@ -1,0 +1,523 @@
+/* ===========================
+   Home — Página Inicial
+   Design: Neo-Brutalism + Streetwear
+   =========================== */
+
+/* --- Hero Section --- */
+.hero {
+    position: relative;
+    overflow: hidden;
+    background-color: var(--color-primary);
+    border-bottom: var(--border-width) solid var(--border-color);
+}
+
+.hero__container {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: var(--space-8);
+    padding-block: var(--space-12);
+}
+
+.hero__content {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-6);
+    z-index: 1;
+}
+
+.hero__eyebrow {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-2);
+    width: fit-content;
+    padding: var(--space-1) var(--space-3);
+    border: var(--border-width) solid var(--color-accent);
+    background-color: var(--color-accent);
+    color: var(--color-surface);
+    font-family: var(--font-heading);
+    font-size: var(--text-xs);
+    font-weight: var(--font-weight-bold);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+}
+
+.hero__title {
+    color: var(--color-surface);
+    font-family: var(--font-heading);
+    font-size: clamp(2.4rem, 6vw, 4.5rem);
+    font-weight: var(--font-weight-extrabold);
+    line-height: 1;
+    letter-spacing: -0.03em;
+}
+
+.hero__title span {
+    color: var(--color-accent);
+}
+
+.hero__subtitle {
+    max-width: 480px;
+    margin: 0;
+    color: #A0A0A0;
+    font-size: var(--text-base);
+    line-height: 1.6;
+}
+
+.hero__cta-group {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-3);
+}
+
+.hero__btn--primary {
+    background-color: var(--color-accent);
+    color: var(--color-surface);
+    border-color: var(--color-accent);
+    box-shadow: 4px 4px 0px rgba(255, 59, 0, 0.6);
+}
+
+.hero__btn--primary:hover {
+    color: var(--color-surface);
+    box-shadow: 6px 6px 0px rgba(255, 59, 0, 0.6);
+}
+
+.hero__btn--outline {
+    background-color: transparent;
+    color: var(--color-surface);
+    border-color: var(--color-surface);
+    box-shadow: 4px 4px 0px rgba(255, 255, 255, 0.2);
+}
+
+.hero__btn--outline:hover {
+    color: var(--color-surface);
+    box-shadow: 6px 6px 0px rgba(255, 255, 255, 0.2);
+}
+
+.hero__stats {
+    display: flex;
+    gap: var(--space-8);
+    padding-top: var(--space-4);
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.hero__stat {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-1);
+}
+
+.hero__stat-value {
+    color: var(--color-surface);
+    font-family: var(--font-heading);
+    font-size: var(--text-2xl);
+    font-weight: var(--font-weight-extrabold);
+    line-height: 1;
+}
+
+.hero__stat-label {
+    color: var(--color-muted);
+    font-size: var(--text-xs);
+    font-weight: var(--font-weight-medium);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+}
+
+/* Imagem hero / visual */
+.hero__visual {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.hero__image-frame {
+    position: relative;
+    width: 100%;
+    max-width: 480px;
+    aspect-ratio: 4 / 3;
+    border: var(--border-width) solid rgba(255, 255, 255, 0.2);
+    background-color: #1a1a1a;
+    overflow: hidden;
+    box-shadow: var(--shadow-xl);
+}
+
+.hero__image-frame img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    opacity: 0.9;
+}
+
+.hero__image-badge {
+    position: absolute;
+    bottom: var(--space-4);
+    left: var(--space-4);
+    padding: var(--space-2) var(--space-4);
+    border: var(--border-width) solid var(--border-color);
+    background-color: var(--color-accent);
+    color: var(--color-surface);
+    font-family: var(--font-heading);
+    font-size: var(--text-sm);
+    font-weight: var(--font-weight-bold);
+    box-shadow: var(--shadow-md);
+}
+
+/* Decoração geométrica neo-brutalism */
+.hero__deco-square {
+    position: absolute;
+    top: var(--space-6);
+    right: var(--space-6);
+    width: 60px;
+    height: 60px;
+    border: 3px solid var(--color-accent);
+    opacity: 0.4;
+}
+
+/* --- Seção genérica --- */
+.home-section {
+    padding-block: var(--space-16);
+}
+
+.home-section--alt {
+    background-color: var(--color-surface);
+    border-top: var(--border-width) solid var(--border-color);
+    border-bottom: var(--border-width) solid var(--border-color);
+}
+
+/* Cabeçalho de seção */
+.section-header {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: var(--space-4);
+    margin-bottom: var(--space-8);
+}
+
+.section-header__content {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-2);
+}
+
+.section-header__label {
+    display: block;
+    color: var(--color-accent);
+    font-size: var(--text-xs);
+    font-weight: var(--font-weight-bold);
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+}
+
+.section-header__title {
+    margin: 0;
+    font-size: var(--text-2xl);
+}
+
+.section-header__link {
+    white-space: nowrap;
+    font-size: var(--text-sm);
+    font-weight: var(--font-weight-semibold);
+    text-decoration: underline;
+    text-underline-offset: 3px;
+    flex-shrink: 0;
+}
+
+.section-header__link:hover {
+    color: var(--color-accent);
+}
+
+/* --- Grade de produtos em destaque (placeholder Sprint 3) --- */
+.products-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: var(--space-4);
+}
+
+/* Placeholder visual de card de produto */
+.product-placeholder {
+    display: flex;
+    flex-direction: column;
+    background-color: var(--color-surface);
+    border: var(--border-width) solid var(--border-color);
+    box-shadow: var(--shadow-lg);
+    overflow: hidden;
+    transition:
+        transform var(--transition-fast) ease,
+        box-shadow var(--transition-fast) ease;
+}
+
+.product-placeholder:hover {
+    transform: translate(-3px, -3px);
+    box-shadow: var(--shadow-xl);
+}
+
+.product-placeholder__image {
+    position: relative;
+    aspect-ratio: 1 / 1;
+    background-color: var(--color-bg);
+    border-bottom: var(--border-width) solid var(--border-color);
+    overflow: hidden;
+}
+
+.product-placeholder__image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.product-placeholder__badge {
+    position: absolute;
+    top: var(--space-3);
+    left: var(--space-3);
+    padding: var(--space-1) var(--space-2);
+    border: var(--border-width) solid var(--border-color);
+    background-color: var(--color-accent);
+    color: var(--color-surface);
+    font-family: var(--font-heading);
+    font-size: var(--text-badge);
+    font-weight: var(--font-weight-bold);
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    box-shadow: var(--shadow-sm);
+}
+
+.product-placeholder__info {
+    padding: var(--space-4);
+}
+
+.product-placeholder__category {
+    display: block;
+    margin-bottom: var(--space-1);
+    color: var(--color-muted);
+    font-size: var(--text-xs);
+    font-weight: var(--font-weight-medium);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+}
+
+.product-placeholder__name {
+    margin: 0 0 var(--space-2) 0;
+    font-family: var(--font-heading);
+    font-size: var(--text-base);
+    font-weight: var(--font-weight-bold);
+    line-height: 1.3;
+    color: var(--color-primary);
+}
+
+.product-placeholder__price {
+    color: var(--color-primary);
+    font-family: var(--font-heading);
+    font-size: var(--text-lg);
+    font-weight: var(--font-weight-extrabold);
+}
+
+/* Banner "em breve" */
+.coming-soon-banner {
+    margin-top: var(--space-4);
+    display: flex;
+    align-items: center;
+    gap: var(--space-3);
+    padding: var(--space-4) var(--space-5);
+    border: var(--border-width) dashed var(--color-muted);
+    background-color: var(--color-bg);
+    color: var(--color-muted);
+    font-size: var(--text-sm);
+}
+
+.coming-soon-banner__icon {
+    font-size: var(--text-lg);
+    flex-shrink: 0;
+}
+
+/* --- Seção de Categorias --- */
+.categories-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: var(--space-3);
+}
+
+.category-card {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    min-height: 160px;
+    padding: var(--space-4);
+    border: var(--border-width) solid var(--border-color);
+    background-color: var(--color-primary);
+    box-shadow: var(--shadow-lg);
+    overflow: hidden;
+    text-decoration: none;
+    transition:
+        transform var(--transition-fast) ease,
+        box-shadow var(--transition-fast) ease;
+}
+
+.category-card:hover {
+    transform: translate(-3px, -3px);
+    box-shadow: var(--shadow-xl);
+}
+
+.category-card__bg {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    opacity: 0.3;
+    transition: opacity var(--transition-normal) ease;
+}
+
+.category-card:hover .category-card__bg {
+    opacity: 0.45;
+}
+
+.category-card__content {
+    position: relative;
+    z-index: 1;
+}
+
+.category-card__name {
+    display: block;
+    color: var(--color-surface);
+    font-family: var(--font-heading);
+    font-size: var(--text-base);
+    font-weight: var(--font-weight-bold);
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    line-height: 1.2;
+    margin-bottom: var(--space-1);
+}
+
+.category-card__count {
+    display: block;
+    color: rgba(255, 255, 255, 0.55);
+    font-size: var(--text-xs);
+    font-weight: var(--font-weight-medium);
+}
+
+.category-card--accent {
+    background-color: var(--color-accent);
+}
+
+.category-card--featured {
+    grid-column: span 2;
+    min-height: 200px;
+}
+
+/* --- Seção CTA Banner --- */
+.cta-banner {
+    padding-block: var(--space-12);
+    background-color: var(--color-accent);
+    border-top: var(--border-width) solid var(--border-color);
+    border-bottom: var(--border-width) solid var(--border-color);
+}
+
+.cta-banner__inner {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--space-6);
+}
+
+.cta-banner__label {
+    display: block;
+    color: rgba(255, 255, 255, 0.7);
+    font-size: var(--text-xs);
+    font-weight: var(--font-weight-bold);
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    margin-bottom: var(--space-2);
+}
+
+.cta-banner__title {
+    margin: 0;
+    color: var(--color-surface);
+    font-family: var(--font-heading);
+    font-size: clamp(1.8rem, 4vw, 3rem);
+    font-weight: var(--font-weight-extrabold);
+    line-height: 1.1;
+    letter-spacing: -0.02em;
+}
+
+.cta-banner__actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-3);
+    flex-shrink: 0;
+}
+
+.cta-banner__btn {
+    background-color: var(--color-primary);
+    color: var(--color-surface);
+    border-color: var(--color-primary);
+    box-shadow: 4px 4px 0px var(--color-primary);
+}
+
+.cta-banner__btn:hover {
+    color: var(--color-surface);
+    box-shadow: 6px 6px 0px var(--color-primary);
+}
+
+.cta-banner__btn--outline {
+    background-color: transparent;
+    color: var(--color-surface);
+    border-color: var(--color-surface);
+    box-shadow: 4px 4px 0px rgba(255, 255, 255, 0.3);
+}
+
+.cta-banner__btn--outline:hover {
+    color: var(--color-surface);
+    box-shadow: 6px 6px 0px rgba(255, 255, 255, 0.3);
+}
+
+/* --- Responsividade --- */
+@media (min-width: 640px) {
+    .hero__container {
+        padding-block: var(--space-16);
+    }
+
+    .categories-grid {
+        grid-template-columns: repeat(3, 1fr);
+    }
+
+    .category-card--featured {
+        grid-column: span 1;
+    }
+
+    .products-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .cta-banner__inner {
+        flex-direction: row;
+        align-items: center;
+        justify-content: space-between;
+    }
+}
+
+@media (min-width: 768px) {
+    .hero__container {
+        grid-template-columns: 1fr 1fr;
+        align-items: center;
+        gap: var(--space-12);
+    }
+
+    .categories-grid {
+        grid-template-columns: repeat(4, 1fr);
+    }
+
+    .category-card--featured {
+        grid-column: span 1;
+        min-height: 220px;
+    }
+}
+
+@media (min-width: 1024px) {
+    .hero__container {
+        padding-block: var(--space-24);
+    }
+
+    .products-grid {
+        grid-template-columns: repeat(4, 1fr);
+    }
+}

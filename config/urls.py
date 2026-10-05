@@ -6,7 +6,7 @@ URLs raiz do Marketplace de Calçados.
 from django.contrib import admin
 from django.http import JsonResponse
 from django.urls import include, path
-from apps.users.views import home
+from config.views import home
 
 
 def health_check(request):

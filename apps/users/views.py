@@ -4,7 +4,6 @@ Views do app users.
 user_login: Autenticação por e-mail e senha.
 user_logout: Encerramento de sessão (POST only).
 register: Cadastro de novo usuário (cliente ou vendedor).
-home: Página inicial do marketplace.
 """
 
 from django.conf import settings
@@ -101,11 +100,6 @@ def register(request):
         'users/register.html',
         {'form': form},
     )
-
-
-def home(request):
-    """Página inicial do marketplace."""
-    return render(request, "home.html")
 
 
 @login_required

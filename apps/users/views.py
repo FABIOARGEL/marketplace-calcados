@@ -4,6 +4,8 @@ Views do app users.
 user_login: Autenticação por e-mail e senha.
 user_logout: Encerramento de sessão (POST only).
 register: Cadastro de novo usuário (cliente ou vendedor).
+profile: Exibição e edição dos dados cadastrais do usuário logado.
+         Vendedores também editam dados do SellerProfile (frete incluso).
 """
 
 from django.conf import settings
@@ -14,7 +16,7 @@ from django.shortcuts import redirect, render
 from django.utils.http import url_has_allowed_host_and_scheme
 from django.views.decorators.http import require_POST
 
-from .forms import LoginForm, UserRegistrationForm
+from .forms import LoginForm, SellerProfileForm, UserProfileForm, UserRegistrationForm
 
 
 def user_login(request):
@@ -108,3 +110,64 @@ def user_logout(request):
     """Encerra a sessão do usuário (somente POST)."""
     logout(request)
     return redirect("home")
+
+
+@login_required
+def profile(request):
+    """
+    View de exibição e edição do perfil do usuário autenticado.
+
+    GET: exibe dados do usuário e, se vendedor, dados do SellerProfile.
+    POST: valida e salva as alterações. Vendedores têm dois formulários
+          submetidos no mesmo POST (user_form e seller_form).
+
+    Mensagens:
+        success — dados salvos com sucesso.
+        error   — há erros de validação nos formulários.
+    """
+    user = request.user
+    is_seller = user.is_seller
+    seller_profile = getattr(user, 'seller_profile', None)
+
+    if request.method == 'POST':
+        user_form = UserProfileForm(request.POST, instance=user)
+        seller_form = (
+            SellerProfileForm(request.POST, instance=seller_profile)
+            if is_seller
+            else None
+        )
+
+        user_form_valid = user_form.is_valid()
+        seller_form_valid = (seller_form.is_valid() if seller_form else True)
+
+        if user_form_valid and seller_form_valid:
+            user_form.save()
+            if seller_form:
+                seller_form.save()
+            messages.success(
+                request,
+                'Seus dados foram atualizados com sucesso!'
+            )
+            return redirect('users:user-profile')
+
+        messages.error(
+            request,
+            'Corrija os erros abaixo antes de salvar.'
+        )
+    else:
+        user_form = UserProfileForm(instance=user)
+        seller_form = (
+            SellerProfileForm(instance=seller_profile)
+            if is_seller
+            else None
+        )
+
+    return render(
+        request,
+        'users/profile.html',
+        {
+            'user_form': user_form,
+            'seller_form': seller_form,
+            'is_seller': is_seller,
+        },
+    )

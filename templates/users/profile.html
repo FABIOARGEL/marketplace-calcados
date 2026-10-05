@@ -1,0 +1,284 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Meu Perfil | SoleStep{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/profile.css' %}">
+{% endblock %}
+
+{% block content %}
+<section class="profile-page container">
+
+    <!-- Cabeçalho da página -->
+    <div class="profile-page__header">
+        <div class="profile-page__title-group">
+            <h1 class="profile-page__title">Meu Perfil</h1>
+            <p class="profile-page__subtitle">
+                Gerencie seus dados cadastrais
+                {% if is_seller %}e as configurações da sua loja{% endif %}.
+            </p>
+        </div>
+
+        <!-- Badge tipo de conta -->
+        <span class="badge {% if is_seller %}badge--accent{% else %}badge--info{% endif %} profile-page__badge">
+            {% if is_seller %}Vendedor{% else %}Cliente{% endif %}
+        </span>
+    </div>
+
+    <form method="post" class="profile-layout" novalidate id="form-profile">
+        {% csrf_token %}
+
+        <!-- ========================
+             Coluna principal
+             ======================== -->
+        <div class="profile-layout__main">
+
+            <!-- Seção: Dados pessoais -->
+            <div class="profile-section">
+                <div class="profile-section__header">
+                    <h2 class="profile-section__title">Dados pessoais</h2>
+                    <p class="profile-section__desc">Nome e e-mail utilizados para login e identificação.</p>
+                </div>
+
+                <div class="profile-section__body">
+
+                    {% if user_form.non_field_errors %}
+                    <div class="profile-alert profile-alert--error" role="alert">
+                        {% for error in user_form.non_field_errors %}
+                        <p>{{ error }}</p>
+                        {% endfor %}
+                    </div>
+                    {% endif %}
+
+                    <div class="profile-form__row">
+                        <!-- Nome -->
+                        <div class="form-group">
+                            <label for="id_profile_first_name" class="form-label">
+                                {{ user_form.first_name.label }}
+                            </label>
+                            {{ user_form.first_name }}
+                            {% if user_form.first_name.errors %}
+                            <ul class="form-error-list" role="alert">
+                                {% for error in user_form.first_name.errors %}
+                                <li class="form-error">{{ error }}</li>
+                                {% endfor %}
+                            </ul>
+                            {% endif %}
+                        </div>
+
+                        <!-- Sobrenome -->
+                        <div class="form-group">
+                            <label for="id_profile_last_name" class="form-label">
+                                {{ user_form.last_name.label }}
+                            </label>
+                            {{ user_form.last_name }}
+                            {% if user_form.last_name.errors %}
+                            <ul class="form-error-list" role="alert">
+                                {% for error in user_form.last_name.errors %}
+                                <li class="form-error">{{ error }}</li>
+                                {% endfor %}
+                            </ul>
+                            {% endif %}
+                        </div>
+                    </div>
+
+                    <!-- E-mail -->
+                    <div class="form-group">
+                        <label for="id_profile_email" class="form-label">
+                            {{ user_form.email.label }}
+                        </label>
+                        {{ user_form.email }}
+                        {% if user_form.email.errors %}
+                        <ul class="form-error-list" role="alert">
+                            {% for error in user_form.email.errors %}
+                            <li class="form-error">{{ error }}</li>
+                            {% endfor %}
+                        </ul>
+                        {% endif %}
+                        <p class="form-help">Usado como identificador de login. Deve ser único.</p>
+                    </div>
+
+                </div>
+            </div>
+
+            <!-- Seção: Dados do vendedor (condicional) -->
+            {% if is_seller and seller_form %}
+            <div class="profile-section profile-section--seller">
+                <div class="profile-section__header">
+                    <h2 class="profile-section__title">
+                        <span class="profile-section__title-icon" aria-hidden="true">🏪</span>
+                        Sua loja
+                    </h2>
+                    <p class="profile-section__desc">
+                        Informações públicas da loja e configuração de frete.
+                    </p>
+                </div>
+
+                <div class="profile-section__body">
+
+                    {% if seller_form.non_field_errors %}
+                    <div class="profile-alert profile-alert--error" role="alert">
+                        {% for error in seller_form.non_field_errors %}
+                        <p>{{ error }}</p>
+                        {% endfor %}
+                    </div>
+                    {% endif %}
+
+                    <!-- Nome da loja -->
+                    <div class="form-group">
+                        <label for="id_store_name" class="form-label">
+                            {{ seller_form.store_name.label }}
+                        </label>
+                        {{ seller_form.store_name }}
+                        {% if seller_form.store_name.errors %}
+                        <ul class="form-error-list" role="alert">
+                            {% for error in seller_form.store_name.errors %}
+                            <li class="form-error">{{ error }}</li>
+                            {% endfor %}
+                        </ul>
+                        {% endif %}
+                    </div>
+
+                    <!-- CNPJ -->
+                    <div class="form-group">
+                        <label for="id_cnpj" class="form-label">
+                            {{ seller_form.cnpj.label }}
+                        </label>
+                        {{ seller_form.cnpj }}
+                        {% if seller_form.cnpj.errors %}
+                        <ul class="form-error-list" role="alert">
+                            {% for error in seller_form.cnpj.errors %}
+                            <li class="form-error">{{ error }}</li>
+                            {% endfor %}
+                        </ul>
+                        {% endif %}
+                        <p class="form-help">Opcional. Formato: XX.XXX.XXX/XXXX-XX</p>
+                    </div>
+
+                    <!-- Descrição -->
+                    <div class="form-group">
+                        <label for="id_description" class="form-label">
+                            {{ seller_form.description.label }}
+                        </label>
+                        {{ seller_form.description }}
+                        {% if seller_form.description.errors %}
+                        <ul class="form-error-list" role="alert">
+                            {% for error in seller_form.description.errors %}
+                            <li class="form-error">{{ error }}</li>
+                            {% endfor %}
+                        </ul>
+                        {% endif %}
+                    </div>
+
+                    <!-- Configuração de frete -->
+                    <div class="profile-shipping">
+                        <h3 class="profile-shipping__title">Configuração de frete</h3>
+                        <p class="profile-shipping__desc">
+                            O frete é calculado automaticamente:
+                            <strong>Frete = Distância (km) × Valor por km (R$)</strong>.
+                            Este cálculo é simulado — sem integração com API de mapas.
+                        </p>
+
+                        <div class="profile-form__row">
+                            <!-- Distância -->
+                            <div class="form-group">
+                                <label for="id_shipping_distance_km" class="form-label">
+                                    {{ seller_form.shipping_distance_km.label }}
+                                </label>
+                                {{ seller_form.shipping_distance_km }}
+                                {% if seller_form.shipping_distance_km.errors %}
+                                <ul class="form-error-list" role="alert">
+                                    {% for error in seller_form.shipping_distance_km.errors %}
+                                    <li class="form-error">{{ error }}</li>
+                                    {% endfor %}
+                                </ul>
+                                {% endif %}
+                                {% if seller_form.shipping_distance_km.help_text %}
+                                <p class="form-help">{{ seller_form.shipping_distance_km.help_text }}</p>
+                                {% endif %}
+                            </div>
+
+                            <!-- Valor por km -->
+                            <div class="form-group">
+                                <label for="id_shipping_rate_per_km" class="form-label">
+                                    {{ seller_form.shipping_rate_per_km.label }}
+                                </label>
+                                {{ seller_form.shipping_rate_per_km }}
+                                {% if seller_form.shipping_rate_per_km.errors %}
+                                <ul class="form-error-list" role="alert">
+                                    {% for error in seller_form.shipping_rate_per_km.errors %}
+                                    <li class="form-error">{{ error }}</li>
+                                    {% endfor %}
+                                </ul>
+                                {% endif %}
+                                {% if seller_form.shipping_rate_per_km.help_text %}
+                                <p class="form-help">{{ seller_form.shipping_rate_per_km.help_text }}</p>
+                                {% endif %}
+                            </div>
+                        </div>
+
+                        <!-- Preview do frete calculado -->
+                        <div class="profile-shipping__preview" id="shipping-preview" aria-live="polite">
+                            <span class="profile-shipping__preview-label">Frete estimado:</span>
+                            <span class="profile-shipping__preview-value" id="shipping-preview-value">—</span>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+            {% endif %}
+
+        </div>
+
+        <!-- ========================
+             Barra lateral / Ações
+             ======================== -->
+        <aside class="profile-layout__aside">
+            <div class="profile-sidebar">
+                <div class="profile-sidebar__avatar" aria-hidden="true">
+                    {{ request.user.first_name|first|upper }}{{ request.user.last_name|first|upper }}
+                </div>
+                <p class="profile-sidebar__name">{{ request.user.full_name }}</p>
+                <p class="profile-sidebar__email text-muted">{{ request.user.email }}</p>
+
+                <div class="profile-sidebar__actions">
+                    <button
+                        type="submit"
+                        class="btn btn--accent profile-sidebar__save-btn"
+                        id="btn-save-profile"
+                    >
+                        Salvar alterações
+                    </button>
+                    <a
+                        href="{% url 'home' %}"
+                        class="btn btn--primary profile-sidebar__cancel-btn"
+                        id="btn-cancel-profile"
+                    >
+                        Cancelar
+                    </a>
+                </div>
+
+                <div class="profile-sidebar__info">
+                    <p class="profile-sidebar__info-item">
+                        <span class="profile-sidebar__info-label">Membro desde</span>
+                        <span>{{ request.user.date_joined|date:"d/m/Y" }}</span>
+                    </p>
+                    {% if is_seller %}
+                    <p class="profile-sidebar__info-item">
+                        <span class="profile-sidebar__info-label">Tipo</span>
+                        <span>Vendedor</span>
+                    </p>
+                    {% endif %}
+                </div>
+            </div>
+        </aside>
+
+    </form>
+
+</section>
+{% endblock %}
+
+{% block extra_js %}
+<script src="{% static 'js/profile.js' %}"></script>
+{% endblock %}

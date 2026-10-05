@@ -14,3 +14,7 @@ class UsersConfig(AppConfig):
     default_auto_field = 'django.db.models.BigAutoField'
     name = 'apps.users'
     verbose_name = 'Usuários'
+
+    def ready(self):
+        """Registra signals do app users."""
+        import apps.users.signals  # noqa: F401

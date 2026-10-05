@@ -1,0 +1,126 @@
+{% extends "base.html" %}
+
+{% block title %}Criar conta | SoleStep{% endblock %}
+
+{% block content %}
+<section class="container auth-content">
+    <div class="auth-card">
+        <div class="auth-card__header">
+            <h1 class="auth-card__title">Criar sua conta</h1>
+            <p class="auth-card__subtitle">
+                Preencha os dados abaixo para começar a usar o SoleStep.
+            </p>
+        </div>
+
+        {% if form.non_field_errors %}
+        <div class="auth-card__errors" role="alert">
+            {% for error in form.non_field_errors %}
+            <p class="form-error">{{ error }}</p>
+            {% endfor %}
+        </div>
+        {% endif %}
+
+        <form method="post" class="auth-form" novalidate>
+            {% csrf_token %}
+
+            <div class="auth-form__row">
+                <div class="form-group">
+                    <label for="id_first_name" class="form-label">{{ form.first_name.label }}</label>
+                    {{ form.first_name }}
+                    {% if form.first_name.errors %}
+                    <ul class="form-error-list" role="alert">
+                        {% for error in form.first_name.errors %}
+                        <li class="form-error">{{ error }}</li>
+                        {% endfor %}
+                    </ul>
+                    {% endif %}
+                </div>
+
+                <div class="form-group">
+                    <label for="id_last_name" class="form-label">{{ form.last_name.label }}</label>
+                    {{ form.last_name }}
+                    {% if form.last_name.errors %}
+                    <ul class="form-error-list" role="alert">
+                        {% for error in form.last_name.errors %}
+                        <li class="form-error">{{ error }}</li>
+                        {% endfor %}
+                    </ul>
+                    {% endif %}
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="id_email" class="form-label">{{ form.email.label }}</label>
+                {{ form.email }}
+                {% if form.email.errors %}
+                <ul class="form-error-list" role="alert">
+                    {% for error in form.email.errors %}
+                    <li class="form-error">{{ error }}</li>
+                    {% endfor %}
+                </ul>
+                {% endif %}
+            </div>
+
+            <div class="form-group">
+                <label for="id_password1" class="form-label">{{ form.password1.label }}</label>
+                {{ form.password1 }}
+                {% if form.password1.errors %}
+                <ul class="form-error-list" role="alert">
+                    {% for error in form.password1.errors %}
+                    <li class="form-error">{{ error }}</li>
+                    {% endfor %}
+                </ul>
+                {% endif %}
+                {% if form.password1.help_text %}
+                <p class="form-help">{{ form.password1.help_text }}</p>
+                {% endif %}
+            </div>
+
+            <div class="form-group">
+                <label for="id_password2" class="form-label">{{ form.password2.label }}</label>
+                {{ form.password2 }}
+                {% if form.password2.errors %}
+                <ul class="form-error-list" role="alert">
+                    {% for error in form.password2.errors %}
+                    <li class="form-error">{{ error }}</li>
+                    {% endfor %}
+                </ul>
+                {% endif %}
+            </div>
+
+            <div class="form-group">
+                <span class="form-label">{{ form.user_type.label }}</span>
+                <div class="auth-form__radio-group">
+                    {% for radio in form.user_type %}
+                    <label class="auth-form__radio-option" for="{{ radio.id_for_label }}">
+                        {{ radio.tag }}
+                        <span class="auth-form__radio-label">{{ radio.choice_label }}</span>
+                        {% if radio.choice_label == "Cliente" %}
+                        <span class="auth-form__radio-desc">Compre calçados dos melhores vendedores</span>
+                        {% else %}
+                        <span class="auth-form__radio-desc">Venda seus calçados no marketplace</span>
+                        {% endif %}
+                    </label>
+                    {% endfor %}
+                </div>
+                {% if form.user_type.errors %}
+                <ul class="form-error-list" role="alert">
+                    {% for error in form.user_type.errors %}
+                    <li class="form-error">{{ error }}</li>
+                    {% endfor %}
+                </ul>
+                {% endif %}
+            </div>
+
+            <button type="submit" class="btn btn--accent auth-form__submit" id="btn-register">
+                Criar conta
+            </button>
+        </form>
+
+        <p class="auth-card__footer">
+            Já tem uma conta?
+            <a href="{% url 'users:user-login' %}" class="auth-card__link">Entrar</a>
+        </p>
+    </div>
+</section>
+{% endblock %}

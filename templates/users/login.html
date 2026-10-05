@@ -1,41 +1,58 @@
-
 {% extends "base.html" %}
 
 {% block title %}Login | SoleStep{% endblock %}
 
 {% block content %}
-<section class="container login-content">
-    <h1>Entrar na sua conta</h1>
-    <p>Informe seu e-mail e sua senha para continuar.</p>
-
-    {% if form.non_field_errors %}
-        {% for error in form.non_field_errors %}
-            <p class="form-error" role="alert">{{ error }}</p>
-        {% endfor %}
-    {% endif %}
-
-    <form method="post">
-        {% csrf_token %}
-        <input type="hidden" name="next" value="{{ request.GET.next|default:'' }}">
-
-        <div class="form-group">
-            {{ form.email.label_tag }}
-            {{ form.email }}
-            {{ form.email.errors }}
+<section class="container auth-content">
+    <div class="auth-card">
+        <div class="auth-card__header">
+            <h1 class="auth-card__title">Entrar na sua conta</h1>
+            <p class="auth-card__subtitle">Informe seu e-mail e sua senha para continuar.</p>
         </div>
 
-        <div class="form-group">
-            {{ form.password.label_tag }}
-            {{ form.password }}
-            {{ form.password.errors }}
+        {% if form.non_field_errors %}
+        <div class="auth-card__errors" role="alert">
+            {% for error in form.non_field_errors %}
+            <p class="form-error">{{ error }}</p>
+            {% endfor %}
         </div>
+        {% endif %}
 
-        <button type="submit" class="btn btn--primary">Entrar</button>
-    </form>
+        <form method="post" class="auth-form" novalidate>
+            {% csrf_token %}
+            <input type="hidden" name="next" value="{{ request.GET.next|default:'' }}">
 
-    <p class="login-register">
-        Ainda não tem uma conta?
-        <a href="/usuarios/cadastro/">Cadastre-se</a>
-    </p>
+            <div class="form-group">
+                <label for="id_email" class="form-label">{{ form.email.label }}</label>
+                {{ form.email }}
+                {% if form.email.errors %}
+                <ul class="form-error-list" role="alert">
+                    {% for error in form.email.errors %}
+                    <li class="form-error">{{ error }}</li>
+                    {% endfor %}
+                </ul>
+                {% endif %}
+            </div>
+
+            <div class="form-group">
+                <label for="id_password" class="form-label">{{ form.password.label }}</label>
+                {{ form.password }}
+                {% if form.password.errors %}
+                <ul class="form-error-list" role="alert">
+                    {% for error in form.password.errors %}
+                    <li class="form-error">{{ error }}</li>
+                    {% endfor %}
+                </ul>
+                {% endif %}
+            </div>
+
+            <button type="submit" class="btn btn--primary auth-form__submit" id="btn-login">Entrar</button>
+        </form>
+
+        <p class="auth-card__footer">
+            Ainda não tem uma conta?
+            <a href="{% url 'users:user-register' %}" class="auth-card__link">Cadastre-se</a>
+        </p>
+    </div>
 </section>
 {% endblock %}

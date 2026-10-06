@@ -1,0 +1,366 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Cadastrar Produto — SoleStep{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/products.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="container product-form-page">
+
+  <!-- Cabeçalho da página -->
+  <header class="product-form-page__header">
+    <h1 class="product-form-page__title">Cadastrar novo calçado</h1>
+    <p class="product-form-page__subtitle">
+      Preencha os dados abaixo para adicionar um produto ao seu catálogo.
+    </p>
+  </header>
+
+  <!-- Formulário principal -->
+  <form
+    id="product-create-form"
+    method="post"
+    enctype="multipart/form-data"
+    novalidate
+  >
+    {% csrf_token %}
+
+    <!-- Management forms dos formsets (obrigatório) -->
+    {{ image_formset.management_form }}
+    {{ stock_formset.management_form }}
+
+    <div class="product-form__layout">
+
+      <!-- ==============================
+           COLUNA PRINCIPAL
+           ============================== -->
+      <div class="product-form__main">
+
+        <!-- Seção: Informações do produto -->
+        <section class="form-section" aria-labelledby="section-info-title">
+          <div class="form-section__header">
+            <span class="form-section__icon" aria-hidden="true">1</span>
+            <h2 class="form-section__title" id="section-info-title">Informações do produto</h2>
+          </div>
+          <div class="form-section__body">
+
+            <!-- Nome -->
+            <div class="form-group">
+              <label class="form-label" for="{{ form.name.id_for_label }}">
+                {{ form.name.label }} <span aria-hidden="true">*</span>
+              </label>
+              {{ form.name }}
+              {% if form.name.errors %}
+                <ul class="form-error-list" role="alert">
+                  {% for erro in form.name.errors %}
+                    <li class="form-error">{{ erro }}</li>
+                  {% endfor %}
+                </ul>
+              {% endif %}
+            </div>
+
+            <!-- Marca e Categoria (lado a lado em sm+) -->
+            <div class="form-row form-row--2col">
+              <div class="form-group">
+                <label class="form-label" for="{{ form.brand.id_for_label }}">
+                  {{ form.brand.label }} <span aria-hidden="true">*</span>
+                </label>
+                {{ form.brand }}
+                {% if form.brand.errors %}
+                  <ul class="form-error-list" role="alert">
+                    {% for erro in form.brand.errors %}
+                      <li class="form-error">{{ erro }}</li>
+                    {% endfor %}
+                  </ul>
+                {% endif %}
+              </div>
+              <div class="form-group">
+                <label class="form-label" for="{{ form.category.id_for_label }}">
+                  {{ form.category.label }}
+                </label>
+                {{ form.category }}
+                {% if form.category.errors %}
+                  <ul class="form-error-list" role="alert">
+                    {% for erro in form.category.errors %}
+                      <li class="form-error">{{ erro }}</li>
+                    {% endfor %}
+                  </ul>
+                {% endif %}
+              </div>
+            </div>
+
+            <!-- Descrição -->
+            <div class="form-group">
+              <label class="form-label" for="{{ form.description.id_for_label }}">
+                {{ form.description.label }} <span aria-hidden="true">*</span>
+              </label>
+              {{ form.description }}
+              {% if form.description.errors %}
+                <ul class="form-error-list" role="alert">
+                  {% for erro in form.description.errors %}
+                    <li class="form-error">{{ erro }}</li>
+                  {% endfor %}
+                </ul>
+              {% endif %}
+            </div>
+
+          </div>
+        </section>
+
+        <!-- Seção: Imagens -->
+        <section class="form-section" aria-labelledby="section-images-title">
+          <div class="form-section__header">
+            <span class="form-section__icon" aria-hidden="true">2</span>
+            <h2 class="form-section__title" id="section-images-title">Imagens do calçado</h2>
+          </div>
+          <div class="form-section__body">
+
+            <!-- Zona de drag-and-drop (visual apenas) -->
+            <div class="image-upload-zone" id="image-upload-zone" role="presentation">
+              <span class="image-upload-zone__icon" aria-hidden="true">📸</span>
+              <p class="image-upload-zone__text">
+                Arraste imagens aqui ou
+                <span class="image-upload-zone__label">selecione nos campos abaixo</span>
+              </p>
+              <p class="image-upload-zone__text">JPG, PNG, WEBP • Máx. 10 imagens</p>
+            </div>
+
+            <!-- Container de previews -->
+            <div class="image-previews" id="image-previews-container" aria-live="polite"></div>
+
+            <!-- Formset de imagens -->
+            <div id="image-formset-container">
+              <div class="image-formset-list">
+                {% for img_form in image_formset %}
+                <div class="image-formset-item">
+                  <div class="image-formset-item__fields">
+                    {# Hidden fields do formset (id, etc.) #}
+                    {% for hidden in img_form.hidden_fields %}{{ hidden }}{% endfor %}
+
+                    <div class="form-group">
+                      <label class="form-label" for="{{ img_form.image.id_for_label }}">
+                        Imagem {{ forloop.counter }}
+                      </label>
+                      {{ img_form.image }}
+                      {% if img_form.image.errors %}
+                        <ul class="form-error-list" role="alert">
+                          {% for erro in img_form.image.errors %}
+                            <li class="form-error">{{ erro }}</li>
+                          {% endfor %}
+                        </ul>
+                      {% endif %}
+                    </div>
+
+                    <div class="form-row form-row--2col">
+                      <div class="form-group">
+                        <label class="form-label" for="{{ img_form.alt_text.id_for_label }}">
+                          {{ img_form.alt_text.label }}
+                        </label>
+                        {{ img_form.alt_text }}
+                      </div>
+                      <div class="form-group">
+                        <label class="form-label" for="{{ img_form.order.id_for_label }}">
+                          {{ img_form.order.label }}
+                        </label>
+                        {{ img_form.order }}
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- Deletar imagem -->
+                  <div class="image-formset-item__delete">
+                    {% if img_form.DELETE %}
+                      <label class="delete-checkbox-label" for="{{ img_form.DELETE.id_for_label }}">
+                        {{ img_form.DELETE }}
+                        Remover
+                      </label>
+                    {% endif %}
+                  </div>
+                </div>
+                {% endfor %}
+              </div>
+            </div>
+
+            {% if image_formset.non_form_errors %}
+              <div class="alert alert--error" role="alert">
+                {% for erro in image_formset.non_form_errors %}
+                  <p>{{ erro }}</p>
+                {% endfor %}
+              </div>
+            {% endif %}
+
+          </div>
+        </section>
+
+      </div>
+      <!-- /coluna principal -->
+
+      <!-- ==============================
+           COLUNA LATERAL
+           ============================== -->
+      <div class="product-form__aside">
+
+        <!-- Seção: Preço -->
+        <section class="form-section" aria-labelledby="section-price-title">
+          <div class="form-section__header">
+            <span class="form-section__icon" aria-hidden="true">R$</span>
+            <h2 class="form-section__title" id="section-price-title">Preço de venda</h2>
+          </div>
+          <div class="form-section__body">
+            <div class="form-group">
+              <label class="form-label" for="{{ form.price.id_for_label }}">
+                {{ form.price.label }} <span aria-hidden="true">*</span>
+              </label>
+              <div class="price-input-wrapper">
+                <span class="price-input-wrapper__prefix" aria-hidden="true">R$</span>
+                {{ form.price }}
+              </div>
+              {% if form.price.errors %}
+                <ul class="form-error-list" role="alert">
+                  {% for erro in form.price.errors %}
+                    <li class="form-error">{{ erro }}</li>
+                  {% endfor %}
+                </ul>
+              {% endif %}
+            </div>
+          </div>
+        </section>
+
+        <!-- Seção: Estoque por tamanho -->
+        <section class="form-section" aria-labelledby="section-stock-title">
+          <div class="form-section__header">
+            <span class="form-section__icon" aria-hidden="true">3</span>
+            <h2 class="form-section__title" id="section-stock-title">Estoque por tamanho</h2>
+          </div>
+          <div class="form-section__body">
+
+            <table class="stock-table" aria-label="Estoque por tamanho">
+              <thead class="stock-table__head">
+                <tr>
+                  <th scope="col">Tamanho</th>
+                  <th scope="col">Qtd.</th>
+                  <th scope="col">
+                    <span class="visually-hidden">Remover</span>
+                  </th>
+                </tr>
+              </thead>
+              <tbody class="stock-table__body" id="stock-formset-body">
+                {% for stock_form in stock_formset %}
+                <tr class="stock-row" data-form-index="{{ forloop.counter0 }}">
+                  {% for hidden in stock_form.hidden_fields %}{{ hidden }}{% endfor %}
+                  <td>
+                    {{ stock_form.size }}
+                    {% if stock_form.size.errors %}
+                      <ul class="form-error-list" role="alert">
+                        {% for erro in stock_form.size.errors %}
+                          <li class="form-error">{{ erro }}</li>
+                        {% endfor %}
+                      </ul>
+                    {% endif %}
+                  </td>
+                  <td>
+                    {{ stock_form.quantity }}
+                    {% if stock_form.quantity.errors %}
+                      <ul class="form-error-list" role="alert">
+                        {% for erro in stock_form.quantity.errors %}
+                          <li class="form-error">{{ erro }}</li>
+                        {% endfor %}
+                      </ul>
+                    {% endif %}
+                  </td>
+                  <td>
+                    {% if stock_form.DELETE %}
+                      <label class="delete-checkbox-label" for="{{ stock_form.DELETE.id_for_label }}" aria-label="Remover este tamanho">
+                        {{ stock_form.DELETE }}
+                        ✕
+                      </label>
+                    {% endif %}
+                  </td>
+                </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+
+            <!-- Linha template para adição dinâmica via JS -->
+            <template id="stock-empty-row">
+              <td>
+                <input
+                  type="text"
+                  name="stock-__prefix__-size"
+                  maxlength="10"
+                  class="form-input form-input--size"
+                  placeholder="Ex: 42"
+                  id="id_stock-__prefix__-size"
+                  autocomplete="off"
+                >
+              </td>
+              <td>
+                <input
+                  type="number"
+                  name="stock-__prefix__-quantity"
+                  value="0"
+                  min="0"
+                  class="form-input form-input--qty"
+                  placeholder="0"
+                  id="id_stock-__prefix__-quantity"
+                >
+              </td>
+              <td>
+                <label class="delete-checkbox-label" for="id_stock-__prefix__-DELETE" aria-label="Remover este tamanho">
+                  <input
+                    type="checkbox"
+                    name="stock-__prefix__-DELETE"
+                    id="id_stock-__prefix__-DELETE"
+                  >
+                  ✕
+                </label>
+              </td>
+            </template>
+
+            <!-- Botão adicionar linha -->
+            <button
+              type="button"
+              class="btn btn--add-row"
+              id="btn-add-stock-row"
+              aria-label="Adicionar novo tamanho ao estoque"
+            >
+              <span aria-hidden="true">＋</span> Adicionar tamanho
+            </button>
+
+            {% if stock_formset.non_form_errors %}
+              <div class="alert alert--error" role="alert" style="margin-top: var(--space-4);">
+                {% for erro in stock_formset.non_form_errors %}
+                  <p>{{ erro }}</p>
+                {% endfor %}
+              </div>
+            {% endif %}
+
+          </div>
+        </section>
+
+        <!-- Ações -->
+        <div class="product-form__actions">
+          <a href="{% url 'products:product-list-seller' %}" class="btn">
+            Cancelar
+          </a>
+          <button type="submit" class="btn btn--accent" id="btn-submit-product">
+            Salvar produto
+          </button>
+        </div>
+
+      </div>
+      <!-- /coluna lateral -->
+
+    </div>
+    <!-- /layout -->
+
+  </form>
+
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="{% static 'js/product-form.js' %}"></script>
+{% endblock %}

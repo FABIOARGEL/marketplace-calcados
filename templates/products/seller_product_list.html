@@ -1,0 +1,214 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Meus Produtos — SoleStep{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/products.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="container seller-products-page">
+
+  <!-- Cabeçalho da página -->
+  <div class="seller-products__header">
+    <div>
+      <h1 class="seller-products__title">Meus Produtos</h1>
+      <p class="seller-products__subtitle">
+        Gerencie seu catálogo de calçados — ativos e inativos.
+      </p>
+    </div>
+    <a href="{% url 'products:product-create' %}" class="btn btn--accent" id="btn-new-product">
+      + Novo produto
+    </a>
+  </div>
+
+  <!-- Stats rápidas -->
+  <div class="seller-products__stats" aria-label="Resumo do catálogo">
+    <div class="stat-card">
+      <span class="stat-card__value">{{ paginator.count }}</span>
+      <span class="stat-card__label">Total</span>
+    </div>
+    <div class="stat-card stat-card--success">
+      <span class="stat-card__value">{{ active_count }}</span>
+      <span class="stat-card__label">Ativos</span>
+    </div>
+    <div class="stat-card stat-card--muted">
+      <span class="stat-card__value">{{ inactive_count }}</span>
+      <span class="stat-card__label">Inativos</span>
+    </div>
+  </div>
+
+  {% if page_obj %}
+    <!-- Tabela de produtos -->
+    <div class="seller-products__table-wrapper">
+      <table class="products-table" aria-label="Lista de produtos do vendedor">
+        <thead class="products-table__head">
+          <tr>
+            <th scope="col">Produto</th>
+            <th scope="col" class="products-table__col--category">Categoria</th>
+            <th scope="col" class="products-table__col--price">Preço</th>
+            <th scope="col" class="products-table__col--stock">Estoque</th>
+            <th scope="col" class="products-table__col--status">Status</th>
+            <th scope="col" class="products-table__col--actions">Ações</th>
+          </tr>
+        </thead>
+        <tbody class="products-table__body">
+          {% for produto in page_obj %}
+          <tr class="products-table__row {% if not produto.is_active %}products-table__row--inactive{% endif %}"
+              id="product-row-{{ produto.pk }}">
+
+            <!-- Produto: imagem + nome + marca -->
+            <td class="products-table__cell products-table__cell--product">
+              <div class="product-thumb">
+                {% with produto.images.first as img %}
+                  {% if img %}
+                    <div class="product-thumb__image">
+                      <img src="{{ img.image.url }}"
+                           alt="{{ img.alt_text|default:produto.name }}"
+                           loading="lazy">
+                    </div>
+                  {% else %}
+                    <div class="product-thumb__image product-thumb__image--placeholder"
+                         aria-hidden="true">👟</div>
+                  {% endif %}
+                {% endwith %}
+                <div class="product-thumb__info">
+                  <span class="product-thumb__name">{{ produto.name }}</span>
+                  <span class="product-thumb__brand">{{ produto.brand }}</span>
+                </div>
+              </div>
+            </td>
+
+            <!-- Categoria -->
+            <td class="products-table__cell products-table__col--category">
+              {% if produto.category %}
+                <span class="category-tag">{{ produto.category.name }}</span>
+              {% else %}
+                <span class="text-muted">—</span>
+              {% endif %}
+            </td>
+
+            <!-- Preço -->
+            <td class="products-table__cell products-table__col--price">
+              <span class="price-value">R$&nbsp;{{ produto.price }}</span>
+            </td>
+
+            <!-- Estoque: total de tamanhos cadastrados -->
+            <td class="products-table__cell products-table__col--stock">
+              {% with produto.stock_items.count as total %}
+                <span class="stock-count {% if total == 0 %}stock-count--empty{% endif %}">
+                  {{ total }} tamanho{{ total|pluralize }}
+                </span>
+              {% endwith %}
+            </td>
+
+            <!-- Status -->
+            <td class="products-table__cell products-table__col--status">
+              {% if produto.is_active %}
+                <span class="badge badge--success" aria-label="Produto ativo">Ativo</span>
+              {% else %}
+                <span class="badge" aria-label="Produto inativo">Inativo</span>
+              {% endif %}
+            </td>
+
+            <!-- Ações -->
+            <td class="products-table__cell products-table__col--actions">
+              <div class="product-actions">
+                <a href="{% url 'products:product-create' %}"
+                   class="btn-action btn-action--edit"
+                   id="btn-edit-{{ produto.pk }}"
+                   aria-label="Editar {{ produto.name }}">
+                  Editar
+                </a>
+
+                <form method="post"
+                      action="{% url 'products:seller-product-toggle' produto.pk %}"
+                      class="product-actions__toggle-form"
+                      id="form-toggle-{{ produto.pk }}">
+                  {% csrf_token %}
+                  <button type="submit"
+                          class="btn-action {% if produto.is_active %}btn-action--deactivate{% else %}btn-action--activate{% endif %}"
+                          id="btn-toggle-{{ produto.pk }}"
+                          aria-label="{% if produto.is_active %}Desativar{% else %}Ativar{% endif %} {{ produto.name }}">
+                    {% if produto.is_active %}Desativar{% else %}Ativar{% endif %}
+                  </button>
+                </form>
+              </div>
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Paginação -->
+    {% if is_paginated %}
+    <nav class="pagination" aria-label="Navegação de páginas">
+      <div class="pagination__info">
+        Página {{ page_obj.number }} de {{ paginator.num_pages }}
+        &mdash; {{ paginator.count }} produto{{ paginator.count|pluralize }}
+      </div>
+
+      <div class="pagination__controls">
+        {% if page_obj.has_previous %}
+          <a href="?page=1"
+             class="pagination__btn"
+             id="page-first"
+             aria-label="Primeira página">&laquo;</a>
+          <a href="?page={{ page_obj.previous_page_number }}"
+             class="pagination__btn"
+             id="page-prev"
+             aria-label="Página anterior">&lsaquo;</a>
+        {% else %}
+          <span class="pagination__btn pagination__btn--disabled" aria-disabled="true">&laquo;</span>
+          <span class="pagination__btn pagination__btn--disabled" aria-disabled="true">&lsaquo;</span>
+        {% endif %}
+
+        <!-- Números de página -->
+        {% for num in paginator.page_range %}
+          {% if num == page_obj.number %}
+            <span class="pagination__btn pagination__btn--current"
+                  aria-current="page"
+                  aria-label="Página {{ num }}, atual">{{ num }}</span>
+          {% elif num >= page_obj.number|add:"-2" and num <= page_obj.number|add:"2" %}
+            <a href="?page={{ num }}"
+               class="pagination__btn"
+               id="page-{{ num }}"
+               aria-label="Página {{ num }}">{{ num }}</a>
+          {% endif %}
+        {% endfor %}
+
+        {% if page_obj.has_next %}
+          <a href="?page={{ page_obj.next_page_number }}"
+             class="pagination__btn"
+             id="page-next"
+             aria-label="Próxima página">&rsaquo;</a>
+          <a href="?page={{ paginator.num_pages }}"
+             class="pagination__btn"
+             id="page-last"
+             aria-label="Última página">&raquo;</a>
+        {% else %}
+          <span class="pagination__btn pagination__btn--disabled" aria-disabled="true">&rsaquo;</span>
+          <span class="pagination__btn pagination__btn--disabled" aria-disabled="true">&raquo;</span>
+        {% endif %}
+      </div>
+    </nav>
+    {% endif %}
+
+  {% else %}
+    <!-- Estado vazio -->
+    <div class="empty-state" role="status">
+      <span class="empty-state__icon" aria-hidden="true">📦</span>
+      <h2 class="empty-state__title">Nenhum produto cadastrado</h2>
+      <p class="empty-state__text">
+        Adicione seu primeiro calçado e comece a vender.
+      </p>
+      <a href="{% url 'products:product-create' %}" class="btn btn--accent" id="btn-first-product">
+        + Cadastrar primeiro produto
+      </a>
+    </div>
+  {% endif %}
+
+</div>
+{% endblock %}

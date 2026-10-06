@@ -8,6 +8,15 @@ from .views import (
     user_login,
     user_logout,
 )
+"""
+URLs do app users.
+
+Prefixo: /usuarios/ (definido em config/urls.py)
+"""
+
+from django.urls import path
+
+from .views import profile, register, user_login, user_logout
 
 
 app_name = "users"
@@ -19,4 +28,6 @@ urlpatterns = [
     path("enderecos/novo/", address_create, name="address-create"),
     path("enderecos/<int:pk>/editar/", address_edit, name="address-edit"),
     path("enderecos/<int:pk>/excluir/", address_delete, name="address-delete"),
+    path("cadastro/", register, name="user-register"),
+    path("perfil/", profile, name="user-profile"),
 ]

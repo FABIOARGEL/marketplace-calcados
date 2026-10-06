@@ -5,15 +5,23 @@ product_create:
     Permite ao vendedor autenticado cadastrar um novo calçado com
     imagens e estoque por tamanho.
 
-product_list_seller:
-    Lista os produtos do vendedor logado (placeholder para Sprint futura).
+seller_product_list:
+    Lista todos os produtos (ativos e inativos) do vendedor logado,
+    com paginação de 10 itens por página.
+
+seller_product_toggle:
+    Alterna o status is_active do produto (ativar / desativar).
+    Operação de soft delete — nunca exclui fisicamente.
 """
 
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
-from django.shortcuts import redirect, render
+from django.core.paginator import Paginator
+from django.shortcuts import get_object_or_404, redirect, render
+from django.views.decorators.http import require_POST
 
 from .forms import ProductForm, ProductImageFormSet, StockFormSet
+from .models import Product
 
 
 @login_required
@@ -89,7 +97,7 @@ def product_create(request):
                     request,
                     f'Produto "{produto.name}" cadastrado com sucesso!',
                 )
-                return redirect('products:product-list-seller')
+                return redirect('products:seller-product-list')
 
     else:
         form = ProductForm()
@@ -104,24 +112,69 @@ def product_create(request):
 
 
 @login_required
-def product_list_seller(request):
+def seller_product_list(request):
     """
-    Lista os produtos do vendedor autenticado.
+    Lista os produtos do vendedor autenticado com paginação.
 
-    Acesso restrito a vendedores.
-    Exibe apenas os produtos (ativos e inativos) do próprio vendedor.
+    Acesso restrito a vendedores. Redireciona para home se o usuário
+    não for vendedor.
+
+    Exibe todos os produtos do vendedor (ativos e inativos), ordenados
+    do mais recente para o mais antigo, com 10 itens por página.
+
+    Contexto enviado ao template:
+        page_obj  — página atual do Paginator
+        paginator — instância do Paginator (total de páginas, etc.)
+        is_paginated — bool indicando se há mais de uma página
     """
     if not request.user.is_seller:
         messages.error(request, 'Acesso restrito a vendedores.')
         return redirect('home')
 
-    produtos = (
+    qs = (
         request.user.products
         .select_related('category')
         .prefetch_related('images', 'stock_items')
         .order_by('-created_at')
     )
 
-    return render(request, 'products/product_list_seller.html', {
-        'produtos': produtos,
+    paginator = Paginator(qs, 10)
+    page_number = request.GET.get('page')
+    page_obj = paginator.get_page(page_number)
+
+    active_count = qs.filter(is_active=True).count()
+    inactive_count = qs.filter(is_active=False).count()
+
+    return render(request, 'products/seller_product_list.html', {
+        'page_obj': page_obj,
+        'paginator': paginator,
+        'is_paginated': paginator.num_pages > 1,
+        'active_count': active_count,
+        'inactive_count': inactive_count,
     })
+
+
+
+@login_required
+@require_POST
+def seller_product_toggle(request, pk):
+    """
+    Alterna o status is_active de um produto do vendedor.
+
+    Operação de soft delete reversível — nunca exclui o produto do banco.
+    Somente o vendedor dono do produto pode executar esta ação.
+
+    POST: inverte is_active e redireciona para a lista de produtos.
+    """
+    if not request.user.is_seller:
+        messages.error(request, 'Acesso restrito a vendedores.')
+        return redirect('home')
+
+    produto = get_object_or_404(Product, pk=pk, seller=request.user)
+    produto.is_active = not produto.is_active
+    produto.save(update_fields=['is_active', 'updated_at'])
+
+    status = 'ativado' if produto.is_active else 'desativado'
+    messages.success(request, f'Produto "{produto.name}" {status} com sucesso.')
+
+    return redirect('products:seller-product-list')

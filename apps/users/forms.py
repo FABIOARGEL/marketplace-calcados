@@ -26,6 +26,8 @@ from .models import SellerProfile
 
 User = get_user_model()
 
+from .models import Address
+
 
 class LoginForm(forms.Form):
     """Formulário de login por e-mail."""
@@ -49,6 +51,48 @@ class LoginForm(forms.Form):
     )
 
 
+class AddressForm(forms.ModelForm):
+    zip_code = forms.RegexField(
+        regex=r"^\d{5}-\d{3}$",
+        error_messages={
+            "invalid": "Informe o CEP no formato XXXXX-XXX.",
+        },
+    )
+
+    state = forms.CharField(
+        max_length=2,
+        min_length=2,
+        error_messages={
+            "min_length": "A UF deve ter 2 caracteres.",
+            "max_length": "A UF deve ter 2 caracteres.",
+        },
+    )
+
+    class Meta:
+        model = Address
+        fields = [
+            "nickname",
+            "recipient_name",
+            "zip_code",
+            "street",
+            "number",
+            "complement",
+            "neighborhood",
+            "city",
+            "state",
+            "reference",
+            "is_default",
+        ]
+
+    def clean_state(self):
+        state = self.cleaned_data["state"].strip().upper()
+
+        if not state.isalpha():
+            raise forms.ValidationError(
+                "A UF deve conter apenas letras."
+            )
+
+        return state
 class UserRegistrationForm(UserCreationForm):
     """
     Formulário de cadastro de novo usuário.

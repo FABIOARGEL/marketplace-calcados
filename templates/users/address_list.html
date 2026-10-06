@@ -1,0 +1,85 @@
+{% extends "base.html" %}
+
+{% block title %}Meus endereços | SoleStep{% endblock %}
+
+{% block content %}
+<section class="page">
+    <div class="container">
+        <div class="flex justify-between items-center gap-4">
+            <div>
+                <h1>Meus endereços</h1>
+                <p>Gerencie seus endereços de entrega.</p>
+            </div>
+
+            <a href="{% url 'users:address-create' %}" class="btn btn--accent">
+                Novo endereço
+            </a>
+        </div>
+
+        {% if addresses %}
+            <div class="address-list">
+                {% for address in addresses %}
+                    <article class="bg-surface">
+                        <h3>
+                            {% if address.nickname %}
+                                {{ address.nickname }}
+                            {% else %}
+                                Endereço
+                            {% endif %}
+                        </h3>
+
+                        {% if address.is_default %}
+                            <p><strong>Endereço padrão</strong></p>
+                        {% endif %}
+
+                        <p>
+                            <strong>{{ address.recipient_name }}</strong><br>
+                            {{ address.street }}, {{ address.number }}<br>
+
+                            {% if address.complement %}
+                                {{ address.complement }}<br>
+                            {% endif %}
+
+                            {{ address.neighborhood }}<br>
+                            {{ address.city }}/{{ address.state }}<br>
+                            CEP {{ address.zip_code }}
+                        </p>
+
+                        {% if address.reference %}
+                            <p>
+                                <strong>Referência:</strong>
+                                {{ address.reference }}
+                            </p>
+                        {% endif %}
+
+                        <div class="flex gap-2">
+                            <a
+                                href="{% url 'users:address-edit' address.pk %}"
+                                class="btn"
+                            >
+                                Editar
+                            </a>
+
+                            <a
+                                href="{% url 'users:address-delete' address.pk %}"
+                                class="btn"
+                            >
+                                Excluir
+                            </a>
+                        </div>
+                    </article>
+                {% endfor %}
+            </div>
+        {% else %}
+            <div class="bg-surface">
+                <h3>Nenhum endereço cadastrado</h3>
+                <p>Cadastre um endereço para utilizá-lo nas entregas.</p>
+
+                <a href="{% url 'users:address-create' %}" class="btn btn--primary">
+                    Cadastrar endereço
+                </a>
+            </div>
+        {% endif %}
+    </div>
+</section>
+{% endblock %}

@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+
+{% block title %}Excluir endereço | SoleStep{% endblock %}
+
+{% block content %}
+<section class="page">
+    <div class="container">
+        <h1>Excluir endereço</h1>
+
+        <p>
+            Tem certeza que deseja excluir este endereço?
+        </p>
+
+        <p>
+            <strong>{{ address.recipient_name }}</strong><br>
+            {{ address.street }}, {{ address.number }}<br>
+            {{ address.city }}/{{ address.state }}
+        </p>
+
+        <form method="post">
+            {% csrf_token %}
+
+            <div class="flex gap-2">
+                <button type="submit" class="btn btn--accent">
+                    Confirmar exclusão
+                </button>
+
+                <a href="{% url 'users:address-list' %}" class="btn">
+                    Cancelar
+                </a>
+            </div>
+        </form>
+    </div>
+</section>
+{% endblock %}

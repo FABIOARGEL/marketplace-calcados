@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+
+{% block title %}{{ title }} | SoleStep{% endblock %}
+
+{% block content %}
+<section class="page">
+    <div class="container">
+        <h1>{{ title }}</h1>
+
+        <form method="post">
+            {% csrf_token %}
+
+            {{ form.non_field_errors }}
+
+            {% for field in form %}
+                <div>
+                    {{ field.label_tag }}
+                    {{ field }}
+
+                    {% if field.help_text %}
+                        <small>{{ field.help_text }}</small>
+                    {% endif %}
+
+                    {{ field.errors }}
+                </div>
+            {% endfor %}
+
+            <div class="flex gap-2">
+                <button type="submit" class="btn btn--primary">
+                    Salvar endereço
+                </button>
+
+                <a href="{% url 'users:address-list' %}" class="btn">
+                    Cancelar
+                </a>
+            </div>
+        </form>
+    </div>
+</section>
+{% endblock %}

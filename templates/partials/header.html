@@ -19,8 +19,17 @@
             <a href="/carrinho/" class="navbar__icon-btn">Carrinho</a>
 
             {% if user.is_authenticated %}
+                {% if user.is_seller %}
+                    <a href="{% url 'products:product-list-seller' %}" class="navbar__link" id="navbar-my-products-link">
+                        Meus Produtos
+                    </a>
+                    <a href="{% url 'products:product-create' %}" class="btn btn--accent" style="padding: var(--space-2) var(--space-4); min-height: auto; font-size: var(--text-sm);" id="navbar-new-product-link">
+                        + Novo produto
+                    </a>
+                {% endif %}
+
                 <a href="{% url 'users:user-profile' %}" class="navbar__link" id="navbar-profile-link">
-                    Olá, {{ user.get_full_name|default:user.email }}
+                    Olá, {{ user.first_name|default:user.email }}
                 </a>
 
                 <form method="post" action="{% url 'users:user-logout' %}">
@@ -66,6 +75,10 @@
         <a href="/carrinho/" class="navbar__link">Carrinho</a>
 
         {% if user.is_authenticated %}
+            {% if user.is_seller %}
+                <a href="{% url 'products:product-list-seller' %}" class="navbar__link">Meus Produtos</a>
+                <a href="{% url 'products:product-create' %}" class="navbar__link">+ Novo produto</a>
+            {% endif %}
             <a href="{% url 'users:user-profile' %}" class="navbar__link">Minha conta</a>
 
             <form method="post" action="{% url 'users:user-logout' %}">

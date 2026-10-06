@@ -1,0 +1,73 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Meus Produtos — SoleStep{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/products.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="container seller-products-page">
+
+  <div class="seller-products__header">
+    <h1 class="seller-products__title">Meus Produtos</h1>
+    <a href="{% url 'products:product-create' %}" class="btn btn--accent" id="btn-new-product">
+      + Novo produto
+    </a>
+  </div>
+
+  {% if produtos %}
+    <div class="seller-products__grid">
+      {% for produto in produtos %}
+        <article class="product-card {% if not produto.is_active %}product-card--inactive{% endif %}">
+
+          <!-- Imagem principal -->
+          <div class="product-card__image">
+            {% with produto.images.first as img %}
+              {% if img %}
+                <img src="{{ img.image.url }}" alt="{{ img.alt_text|default:produto.name }}">
+              {% else %}
+                <div class="product-card__image--placeholder" aria-hidden="true">👟</div>
+              {% endif %}
+            {% endwith %}
+          </div>
+
+          <!-- Corpo do card -->
+          <div class="product-card__body">
+            <span class="product-card__brand">{{ produto.brand }}</span>
+            <h2 class="product-card__name">{{ produto.name }}</h2>
+            <p class="product-card__price">R$ {{ produto.price }}</p>
+          </div>
+
+          <!-- Meta: status + estoque -->
+          <div class="product-card__meta">
+            {% if produto.is_active %}
+              <span class="badge badge--success">Ativo</span>
+            {% else %}
+              <span class="badge">Inativo</span>
+            {% endif %}
+            <span class="text-muted" style="font-size: var(--text-xs);">
+              {{ produto.stock_items.count }} tamanho{{ produto.stock_items.count|pluralize }}
+            </span>
+          </div>
+
+        </article>
+      {% endfor %}
+    </div>
+  {% else %}
+    <!-- Estado vazio -->
+    <div class="empty-state">
+      <span class="empty-state__icon" aria-hidden="true">📦</span>
+      <h2 class="empty-state__title">Nenhum produto cadastrado</h2>
+      <p class="empty-state__text">
+        Adicione seu primeiro calçado e comece a vender.
+      </p>
+      <a href="{% url 'products:product-create' %}" class="btn btn--accent">
+        + Cadastrar primeiro produto
+      </a>
+    </div>
+  {% endif %}
+
+</div>
+{% endblock %}

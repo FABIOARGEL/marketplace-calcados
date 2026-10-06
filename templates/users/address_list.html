@@ -1,0 +1,97 @@
+﻿{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Meus Endereços | SoleStep{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/profile.css' %}">
+{% endblock %}
+
+{% block content %}
+<section class="profile-page container">
+
+    <div class="profile-page__header">
+        <div class="profile-page__title-group">
+            <h1 class="profile-page__title">Meus Endereços</h1>
+            <p class="profile-page__subtitle">Gerencie seus endereços de entrega.</p>
+        </div>
+        <a href="{% url 'users:address-create' %}" class="btn btn--primary" id="btn-new-address">
+            + Novo endereço
+        </a>
+    </div>
+
+    {% if messages %}
+    <div role="alert">
+        {% for message in messages %}
+        <div class="profile-alert profile-alert--{{ message.tags }}">
+            <p>{{ message }}</p>
+        </div>
+        {% endfor %}
+    </div>
+    {% endif %}
+
+    {% if addresses %}
+    <ul class="address-list" role="list">
+        {% for address in addresses %}
+        <li class="address-card{% if address.is_default %} address-card--default{% endif %}">
+
+            <div class="address-card__header">
+                <div class="address-card__title-group">
+                    {% if address.nickname %}
+                    <span class="address-card__nickname">{{ address.nickname }}</span>
+                    {% endif %}
+                    {% if address.is_default %}
+                    <span class="badge badge--accent address-card__badge">Padrão</span>
+                    {% endif %}
+                </div>
+                <div class="address-card__actions">
+                    <a href="{% url 'users:address-edit' address.pk %}"
+                       class="btn btn--secondary btn--sm"
+                       aria-label="Editar endereço {{ address.nickname|default:address.street }}">
+                        Editar
+                    </a>
+                    <a href="{% url 'users:address-delete' address.pk %}"
+                       class="btn btn--danger btn--sm"
+                       aria-label="Excluir endereço {{ address.nickname|default:address.street }}">
+                        Excluir
+                    </a>
+                </div>
+            </div>
+
+            <div class="address-card__body">
+                <p class="address-card__recipient">
+                    <strong>Destinatário:</strong> {{ address.recipient_name }}
+                </p>
+                <p class="address-card__line">
+                    {{ address.street }}, {{ address.number }}{% if address.complement %} — {{ address.complement }}{% endif %}
+                </p>
+                <p class="address-card__line">
+                    {{ address.neighborhood }} · {{ address.city }}/{{ address.state }}
+                </p>
+                <p class="address-card__cep">CEP {{ address.zip_code }}</p>
+                {% if address.reference %}
+                <p class="address-card__reference">
+                    <span class="address-card__reference-label">Referência:</span> {{ address.reference }}
+                </p>
+                {% endif %}
+            </div>
+
+        </li>
+        {% endfor %}
+    </ul>
+
+    {% else %}
+    <div class="address-empty">
+        <p class="address-empty__text">Você ainda não tem endereços cadastrados.</p>
+        <a href="{% url 'users:address-create' %}" class="btn btn--primary" id="btn-add-first-address">
+            Adicionar primeiro endereço
+        </a>
+    </div>
+    {% endif %}
+
+    <div class="address-page__back">
+        <a href="{% url 'users:user-profile' %}" class="link-back">← Voltar ao perfil</a>
+    </div>
+
+</section>
+{% endblock %}

@@ -16,13 +16,19 @@ UserProfileForm:
 SellerProfileForm:
     Edição dos dados do SellerProfile (nome da loja, CNPJ, descrição,
     configuração de frete). Disponível apenas para usuários SELLER.
+
+AddressForm:
+    Criação e edição de endereço de entrega do usuário.
+    Valida formato de CEP (XXXXX-XXX) e UF (2 caracteres maiúsculos).
 """
+
+import re
 
 from django import forms
 from django.contrib.auth import get_user_model
 from django.contrib.auth.forms import UserCreationForm
 
-from .models import SellerProfile
+from .models import Address, SellerProfile
 
 User = get_user_model()
 
@@ -276,3 +282,161 @@ class SellerProfileForm(forms.ModelForm):
             'shipping_rate_per_km',
             'shipping_distance_km',
         )
+
+
+class AddressForm(forms.ModelForm):
+    """
+    Formulário de criação e edição de endereço de entrega.
+
+    Validações:
+        - CEP no formato XXXXX-XXX (8 dígitos com hífen)
+        - UF com exatamente 2 letras maiúsculas
+    """
+
+    nickname = forms.CharField(
+        label='Apelido',
+        max_length=100,
+        required=False,
+        widget=forms.TextInput(attrs={
+            'class': 'form-input',
+            'placeholder': 'Ex: Casa, Trabalho',
+            'id': 'id_addr_nickname',
+        }),
+    )
+
+    recipient_name = forms.CharField(
+        label='Nome do destinatário',
+        max_length=200,
+        widget=forms.TextInput(attrs={
+            'class': 'form-input',
+            'placeholder': 'Nome de quem receberá o pedido',
+            'id': 'id_addr_recipient_name',
+        }),
+    )
+
+    zip_code = forms.CharField(
+        label='CEP',
+        max_length=9,
+        widget=forms.TextInput(attrs={
+            'class': 'form-input',
+            'placeholder': 'XXXXX-XXX',
+            'maxlength': '9',
+            'id': 'id_addr_zip_code',
+        }),
+    )
+
+    street = forms.CharField(
+        label='Rua / Logradouro',
+        max_length=300,
+        widget=forms.TextInput(attrs={
+            'class': 'form-input',
+            'placeholder': 'Nome da rua',
+            'id': 'id_addr_street',
+        }),
+    )
+
+    number = forms.CharField(
+        label='Número',
+        max_length=20,
+        widget=forms.TextInput(attrs={
+            'class': 'form-input',
+            'placeholder': 'Nº',
+            'id': 'id_addr_number',
+        }),
+    )
+
+    complement = forms.CharField(
+        label='Complemento',
+        max_length=100,
+        required=False,
+        widget=forms.TextInput(attrs={
+            'class': 'form-input',
+            'placeholder': 'Apto, Bloco, etc.',
+            'id': 'id_addr_complement',
+        }),
+    )
+
+    neighborhood = forms.CharField(
+        label='Bairro',
+        max_length=150,
+        widget=forms.TextInput(attrs={
+            'class': 'form-input',
+            'placeholder': 'Nome do bairro',
+            'id': 'id_addr_neighborhood',
+        }),
+    )
+
+    city = forms.CharField(
+        label='Cidade',
+        max_length=150,
+        widget=forms.TextInput(attrs={
+            'class': 'form-input',
+            'placeholder': 'Nome da cidade',
+            'id': 'id_addr_city',
+        }),
+    )
+
+    state = forms.CharField(
+        label='Estado (UF)',
+        max_length=2,
+        widget=forms.TextInput(attrs={
+            'class': 'form-input',
+            'placeholder': 'SP',
+            'maxlength': '2',
+            'id': 'id_addr_state',
+        }),
+    )
+
+    reference = forms.CharField(
+        label='Ponto de referência',
+        max_length=300,
+        required=False,
+        widget=forms.TextInput(attrs={
+            'class': 'form-input',
+            'placeholder': 'Próximo ao mercado, portão azul…',
+            'id': 'id_addr_reference',
+        }),
+    )
+
+    is_default = forms.BooleanField(
+        label='Definir como endereço padrão',
+        required=False,
+        widget=forms.CheckboxInput(attrs={
+            'class': 'form-checkbox',
+            'id': 'id_addr_is_default',
+        }),
+    )
+
+    class Meta:
+        model = Address
+        fields = (
+            'nickname',
+            'recipient_name',
+            'zip_code',
+            'street',
+            'number',
+            'complement',
+            'neighborhood',
+            'city',
+            'state',
+            'reference',
+            'is_default',
+        )
+
+    def clean_zip_code(self):
+        """Valida o formato do CEP: XXXXX-XXX."""
+        zip_code = self.cleaned_data.get('zip_code', '').strip()
+        if not re.fullmatch(r'\d{5}-\d{3}', zip_code):
+            raise forms.ValidationError(
+                'CEP inválido. Use o formato XXXXX-XXX (ex: 01310-100).'
+            )
+        return zip_code
+
+    def clean_state(self):
+        """Valida que a UF tem exatamente 2 letras maiúsculas."""
+        state = self.cleaned_data.get('state', '').strip().upper()
+        if not re.fullmatch(r'[A-Z]{2}', state):
+            raise forms.ValidationError(
+                'UF inválida. Use 2 letras maiúsculas (ex: SP, RJ, MG).'
+            )
+        return state

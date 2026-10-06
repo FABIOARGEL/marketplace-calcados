@@ -1,0 +1,189 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}{{ action }} | SoleStep{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/profile.css' %}">
+{% endblock %}
+
+{% block content %}
+<section class="profile-page container">
+
+    <div class="profile-page__header">
+        <div class="profile-page__title-group">
+            <h1 class="profile-page__title">{{ action }}</h1>
+            <p class="profile-page__subtitle">Preencha os dados do endereço de entrega.</p>
+        </div>
+    </div>
+
+    <div class="profile-layout">
+        <div class="profile-layout__main">
+            <div class="profile-section">
+
+                <form method="post" novalidate id="form-address" class="profile-section__body">
+                    {% csrf_token %}
+
+                    {% if form.non_field_errors %}
+                    <div class="profile-alert profile-alert--error" role="alert">
+                        {% for error in form.non_field_errors %}
+                        <p>{{ error }}</p>
+                        {% endfor %}
+                    </div>
+                    {% endif %}
+
+                    <!-- Apelido e Destinatário -->
+                    <div class="profile-form__row">
+                        <div class="form-group">
+                            <label for="id_addr_nickname" class="form-label">
+                                {{ form.nickname.label }}
+                                <span class="form-label__optional">(opcional)</span>
+                            </label>
+                            {{ form.nickname }}
+                            {% if form.nickname.errors %}
+                            <ul class="form-errors" role="alert">
+                                {% for error in form.nickname.errors %}
+                                <li>{{ error }}</li>
+                                {% endfor %}
+                            </ul>
+                            {% endif %}
+                        </div>
+                        <div class="form-group">
+                            <label for="id_addr_recipient_name" class="form-label">
+                                {{ form.recipient_name.label }}
+                            </label>
+                            {{ form.recipient_name }}
+                            {% if form.recipient_name.errors %}
+                            <ul class="form-errors" role="alert">
+                                {% for error in form.recipient_name.errors %}
+                                <li>{{ error }}</li>
+                                {% endfor %}
+                            </ul>
+                            {% endif %}
+                        </div>
+                    </div>
+
+                    <!-- CEP -->
+                    <div class="profile-form__row profile-form__row--third">
+                        <div class="form-group">
+                            <label for="id_addr_zip_code" class="form-label">{{ form.zip_code.label }}</label>
+                            {{ form.zip_code }}
+                            {% if form.zip_code.errors %}
+                            <ul class="form-errors" role="alert">
+                                {% for error in form.zip_code.errors %}
+                                <li>{{ error }}</li>
+                                {% endfor %}
+                            </ul>
+                            {% endif %}
+                        </div>
+                        <div class="form-group">
+                            <label for="id_addr_state" class="form-label">{{ form.state.label }}</label>
+                            {{ form.state }}
+                            {% if form.state.errors %}
+                            <ul class="form-errors" role="alert">
+                                {% for error in form.state.errors %}
+                                <li>{{ error }}</li>
+                                {% endfor %}
+                            </ul>
+                            {% endif %}
+                        </div>
+                        <div class="form-group">
+                            <label for="id_addr_city" class="form-label">{{ form.city.label }}</label>
+                            {{ form.city }}
+                            {% if form.city.errors %}
+                            <ul class="form-errors" role="alert">
+                                {% for error in form.city.errors %}
+                                <li>{{ error }}</li>
+                                {% endfor %}
+                            </ul>
+                            {% endif %}
+                        </div>
+                    </div>
+
+                    <!-- Rua + Número -->
+                    <div class="profile-form__row">
+                        <div class="form-group">
+                            <label for="id_addr_street" class="form-label">{{ form.street.label }}</label>
+                            {{ form.street }}
+                            {% if form.street.errors %}
+                            <ul class="form-errors" role="alert">
+                                {% for error in form.street.errors %}
+                                <li>{{ error }}</li>
+                                {% endfor %}
+                            </ul>
+                            {% endif %}
+                        </div>
+                        <div class="form-group form-group--narrow">
+                            <label for="id_addr_number" class="form-label">{{ form.number.label }}</label>
+                            {{ form.number }}
+                            {% if form.number.errors %}
+                            <ul class="form-errors" role="alert">
+                                {% for error in form.number.errors %}
+                                <li>{{ error }}</li>
+                                {% endfor %}
+                            </ul>
+                            {% endif %}
+                        </div>
+                    </div>
+
+                    <!-- Complemento + Bairro -->
+                    <div class="profile-form__row">
+                        <div class="form-group">
+                            <label for="id_addr_complement" class="form-label">
+                                {{ form.complement.label }}
+                                <span class="form-label__optional">(opcional)</span>
+                            </label>
+                            {{ form.complement }}
+                        </div>
+                        <div class="form-group">
+                            <label for="id_addr_neighborhood" class="form-label">{{ form.neighborhood.label }}</label>
+                            {{ form.neighborhood }}
+                            {% if form.neighborhood.errors %}
+                            <ul class="form-errors" role="alert">
+                                {% for error in form.neighborhood.errors %}
+                                <li>{{ error }}</li>
+                                {% endfor %}
+                            </ul>
+                            {% endif %}
+                        </div>
+                    </div>
+
+                    <!-- Referência -->
+                    <div class="form-group">
+                        <label for="id_addr_reference" class="form-label">
+                            {{ form.reference.label }}
+                            <span class="form-label__optional">(opcional)</span>
+                        </label>
+                        {{ form.reference }}
+                    </div>
+
+                    <!-- Endereço padrão -->
+                    <div class="form-group form-group--checkbox">
+                        {{ form.is_default }}
+                        <label for="id_addr_is_default" class="form-label form-label--inline">
+                            {{ form.is_default.label }}
+                        </label>
+                    </div>
+
+                    <!-- Ações -->
+                    <div class="profile-section__footer">
+                        <button type="submit" class="btn btn--primary" id="btn-save-address">
+                            Salvar endereço
+                        </button>
+                        <a href="{% url 'users:address-list' %}" class="btn btn--secondary">
+                            Cancelar
+                        </a>
+                    </div>
+
+                </form>
+
+            </div>
+        </div>
+    </div>
+
+</section>
+{% endblock %}
+
+{% block extra_js %}
+<script src="{% static 'js/address-form.js' %}"></script>
+{% endblock %}

@@ -3,6 +3,26 @@ from django import forms
 from .models import Address
 
 
+class LoginForm(forms.Form):
+    email = forms.EmailField(
+        label="E-mail",
+        widget=forms.EmailInput(attrs={
+            "class": "form-input",
+            "placeholder": "Digite seu e-mail",
+            "autocomplete": "email",
+        }),
+    )
+
+    password = forms.CharField(
+        label="Senha",
+        widget=forms.PasswordInput(attrs={
+            "class": "form-input",
+            "placeholder": "Digite sua senha",
+            "autocomplete": "current-password",
+        }),
+    )
+
+
 class AddressForm(forms.ModelForm):
     zip_code = forms.RegexField(
         regex=r"^\d{5}-\d{3}$",

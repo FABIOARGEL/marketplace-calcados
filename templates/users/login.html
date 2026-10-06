@@ -1,0 +1,41 @@
+
+{% extends "base.html" %}
+
+{% block title %}Login | SoleStep{% endblock %}
+
+{% block content %}
+<section class="container login-content">
+    <h1>Entrar na sua conta</h1>
+    <p>Informe seu e-mail e sua senha para continuar.</p>
+
+    {% if form.non_field_errors %}
+        {% for error in form.non_field_errors %}
+            <p class="form-error" role="alert">{{ error }}</p>
+        {% endfor %}
+    {% endif %}
+
+    <form method="post">
+        {% csrf_token %}
+        <input type="hidden" name="next" value="{{ request.GET.next|default:'' }}">
+
+        <div class="form-group">
+            {{ form.email.label_tag }}
+            {{ form.email }}
+            {{ form.email.errors }}
+        </div>
+
+        <div class="form-group">
+            {{ form.password.label_tag }}
+            {{ form.password }}
+            {{ form.password.errors }}
+        </div>
+
+        <button type="submit" class="btn btn--primary">Entrar</button>
+    </form>
+
+    <p class="login-register">
+        Ainda não tem uma conta?
+        <a href="/usuarios/cadastro/">Cadastre-se</a>
+    </p>
+</section>
+{% endblock %}

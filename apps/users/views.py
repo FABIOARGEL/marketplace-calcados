@@ -16,6 +16,7 @@ from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
+from django.db import transaction
 from django.shortcuts import get_object_or_404, redirect, render
 from django.utils.http import url_has_allowed_host_and_scheme
 from django.views.decorators.http import require_POST
@@ -66,6 +67,10 @@ def user_login(request):
         "users/login.html",
         {"form": form},
     )
+
+
+def home(request):
+    return render(request, "home.html")
 
 
 def register(request):
@@ -199,6 +204,7 @@ def address_list(request):
 
 
 @login_required
+@transaction.atomic
 def address_create(request):
     """
     Cria um novo endereço de entrega para o usuário autenticado.
@@ -230,6 +236,7 @@ def address_create(request):
 
 
 @login_required
+@transaction.atomic
 def address_edit(request, pk):
     """
     Edita um endereço de entrega existente.

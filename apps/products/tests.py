@@ -50,7 +50,7 @@ class ProductEditTests(TestCase):
 
     def login_seller(self):
         self.client.login(
-            username='vendedor1@teste.com',
+            email='vendedor1@teste.com',
             password='senha-teste-123',
         )
 
@@ -65,7 +65,7 @@ class ProductEditTests(TestCase):
 
     def test_seller_cannot_edit_another_sellers_product(self):
         self.client.login(
-            username='vendedor2@teste.com',
+            email='vendedor2@teste.com',
             password='senha-teste-123',
         )
 

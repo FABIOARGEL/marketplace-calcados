@@ -11,7 +11,10 @@ product_list_seller:
 
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
-from django.shortcuts import redirect, render
+from django.shortcuts import get_object_or_404, redirect, render
+from django.views.decorators.http import require_POST
+
+from .models import Product
 
 from .forms import ProductForm, ProductImageFormSet, StockFormSet
 
@@ -125,3 +128,109 @@ def product_list_seller(request):
     return render(request, 'products/product_list_seller.html', {
         'produtos': produtos,
     })
+
+@login_required
+def product_edit(request, pk):
+    """Edita um produto pertencente ao vendedor autenticado."""
+    if not request.user.is_seller:
+        messages.error(request, 'Acesso restrito a vendedores.')
+        return redirect('home')
+
+    produto = get_object_or_404(
+        Product,
+        pk=pk,
+        seller=request.user,
+    )
+
+    if request.method == 'POST':
+        form = ProductForm(request.POST, instance=produto)
+        image_formset = ProductImageFormSet(
+            request.POST,
+            request.FILES,
+            instance=produto,
+            prefix='images',
+        )
+        stock_formset = StockFormSet(
+            request.POST,
+            instance=produto,
+            prefix='stock',
+        )
+
+        form_valid = form.is_valid()
+        images_valid = image_formset.is_valid()
+        stock_valid = stock_formset.is_valid()
+
+        if form_valid and images_valid and stock_valid:
+            stock_preenchido = any(
+                f.cleaned_data.get('size')
+                and not f.cleaned_data.get('DELETE', False)
+                for f in stock_formset.forms
+                if f.cleaned_data
+            )
+
+            if not stock_preenchido:
+                messages.error(
+                    request,
+                    'Informe pelo menos um tamanho no estoque.',
+                )
+            else:
+                produto = form.save()
+                image_formset.instance = produto
+                image_formset.save()
+                stock_formset.instance = produto
+                stock_formset.save()
+
+                messages.success(
+                    request,
+                    f'Produto "{produto.name}" atualizado com sucesso!',
+                )
+                return redirect('products:product-list-seller')
+    else:
+        form = ProductForm(instance=produto)
+        image_formset = ProductImageFormSet(
+            instance=produto,
+            prefix='images',
+        )
+        stock_formset = StockFormSet(
+            instance=produto,
+            prefix='stock',
+        )
+
+    return render(
+        request,
+        'products/product_form.html',
+        {
+            'form': form,
+            'image_formset': image_formset,
+            'stock_formset': stock_formset,
+            'produto': produto,
+            'modo_edicao': True,
+        },
+    )
+
+
+@login_required
+@require_POST
+def product_toggle_active(request, pk):
+    """Ativa ou desativa um produto sem excluí-lo do banco."""
+    if not request.user.is_seller:
+        messages.error(request, 'Acesso restrito a vendedores.')
+        return redirect('home')
+
+    produto = get_object_or_404(
+        Product,
+        pk=pk,
+        seller=request.user,
+    )
+
+    produto.is_active = not produto.is_active
+    produto.save(update_fields=['is_active', 'updated_at'])
+
+    status = 'ativado' if produto.is_active else 'desativado'
+
+    messages.success(
+        request,
+        f'Produto "{produto.name}" {status} com sucesso.',
+    )
+
+    return redirect('products:product-list-seller')

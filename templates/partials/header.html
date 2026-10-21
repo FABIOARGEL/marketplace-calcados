@@ -20,7 +20,7 @@
 
             {% if user.is_authenticated %}
                 {% if user.is_seller %}
-                    <a href="{% url 'products:product-list-seller' %}" class="navbar__link" id="navbar-my-products-link">
+                    <a href="{% url 'products:seller-product-list' %}" class="navbar__link" id="navbar-my-products-link">
                         Meus Produtos
                     </a>
                     <a href="{% url 'products:product-create' %}" class="btn btn--accent" style="padding: var(--space-2) var(--space-4); min-height: auto; font-size: var(--text-sm);" id="navbar-new-product-link">
@@ -76,7 +76,7 @@
 
         {% if user.is_authenticated %}
             {% if user.is_seller %}
-                <a href="{% url 'products:product-list-seller' %}" class="navbar__link">Meus Produtos</a>
+                <a href="{% url 'products:seller-product-list' %}" class="navbar__link">Meus Produtos</a>
                 <a href="{% url 'products:product-create' %}" class="navbar__link">+ Novo produto</a>
             {% endif %}
             <a href="{% url 'users:user-profile' %}" class="navbar__link">Minha conta</a>

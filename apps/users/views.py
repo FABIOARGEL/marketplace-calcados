@@ -6,6 +6,10 @@ user_logout: Encerramento de sessão (POST only).
 register: Cadastro de novo usuário (cliente ou vendedor).
 profile: Exibição e edição dos dados cadastrais do usuário logado.
          Vendedores também editam dados do SellerProfile (frete incluso).
+address_list: Lista endereços do usuário logado.
+address_create: Formulário + criação de novo endereço.
+address_edit: Edição de endereço existente (somente do próprio usuário).
+address_delete: Exclusão de endereço (somente do próprio usuário).
 """
 
 from django.conf import settings
@@ -17,9 +21,8 @@ from django.shortcuts import get_object_or_404, redirect, render
 from django.utils.http import url_has_allowed_host_and_scheme
 from django.views.decorators.http import require_POST
 
-from .forms import AddressForm, LoginForm
+from .forms import AddressForm, LoginForm, SellerProfileForm, UserProfileForm, UserRegistrationForm
 from .models import Address
-from .forms import LoginForm, SellerProfileForm, UserProfileForm, UserRegistrationForm
 
 
 def user_login(request):
@@ -68,6 +71,8 @@ def user_login(request):
 
 def home(request):
     return render(request, "home.html")
+
+
 def register(request):
     """
     View de cadastro de novo usuário.
@@ -109,7 +114,6 @@ def register(request):
     )
 
 
-
 @login_required
 @require_POST
 def user_logout(request):
@@ -119,99 +123,6 @@ def user_logout(request):
 
 
 @login_required
-def address_list(request):
-    addresses = Address.objects.filter(user=request.user)
-
-    return render(
-        request,
-        "users/address_list.html",
-        {"addresses": addresses},
-    )
-
-
-@login_required
-@transaction.atomic
-def address_create(request):
-    form = AddressForm(request.POST or None)
-
-    if request.method == "POST" and form.is_valid():
-        address = form.save(commit=False)
-        address.user = request.user
-
-        if address.is_default:
-            Address.objects.filter(
-                user=request.user,
-                is_default=True,
-            ).update(is_default=False)
-
-        address.save()
-
-        return redirect("users:address-list")
-
-    return render(
-        request,
-        "users/address_form.html",
-        {
-            "form": form,
-            "title": "Novo endereço",
-        },
-    )
-
-
-@login_required
-@transaction.atomic
-def address_edit(request, pk):
-    address = get_object_or_404(
-        Address,
-        pk=pk,
-        user=request.user,
-    )
-
-    form = AddressForm(
-        request.POST or None,
-        instance=address,
-    )
-
-    if request.method == "POST" and form.is_valid():
-        address = form.save(commit=False)
-
-        if address.is_default:
-            Address.objects.filter(
-                user=request.user,
-                is_default=True,
-            ).exclude(pk=address.pk).update(is_default=False)
-
-        address.save()
-
-        return redirect("users:address-list")
-
-    return render(
-        request,
-        "users/address_form.html",
-        {
-            "form": form,
-            "title": "Editar endereço",
-            "address": address,
-        },
-    )
-
-
-@login_required
-def address_delete(request, pk):
-    address = get_object_or_404(
-        Address,
-        pk=pk,
-        user=request.user,
-    )
-
-    if request.method == "POST":
-        address.delete()
-        return redirect("users:address-list")
-
-    return render(
-        request,
-        "users/address_confirm_delete.html",
-        {"address": address},
 def profile(request):
     """
     View de exibição e edição do perfil do usuário autenticado.
@@ -269,4 +180,114 @@ def profile(request):
             'seller_form': seller_form,
             'is_seller': is_seller,
         },
+    )
+
+
+# ---------------------------------------------------------------------------
+# Endereços de entrega
+# ---------------------------------------------------------------------------
+
+@login_required
+def address_list(request):
+    """
+    Lista todos os endereços de entrega do usuário autenticado.
+
+    Endereços são exibidos com o padrão em primeiro lugar
+    (ordem definida pelo model: -is_default, -created_at).
+    """
+    addresses = request.user.addresses.all()
+    return render(
+        request,
+        'users/address_list.html',
+        {'addresses': addresses},
+    )
+
+
+@login_required
+@transaction.atomic
+def address_create(request):
+    """
+    Cria um novo endereço de entrega para o usuário autenticado.
+
+    GET: exibe formulário vazio.
+    POST: valida e salva o endereço.
+          Se is_default=True, desmarca todos os outros endereços do usuário.
+    """
+    if request.method == 'POST':
+        form = AddressForm(request.POST)
+        if form.is_valid():
+            address = form.save(commit=False)
+            address.user = request.user
+
+            if address.is_default:
+                request.user.addresses.filter(is_default=True).update(is_default=False)
+
+            address.save()
+            messages.success(request, 'Endereço adicionado com sucesso!')
+            return redirect('users:address-list')
+    else:
+        form = AddressForm()
+
+    return render(
+        request,
+        'users/address_form.html',
+        {'form': form, 'action': 'Novo endereço'},
+    )
+
+
+@login_required
+@transaction.atomic
+def address_edit(request, pk):
+    """
+    Edita um endereço de entrega existente.
+
+    Somente o proprietário do endereço pode editá-lo.
+    Se is_default=True, desmarca todos os outros endereços do usuário.
+
+    GET: exibe formulário preenchido.
+    POST: valida e salva as alterações.
+    """
+    address = get_object_or_404(Address, pk=pk, user=request.user)
+
+    if request.method == 'POST':
+        form = AddressForm(request.POST, instance=address)
+        if form.is_valid():
+            addr = form.save(commit=False)
+
+            if addr.is_default:
+                request.user.addresses.exclude(pk=pk).filter(is_default=True).update(is_default=False)
+
+            addr.save()
+            messages.success(request, 'Endereço atualizado com sucesso!')
+            return redirect('users:address-list')
+    else:
+        form = AddressForm(instance=address)
+
+    return render(
+        request,
+        'users/address_form.html',
+        {'form': form, 'action': 'Editar endereço', 'address': address},
+    )
+
+
+@login_required
+def address_delete(request, pk):
+    """
+    Exclui um endereço de entrega.
+
+    Somente o proprietário do endereço pode excluí-lo.
+    GET: exibe página de confirmação de exclusão.
+    POST: realiza a exclusão e redireciona para a lista.
+    """
+    address = get_object_or_404(Address, pk=pk, user=request.user)
+
+    if request.method == 'POST':
+        address.delete()
+        messages.success(request, 'Endereço removido com sucesso!')
+        return redirect('users:address-list')
+
+    return render(
+        request,
+        'users/address_confirm_delete.html',
+        {'address': address},
     )

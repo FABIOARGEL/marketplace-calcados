@@ -1,85 +1,97 @@
 {% extends "base.html" %}
+{% load static %}
 
-{% block title %}Meus endereços | SoleStep{% endblock %}
+{% block title %}Meus Endereços | SoleStep{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/profile.css' %}">
+{% endblock %}
 
 {% block content %}
-<section class="page">
-    <div class="container">
-        <div class="flex justify-between items-center gap-4">
-            <div>
-                <h1>Meus endereços</h1>
-                <p>Gerencie seus endereços de entrega.</p>
-            </div>
+<section class="profile-page container">
 
-            <a href="{% url 'users:address-create' %}" class="btn btn--accent">
-                Novo endereço
-            </a>
+    <div class="profile-page__header">
+        <div class="profile-page__title-group">
+            <h1 class="profile-page__title">Meus Endereços</h1>
+            <p class="profile-page__subtitle">Gerencie seus endereços de entrega.</p>
         </div>
-
-        {% if addresses %}
-            <div class="address-list">
-                {% for address in addresses %}
-                    <article class="bg-surface">
-                        <h3>
-                            {% if address.nickname %}
-                                {{ address.nickname }}
-                            {% else %}
-                                Endereço
-                            {% endif %}
-                        </h3>
-
-                        {% if address.is_default %}
-                            <p><strong>Endereço padrão</strong></p>
-                        {% endif %}
-
-                        <p>
-                            <strong>{{ address.recipient_name }}</strong><br>
-                            {{ address.street }}, {{ address.number }}<br>
-
-                            {% if address.complement %}
-                                {{ address.complement }}<br>
-                            {% endif %}
-
-                            {{ address.neighborhood }}<br>
-                            {{ address.city }}/{{ address.state }}<br>
-                            CEP {{ address.zip_code }}
-                        </p>
-
-                        {% if address.reference %}
-                            <p>
-                                <strong>Referência:</strong>
-                                {{ address.reference }}
-                            </p>
-                        {% endif %}
-
-                        <div class="flex gap-2">
-                            <a
-                                href="{% url 'users:address-edit' address.pk %}"
-                                class="btn"
-                            >
-                                Editar
-                            </a>
-
-                            <a
-                                href="{% url 'users:address-delete' address.pk %}"
-                                class="btn"
-                            >
-                                Excluir
-                            </a>
-                        </div>
-                    </article>
-                {% endfor %}
-            </div>
-        {% else %}
-            <div class="bg-surface">
-                <h3>Nenhum endereço cadastrado</h3>
-                <p>Cadastre um endereço para utilizá-lo nas entregas.</p>
-
-                <a href="{% url 'users:address-create' %}" class="btn btn--primary">
-                    Cadastrar endereço
-                </a>
-            </div>
-        {% endif %}
+        <a href="{% url 'users:address-create' %}" class="btn btn--primary" id="btn-new-address">
+            + Novo endereço
+        </a>
     </div>
+
+    {% if messages %}
+    <div role="alert">
+        {% for message in messages %}
+        <div class="profile-alert profile-alert--{{ message.tags }}">
+            <p>{{ message }}</p>
+        </div>
+        {% endfor %}
+    </div>
+    {% endif %}
+
+    {% if addresses %}
+    <ul class="address-list" role="list">
+        {% for address in addresses %}
+        <li class="address-card{% if address.is_default %} address-card--default{% endif %}">
+
+            <div class="address-card__header">
+                <div class="address-card__title-group">
+                    {% if address.nickname %}
+                    <span class="address-card__nickname">{{ address.nickname }}</span>
+                    {% endif %}
+                    {% if address.is_default %}
+                    <span class="badge badge--accent address-card__badge">Padrão</span>
+                    {% endif %}
+                </div>
+                <div class="address-card__actions">
+                    <a href="{% url 'users:address-edit' address.pk %}"
+                       class="btn btn--secondary btn--sm"
+                       aria-label="Editar endereço {{ address.nickname|default:address.street }}">
+                        Editar
+                    </a>
+                    <a href="{% url 'users:address-delete' address.pk %}"
+                       class="btn btn--danger btn--sm"
+                       aria-label="Excluir endereço {{ address.nickname|default:address.street }}">
+                        Excluir
+                    </a>
+                </div>
+            </div>
+
+            <div class="address-card__body">
+                <p class="address-card__recipient">
+                    <strong>Destinatário:</strong> {{ address.recipient_name }}
+                </p>
+                <p class="address-card__line">
+                    {{ address.street }}, {{ address.number }}{% if address.complement %} — {{ address.complement }}{% endif %}
+                </p>
+                <p class="address-card__line">
+                    {{ address.neighborhood }} · {{ address.city }}/{{ address.state }}
+                </p>
+                <p class="address-card__cep">CEP {{ address.zip_code }}</p>
+                {% if address.reference %}
+                <p class="address-card__reference">
+                    <span class="address-card__reference-label">Referência:</span> {{ address.reference }}
+                </p>
+                {% endif %}
+            </div>
+
+        </li>
+        {% endfor %}
+    </ul>
+
+    {% else %}
+    <div class="address-empty">
+        <p class="address-empty__text">Você ainda não tem endereços cadastrados.</p>
+        <a href="{% url 'users:address-create' %}" class="btn btn--primary" id="btn-add-first-address">
+            Adicionar primeiro endereço
+        </a>
+    </div>
+    {% endif %}
+
+    <div class="address-page__back">
+        <a href="{% url 'users:user-profile' %}" class="link-back">← Voltar ao perfil</a>
+    </div>
+
 </section>
 {% endblock %}

@@ -1,0 +1,200 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}
+    {% if query %}Busca: "{{ query }}" — SoleStep{% else %}Catálogo de Calçados — SoleStep{% endif %}
+{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/products.css' %}">
+<link rel="stylesheet" href="{% static 'css/catalog.css' %}">
+<meta name="description" content="{% if query %}Resultados para &quot;{{ query }}&quot; no catálogo SoleStep.{% else %}Explore nosso catálogo completo de calçados. Tênis, botas, sandálias e muito mais.{% endif %}">
+{% endblock %}
+
+{% block content %}
+<div class="catalog-page">
+    <div class="container">
+
+        <!-- ============================================
+             CABEÇALHO DO CATÁLOGO
+             ============================================ -->
+        <header class="catalog-header">
+            <div class="catalog-header__text">
+                <h1 class="catalog-header__title">
+                    {% if query %}
+                        Resultados para <span class="catalog-header__query">"{{ query }}"</span>
+                    {% else %}
+                        Catálogo
+                    {% endif %}
+                </h1>
+                <p class="catalog-header__count">
+                    {% if query %}
+                        {{ total_count }} produto{{ total_count|pluralize }} encontrado{{ total_count|pluralize }}
+                    {% else %}
+                        {{ total_count }} produto{{ total_count|pluralize }} disponíve{{ total_count|pluralize:"l,is" }}
+                    {% endif %}
+                </p>
+            </div>
+
+            <!-- Campo de busca do catálogo -->
+            <form
+                id="catalog-search-form"
+                class="catalog-search"
+                action="{% url 'products:product-list' %}"
+                method="get"
+                role="search"
+                aria-label="Buscar produtos"
+            >
+                <div class="catalog-search__field">
+                    <label for="catalog-q" class="sr-only">Buscar calçados</label>
+                    <input
+                        id="catalog-q"
+                        type="search"
+                        name="q"
+                        class="catalog-search__input form-input"
+                        placeholder="Buscar por nome ou descrição…"
+                        value="{{ query }}"
+                        autocomplete="off"
+                        aria-label="Termo de busca"
+                    >
+                    <button
+                        type="submit"
+                        id="catalog-search-btn"
+                        class="catalog-search__btn btn"
+                        aria-label="Pesquisar"
+                    >
+                        &#x1F50D; Buscar
+                    </button>
+                </div>
+                {% if query %}
+                <a
+                    href="{% url 'products:product-list' %}"
+                    id="catalog-clear-btn"
+                    class="catalog-search__clear"
+                    aria-label="Limpar busca"
+                >
+                    &#x2715; Limpar busca
+                </a>
+                {% endif %}
+            </form>
+        </header>
+
+        <!-- ============================================
+             GRID DE PRODUTOS
+             ============================================ -->
+        {% if page_obj.object_list %}
+        <section aria-label="Lista de produtos">
+            <div class="catalog-grid" id="products-grid">
+                {% for produto in page_obj %}
+                <article class="catalog-card" id="product-{{ produto.pk }}">
+                    <!-- Imagem -->
+                    <div class="catalog-card__image">
+                        {% with produto.images.first as img %}
+                            {% if img %}
+                                <img src="{{ img.image.url }}" alt="{{ img.alt_text|default:produto.name }}" loading="lazy">
+                            {% else %}
+                                <div class="catalog-card__image--placeholder" aria-hidden="true">&#x1F45F;</div>
+                            {% endif %}
+                        {% endwith %}
+                        {% if produto.category %}
+                        <span class="catalog-card__badge">{{ produto.category.name }}</span>
+                        {% endif %}
+                    </div>
+
+                    <!-- Informações -->
+                    <div class="catalog-card__body">
+                        <span class="catalog-card__brand">{{ produto.brand }}</span>
+                        <h2 class="catalog-card__name">{{ produto.name }}</h2>
+                        <p class="catalog-card__description">{{ produto.description|truncatewords:12 }}</p>
+                        <div class="catalog-card__footer">
+                            <span class="catalog-card__price">
+                                R$&nbsp;{{ produto.price|floatformat:2 }}
+                            </span>
+                            <span class="catalog-card__seller">
+                                {{ produto.seller.get_full_name|default:produto.seller.email }}
+                            </span>
+                        </div>
+                    </div>
+                </article>
+                {% endfor %}
+            </div>
+
+            <!-- Paginação -->
+            {% if is_paginated %}
+            <nav class="pagination" aria-label="Paginação do catálogo">
+                {% if page_obj.has_previous %}
+                <a
+                    href="?{% if query %}q={{ query }}&{% endif %}page={{ page_obj.previous_page_number }}"
+                    class="pagination__btn"
+                    id="pagination-prev"
+                    aria-label="Página anterior"
+                >
+                    &larr; Anterior
+                </a>
+                {% else %}
+                <span class="pagination__btn pagination__btn--disabled" aria-disabled="true">&larr; Anterior</span>
+                {% endif %}
+
+                <div class="pagination__pages" aria-label="Páginas">
+                    {% for num in paginator.page_range %}
+                        {% if page_obj.number == num %}
+                        <span class="pagination__page pagination__page--current" aria-current="page">{{ num }}</span>
+                        {% elif num > page_obj.number|add:"-3" and num < page_obj.number|add:"3" %}
+                        <a
+                            href="?{% if query %}q={{ query }}&{% endif %}page={{ num }}"
+                            class="pagination__page"
+                            id="pagination-page-{{ num }}"
+                        >{{ num }}</a>
+                        {% endif %}
+                    {% endfor %}
+                </div>
+
+                {% if page_obj.has_next %}
+                <a
+                    href="?{% if query %}q={{ query }}&{% endif %}page={{ page_obj.next_page_number }}"
+                    class="pagination__btn"
+                    id="pagination-next"
+                    aria-label="Próxima página"
+                >
+                    Próxima &rarr;
+                </a>
+                {% else %}
+                <span class="pagination__btn pagination__btn--disabled" aria-disabled="true">Próxima &rarr;</span>
+                {% endif %}
+            </nav>
+            {% endif %}
+        </section>
+
+        {% else %}
+        <!-- ============================================
+             EMPTY STATE
+             ============================================ -->
+        <div class="catalog-empty" id="catalog-empty-state" role="status" aria-live="polite">
+            <div class="catalog-empty__icon" aria-hidden="true">&#x1F50D;</div>
+            {% if query %}
+            <h2 class="catalog-empty__title">Nenhum resultado para "{{ query }}"</h2>
+            <p class="catalog-empty__text">
+                Tente palavras diferentes ou verifique a ortografia.
+            </p>
+            <a href="{% url 'products:product-list' %}" id="catalog-empty-clear" class="btn">
+                Ver todos os produtos
+            </a>
+            {% else %}
+            <h2 class="catalog-empty__title">Nenhum produto disponível</h2>
+            <p class="catalog-empty__text">
+                Nosso catálogo está sendo preparado. Volte em breve!
+            </p>
+            <a href="/" id="catalog-empty-home" class="btn">
+                Voltar ao início
+            </a>
+            {% endif %}
+        </div>
+        {% endif %}
+
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="{% static 'js/search.js' %}"></script>
+{% endblock %}

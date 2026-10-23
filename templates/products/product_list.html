@@ -86,7 +86,7 @@
         <section aria-label="Lista de produtos">
             <div class="catalog-grid" id="products-grid">
                 {% for produto in page_obj %}
-                <article class="catalog-card" id="product-{{ produto.pk }}">
+                <a href="{% url 'products:product-detail' produto.pk %}" class="catalog-card" id="product-{{ produto.pk }}" aria-label="{{ produto.name }}">
                     <!-- Imagem -->
                     <div class="catalog-card__image">
                         {% with produto.images.first as img %}
@@ -115,7 +115,7 @@
                             </span>
                         </div>
                     </div>
-                </article>
+                </a>
                 {% endfor %}
             </div>
 

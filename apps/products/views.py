@@ -57,6 +57,34 @@ def product_list(request):
     )
 
 
+def product_detail(request, pk):
+    """Página pública de detalhes de um produto (RF08).
+
+    Exibe imagens, descrição, preços e o formulário de
+    "Adicionar ao carrinho" com seleção de tamanho e quantidade.
+    Tamanhos sem estoque ficam desabilitados no select.
+    """
+    produto = get_object_or_404(
+        Product.objects
+        .select_related('category', 'seller')
+        .prefetch_related('images', 'stock_items'),
+        pk=pk,
+        is_active=True,
+    )
+
+    stock_items = produto.stock_items.filter(quantity__gt=0).order_by('size')
+
+    return render(
+        request,
+        'products/product_detail.html',
+        {
+            'produto': produto,
+            'stock_items': stock_items,
+            'has_stock': stock_items.exists(),
+        },
+    )
+
+
 @login_required
 def product_create(request):
     """Cadastra um produto com imagens e estoque."""
@@ -66,6 +94,7 @@ def product_create(request):
             'Apenas vendedores podem cadastrar produtos.',
         )
         return redirect('home')
+
 
     if request.method == 'POST':
         form = ProductForm(request.POST)

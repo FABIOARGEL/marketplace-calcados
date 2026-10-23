@@ -26,6 +26,7 @@ urlpatterns = [
     path("health/", health_check, name="health-check"),
     path("usuarios/", include("apps.users.urls")),
     path("produtos/", include("apps.products.urls")),
+    path("carrinho/", include("apps.cart.urls")),
 ]
 
 if settings.DEBUG:

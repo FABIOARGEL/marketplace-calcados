@@ -15,7 +15,32 @@
 
         <!-- Autenticação -->
         <div class="navbar__actions">
-            <a href="/busca/" class="navbar__icon-btn">Busca</a>
+            <!-- Busca rápida -->
+            <form
+                id="header-search-form"
+                class="navbar__search"
+                action="{% url 'products:product-list' %}"
+                method="get"
+                role="search"
+                aria-label="Busca rápida"
+            >
+                <label for="header-q" class="sr-only">Buscar calçados</label>
+                <input
+                    id="header-q"
+                    type="search"
+                    name="q"
+                    class="navbar__search-input"
+                    placeholder="Buscar calçados…"
+                    autocomplete="off"
+                    aria-label="Buscar calçados"
+                >
+                <button
+                    type="submit"
+                    id="header-search-btn"
+                    class="navbar__search-btn"
+                    aria-label="Pesquisar"
+                >&#x1F50D;</button>
+            </form>
             <a href="/carrinho/" class="navbar__icon-btn">Carrinho</a>
 
             {% if user.is_authenticated %}
@@ -71,8 +96,32 @@
         <a href="/" class="navbar__link">Início</a>
         <a href="/produtos/" class="navbar__link">Produtos</a>
         <a href="/categorias/" class="navbar__link">Categorias</a>
-        <a href="/busca/" class="navbar__link">Busca</a>
-        <a href="/carrinho/" class="navbar__link">Carrinho</a>
+        <!-- Busca rápida mobile -->
+        <form
+            id="mobile-search-form"
+            class="navbar__search navbar__search--mobile"
+            action="{% url 'products:product-list' %}"
+            method="get"
+            role="search"
+            aria-label="Busca rápida"
+        >
+            <label for="mobile-q" class="sr-only">Buscar calçados</label>
+            <input
+                id="mobile-q"
+                type="search"
+                name="q"
+                class="navbar__search-input"
+                placeholder="Buscar calçados…"
+                autocomplete="off"
+                aria-label="Buscar calçados"
+            >
+            <button
+                type="submit"
+                id="mobile-search-btn"
+                class="navbar__search-btn"
+                aria-label="Pesquisar"
+            >&#x1F50D;</button>
+        </form>
 
         {% if user.is_authenticated %}
             {% if user.is_seller %}

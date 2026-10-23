@@ -8,11 +8,53 @@ Permite cadastrar, listar, editar e ativar ou desativar produtos.
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.core.paginator import Paginator
+from django.db.models import Q
 from django.shortcuts import get_object_or_404, redirect, render
 from django.views.decorators.http import require_POST
 
 from .forms import ProductForm, ProductImageFormSet, StockFormSet
-from .models import Product
+from .models import Category, Product
+
+
+def product_list(request):
+    """Catálogo público de calçados com busca e paginação.
+
+    Parâmetros de query string:
+        q: termo de busca (name ou description, icontains)
+        page: página da paginação
+    """
+    query = request.GET.get('q', '').strip()
+    categories = Category.objects.all()
+
+    qs = (
+        Product.objects
+        .filter(is_active=True)
+        .select_related('category', 'seller')
+        .prefetch_related('images')
+        .order_by('-created_at')
+    )
+
+    if query:
+        qs = qs.filter(
+            Q(name__icontains=query) | Q(description__icontains=query)
+        )
+
+    total_count = qs.count()
+    paginator = Paginator(qs, 12)
+    page_obj = paginator.get_page(request.GET.get('page'))
+
+    return render(
+        request,
+        'products/product_list.html',
+        {
+            'page_obj': page_obj,
+            'paginator': paginator,
+            'is_paginated': paginator.num_pages > 1,
+            'query': query,
+            'total_count': total_count,
+            'categories': categories,
+        },
+    )
 
 
 @login_required

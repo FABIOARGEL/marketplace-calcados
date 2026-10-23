@@ -25,7 +25,7 @@
     <form
       id="checkout-form"
       method="post"
-      action=""
+      action="{% url 'orders:order-confirm' %}"
       novalidate
     >
       {% csrf_token %}

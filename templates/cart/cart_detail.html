@@ -1,0 +1,107 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Meu Carrinho — SoleStep{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/cart.css' %}">
+<meta name="description" content="Seu carrinho de compras na SoleStep.">
+{% endblock %}
+
+{% block content %}
+<div class="cart-page">
+    <div class="container">
+
+        <header class="cart-header">
+            <h1 class="cart-header__title">Meu Carrinho</h1>
+            {% if items %}
+            <span id="cart-count" class="cart-header__count">
+                {{ items|length }} item{{ items|length|pluralize }}
+            </span>
+            {% endif %}
+        </header>
+
+        {% if items %}
+        <div class="cart-layout">
+
+            <!-- Lista de itens -->
+            <section class="cart-items" aria-label="Itens do carrinho">
+                {% for item in items %}
+                <article class="cart-item" id="cart-item-{{ item.pk }}">
+                    <!-- Imagem -->
+                    <div class="cart-item__image">
+                        {% with img=item.product.images.first %}
+                        {% if img %}
+                            <img src="{{ img.image.url }}" alt="{{ img.alt_text|default:item.product.name }}" loading="lazy">
+                        {% else %}
+                            <div class="cart-item__image--placeholder" aria-hidden="true">&#x1F45F;</div>
+                        {% endif %}
+                        {% endwith %}
+                    </div>
+
+                    <!-- Info do produto -->
+                    <div class="cart-item__info">
+                        <span class="cart-item__brand">{{ item.product.brand }}</span>
+                        <h2 class="cart-item__name">
+                            <a href="{% url 'products:product-detail' item.product.pk %}">
+                                {{ item.product.name }}
+                            </a>
+                        </h2>
+                        <span class="cart-item__size">Tamanho: <strong>{{ item.size }}</strong></span>
+                        <div class="cart-item__price-row">
+                            <span class="cart-item__price">R$&nbsp;{{ item.product.price|floatformat:2 }}</span>
+                            <span class="cart-item__qty">× {{ item.quantity }}</span>
+                            <span class="cart-item__subtotal">= R$&nbsp;{{ item.subtotal|floatformat:2 }}</span>
+                        </div>
+                    </div>
+                </article>
+                {% endfor %}
+            </section>
+
+            <!-- Resumo do pedido -->
+            <aside class="cart-summary" aria-label="Resumo do pedido">
+                <div class="cart-summary__card">
+                    <h2 class="cart-summary__title">Resumo</h2>
+
+                    <div class="cart-summary__rows">
+                        <div class="cart-summary__row">
+                            <span>Subtotal</span>
+                            <span>R$&nbsp;{{ total|floatformat:2 }}</span>
+                        </div>
+                        <div class="cart-summary__row cart-summary__row--shipping">
+                            <span>Frete</span>
+                            <span class="cart-summary__shipping-note">calculado no checkout</span>
+                        </div>
+                    </div>
+
+                    <div class="cart-summary__total">
+                        <span>Total</span>
+                        <span class="cart-summary__total-value">R$&nbsp;{{ total|floatformat:2 }}</span>
+                    </div>
+
+                    <a href="#" id="btn-checkout" class="btn cart-summary__checkout-btn" aria-label="Finalizar compra">
+                        Finalizar compra &rarr;
+                    </a>
+
+                    <a href="{% url 'products:product-list' %}" id="btn-continue-shopping" class="cart-summary__continue">
+                        &larr; Continuar comprando
+                    </a>
+                </div>
+            </aside>
+        </div>
+
+        {% else %}
+        <!-- Carrinho vazio -->
+        <div class="cart-empty" id="cart-empty-state" role="status">
+            <div class="cart-empty__icon" aria-hidden="true">&#x1F6D2;</div>
+            <h2 class="cart-empty__title">Seu carrinho está vazio</h2>
+            <p class="cart-empty__text">Explore nosso catálogo e adicione produtos que você gostar!</p>
+            <a href="{% url 'products:product-list' %}" id="cart-empty-catalog" class="btn">
+                Ver catálogo
+            </a>
+        </div>
+        {% endif %}
+
+    </div>
+</div>
+{% endblock %}

@@ -190,6 +190,8 @@
         transform var(--transition-fast) ease,
         box-shadow var(--transition-fast) ease;
     overflow: hidden;
+    text-decoration: none;
+    color: inherit;
 }
 
 .catalog-card:hover {

@@ -8,6 +8,7 @@ from django.urls import path
 
 from .views import (
     product_create,
+    product_detail,
     product_edit,
     product_list,
     product_list_seller,
@@ -20,6 +21,7 @@ app_name = 'products'
 
 urlpatterns = [
     path('', product_list, name='product-list'),
+    path('<int:pk>/', product_detail, name='product-detail'),
     path('novo/', product_create, name='product-create'),
     path('meus-produtos/', seller_product_list, name='seller-product-list'),
     path('meus-produtos/', product_list_seller, name='product-list-seller'),

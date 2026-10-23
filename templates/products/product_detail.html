@@ -1,0 +1,225 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}{{ produto.name }} — SoleStep{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/product_detail.css' %}">
+<meta name="description" content="{{ produto.description|truncatewords:25 }}">
+{% endblock %}
+
+{% block content %}
+<div class="detail-page">
+    <div class="container">
+
+        <!-- Breadcrumb -->
+        <nav class="detail-breadcrumb" aria-label="Navegação estrutural">
+            <a href="{% url 'products:product-list' %}" class="detail-breadcrumb__link">Catálogo</a>
+            <span class="detail-breadcrumb__sep" aria-hidden="true">/</span>
+            {% if produto.category %}
+            <a href="{% url 'products:product-list' %}?categoria={{ produto.category.slug }}" class="detail-breadcrumb__link">
+                {{ produto.category.name }}
+            </a>
+            <span class="detail-breadcrumb__sep" aria-hidden="true">/</span>
+            {% endif %}
+            <span class="detail-breadcrumb__current" aria-current="page">{{ produto.name }}</span>
+        </nav>
+
+        <!-- Layout principal: galeria + info -->
+        <div class="detail-layout">
+
+            <!-- ============================================
+                 GALERIA DE IMAGENS
+                 ============================================ -->
+            <div class="detail-gallery" id="product-gallery" aria-label="Galeria de imagens do produto">
+                {% with imagens=produto.images.all %}
+                {% if imagens %}
+                    <!-- Imagem principal -->
+                    <div class="detail-gallery__main" id="gallery-main">
+                        {% with img=imagens.0 %}
+                        <img
+                            id="gallery-main-img"
+                            src="{{ img.image.url }}"
+                            alt="{{ img.alt_text|default:produto.name }}"
+                            class="detail-gallery__main-img"
+                        >
+                        {% endwith %}
+                    </div>
+                    <!-- Miniaturas -->
+                    {% if imagens|length > 1 %}
+                    <div class="detail-gallery__thumbs" role="list" aria-label="Miniaturas">
+                        {% for img in imagens %}
+                        <button
+                            type="button"
+                            class="detail-gallery__thumb {% if forloop.first %}detail-gallery__thumb--active{% endif %}"
+                            data-src="{{ img.image.url }}"
+                            data-alt="{{ img.alt_text|default:produto.name }}"
+                            aria-label="Ver imagem {{ forloop.counter }}"
+                            id="thumb-{{ forloop.counter }}"
+                        >
+                            <img src="{{ img.image.url }}" alt="{{ img.alt_text|default:produto.name }}" loading="lazy">
+                        </button>
+                        {% endfor %}
+                    </div>
+                    {% endif %}
+                {% else %}
+                    <div class="detail-gallery__main detail-gallery__placeholder" aria-label="Sem imagem disponível">
+                        <span aria-hidden="true">&#x1F45F;</span>
+                    </div>
+                {% endif %}
+                {% endwith %}
+            </div>
+
+            <!-- ============================================
+                 INFORMAÇÕES + FORMULÁRIO
+                 ============================================ -->
+            <div class="detail-info">
+
+                <!-- Categoria e marca -->
+                <div class="detail-info__meta">
+                    {% if produto.category %}
+                    <span class="detail-info__category">{{ produto.category.name }}</span>
+                    {% endif %}
+                    <span class="detail-info__brand">{{ produto.brand }}</span>
+                </div>
+
+                <!-- Nome -->
+                <h1 class="detail-info__name">{{ produto.name }}</h1>
+
+                <!-- Preço -->
+                <div class="detail-info__price-block">
+                    <span class="detail-info__price">R$&nbsp;{{ produto.price|floatformat:2 }}</span>
+                </div>
+
+                <!-- Descrição -->
+                <div class="detail-info__description">
+                    <p>{{ produto.description }}</p>
+                </div>
+
+                <!-- Vendedor -->
+                <p class="detail-info__seller">
+                    Vendido por <strong>{{ produto.seller.get_full_name|default:produto.seller.email }}</strong>
+                </p>
+
+                <!-- ============================================
+                     FORMULÁRIO ADICIONAR AO CARRINHO
+                     ============================================ -->
+                {% if user.is_authenticated %}
+                    {% if has_stock %}
+                    <form
+                        id="cart-add-form"
+                        class="cart-add-form"
+                        method="post"
+                        action="{% url 'cart:cart-add' %}"
+                        aria-label="Adicionar ao carrinho"
+                        data-product-id="{{ produto.pk }}"
+                        data-product-name="{{ produto.name }}"
+                    >
+                        {% csrf_token %}
+                        <input type="hidden" name="product_id" value="{{ produto.pk }}">
+
+                        <!-- Seleção de tamanho -->
+                        <div class="cart-add-form__field">
+                            <label for="size-select" class="cart-add-form__label">
+                                Tamanho <span class="cart-add-form__required" aria-hidden="true">*</span>
+                            </label>
+                            <select
+                                id="size-select"
+                                name="size"
+                                class="cart-add-form__select form-input"
+                                required
+                                aria-required="true"
+                                aria-describedby="size-hint"
+                            >
+                                <option value="">Selecione um tamanho</option>
+                                {% for item in stock_items %}
+                                <option
+                                    value="{{ item.size }}"
+                                    data-stock="{{ item.quantity }}"
+                                    {% if item.quantity == 0 %}disabled{% endif %}
+                                >
+                                    Tam. {{ item.size }}
+                                    {% if item.quantity == 0 %}— Esgotado{% endif %}
+                                </option>
+                                {% endfor %}
+                            </select>
+                            <span id="size-hint" class="cart-add-form__hint" aria-live="polite"></span>
+                        </div>
+
+                        <!-- Quantidade -->
+                        <div class="cart-add-form__field">
+                            <label for="quantity-input" class="cart-add-form__label">
+                                Quantidade
+                            </label>
+                            <div class="cart-add-form__qty-group">
+                                <button
+                                    type="button"
+                                    id="qty-decrease"
+                                    class="cart-add-form__qty-btn"
+                                    aria-label="Diminuir quantidade"
+                                    data-action="decrease"
+                                >−</button>
+                                <input
+                                    id="quantity-input"
+                                    type="number"
+                                    name="quantity"
+                                    class="cart-add-form__qty-input form-input"
+                                    value="1"
+                                    min="1"
+                                    max="99"
+                                    required
+                                    aria-required="true"
+                                    aria-label="Quantidade"
+                                >
+                                <button
+                                    type="button"
+                                    id="qty-increase"
+                                    class="cart-add-form__qty-btn"
+                                    aria-label="Aumentar quantidade"
+                                    data-action="increase"
+                                >+</button>
+                            </div>
+                            <span id="stock-available" class="cart-add-form__stock-info" aria-live="polite"></span>
+                        </div>
+
+                        <!-- Botão principal -->
+                        <button
+                            type="submit"
+                            id="btn-add-to-cart"
+                            class="cart-add-form__submit btn"
+                            aria-label="Adicionar ao carrinho"
+                        >
+                            &#x1F6D2; Adicionar ao carrinho
+                        </button>
+                    </form>
+
+                    {% else %}
+                    <!-- Esgotado -->
+                    <div class="cart-add-form__esgotado" role="alert" aria-live="assertive">
+                        <span class="cart-add-form__esgotado-icon" aria-hidden="true">&#x26A0;&#xFE0F;</span>
+                        <p>Este produto está <strong>esgotado</strong> no momento.</p>
+                    </div>
+                    {% endif %}
+
+                {% else %}
+                <!-- Não autenticado -->
+                <div class="cart-add-form__login-required" role="note">
+                    <p>
+                        <a href="{% url 'users:user-login' %}?next={{ request.path }}" id="detail-login-link" class="link--accent">
+                            Faça login
+                        </a>
+                        para adicionar este produto ao carrinho.
+                    </p>
+                </div>
+                {% endif %}
+
+            </div><!-- /detail-info -->
+        </div><!-- /detail-layout -->
+
+    </div><!-- /container -->
+</div><!-- /detail-page -->
+{% endblock %}
+
+{% block extra_js %}
+<script src="{% static 'js/cart-add.js' %}"></script>
+{% endblock %}

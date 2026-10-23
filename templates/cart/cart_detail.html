@@ -4,8 +4,8 @@
 {% block title %}Meu Carrinho — SoleStep{% endblock %}
 
 {% block extra_css %}
+<meta name="description" content="Seu carrinho de compras na SoleStep. Revise seus itens, ajuste quantidades e finalize sua compra.">
 <link rel="stylesheet" href="{% static 'css/cart.css' %}">
-<meta name="description" content="Seu carrinho de compras na SoleStep.">
 {% endblock %}
 
 {% block content %}
@@ -24,17 +24,23 @@
         {% if items %}
         <div class="cart-layout">
 
-            <!-- Lista de itens -->
+            <!-- ── Lista de itens ─────────────────────────────── -->
             <section class="cart-items" aria-label="Itens do carrinho">
                 {% for item in items %}
-                <article class="cart-item" id="cart-item-{{ item.pk }}">
+                <article class="cart-item" id="cart-item-{{ item.pk }}" data-item-id="{{ item.pk }}">
+
                     <!-- Imagem -->
                     <div class="cart-item__image">
                         {% with img=item.product.images.first %}
                         {% if img %}
-                            <img src="{{ img.image.url }}" alt="{{ img.alt_text|default:item.product.name }}" loading="lazy">
+                            <a href="{% url 'products:product-detail' item.product.pk %}">
+                                <img src="{{ img.image.url }}"
+                                     alt="{{ img.alt_text|default:item.product.name }}"
+                                     loading="lazy">
+                            </a>
                         {% else %}
-                            <div class="cart-item__image--placeholder" aria-hidden="true">&#x1F45F;</div>
+                            <a href="{% url 'products:product-detail' item.product.pk %}"
+                               class="cart-item__image--placeholder" aria-hidden="true">&#x1F45F;</a>
                         {% endif %}
                         {% endwith %}
                     </div>
@@ -48,25 +54,107 @@
                             </a>
                         </h2>
                         <span class="cart-item__size">Tamanho: <strong>{{ item.size }}</strong></span>
-                        <div class="cart-item__price-row">
-                            <span class="cart-item__price">R$&nbsp;{{ item.product.price|floatformat:2 }}</span>
-                            <span class="cart-item__qty">× {{ item.quantity }}</span>
-                            <span class="cart-item__subtotal">= R$&nbsp;{{ item.subtotal|floatformat:2 }}</span>
+
+                        <!-- Linha preço + controles -->
+                        <div class="cart-item__controls">
+                            <span class="cart-item__unit-price">
+                                R$&nbsp;{{ item.product.price|floatformat:2 }} / un.
+                            </span>
+
+                            <!-- Formulário de quantidade -->
+                            <form
+                                id="form-update-{{ item.pk }}"
+                                class="cart-item__qty-form"
+                                action="{% url 'cart:cart-update' item.pk %}"
+                                method="post"
+                                data-item-pk="{{ item.pk }}"
+                                data-item-name="{{ item.product.name }}"
+                            >
+                                {% csrf_token %}
+                                <div class="cart-item__qty-group" role="group" aria-label="Quantidade de {{ item.product.name }}">
+                                    <button
+                                        type="button"
+                                        id="qty-dec-{{ item.pk }}"
+                                        class="qty-btn qty-btn--dec"
+                                        aria-label="Diminuir quantidade"
+                                        data-action="dec"
+                                    >−</button>
+
+                                    <input
+                                        type="number"
+                                        id="qty-input-{{ item.pk }}"
+                                        name="quantity"
+                                        class="cart-item__qty-input"
+                                        value="{{ item.quantity }}"
+                                        min="1"
+                                        max="99"
+                                        aria-label="Quantidade"
+                                        data-original="{{ item.quantity }}"
+                                    >
+
+                                    <button
+                                        type="button"
+                                        id="qty-inc-{{ item.pk }}"
+                                        class="qty-btn qty-btn--inc"
+                                        aria-label="Aumentar quantidade"
+                                        data-action="inc"
+                                    >+</button>
+                                </div>
+
+                                <!-- Botão confirmar — aparece só quando valor muda -->
+                                <button
+                                    type="submit"
+                                    id="btn-update-{{ item.pk }}"
+                                    class="btn btn--update cart-item__btn-update"
+                                    aria-label="Confirmar nova quantidade"
+                                    hidden
+                                >
+                                    ✓ Atualizar
+                                </button>
+                            </form>
+
+                            <!-- Subtotal do item -->
+                            <span
+                                id="subtotal-{{ item.pk }}"
+                                class="cart-item__subtotal"
+                                data-unit-price="{{ item.product.price }}"
+                            >
+                                R$&nbsp;<span class="subtotal-value">{{ item.subtotal|floatformat:2 }}</span>
+                            </span>
                         </div>
                     </div>
+
+                    <!-- Botão remover -->
+                    <form
+                        id="form-remove-{{ item.pk }}"
+                        class="cart-item__remove-form"
+                        action="{% url 'cart:cart-remove' item.pk %}"
+                        method="post"
+                        data-item-name="{{ item.product.name }}"
+                    >
+                        {% csrf_token %}
+                        <button
+                            type="submit"
+                            id="btn-remove-{{ item.pk }}"
+                            class="cart-item__remove-btn"
+                            aria-label="Remover {{ item.product.name }} do carrinho"
+                        >
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </form>
                 </article>
                 {% endfor %}
             </section>
 
-            <!-- Resumo do pedido -->
+            <!-- ── Resumo do pedido ───────────────────────────── -->
             <aside class="cart-summary" aria-label="Resumo do pedido">
                 <div class="cart-summary__card">
                     <h2 class="cart-summary__title">Resumo</h2>
 
                     <div class="cart-summary__rows">
                         <div class="cart-summary__row">
-                            <span>Subtotal</span>
-                            <span>R$&nbsp;{{ total|floatformat:2 }}</span>
+                            <span>Subtotal ({{ items|length }} item{{ items|length|pluralize }})</span>
+                            <span id="summary-subtotal">R$&nbsp;{{ total|floatformat:2 }}</span>
                         </div>
                         <div class="cart-summary__row cart-summary__row--shipping">
                             <span>Frete</span>
@@ -76,9 +164,12 @@
 
                     <div class="cart-summary__total">
                         <span>Total</span>
-                        <span class="cart-summary__total-value">R$&nbsp;{{ total|floatformat:2 }}</span>
+                        <span class="cart-summary__total-value" id="summary-total">
+                            R$&nbsp;<span id="total-value">{{ total|floatformat:2 }}</span>
+                        </span>
                     </div>
 
+                    <!-- Placeholder Sprint 5 -->
                     <a href="#" id="btn-checkout" class="btn cart-summary__checkout-btn" aria-label="Finalizar compra">
                         Finalizar compra &rarr;
                     </a>
@@ -91,12 +182,12 @@
         </div>
 
         {% else %}
-        <!-- Carrinho vazio -->
+        <!-- ── Carrinho vazio ─────────────────────────────── -->
         <div class="cart-empty" id="cart-empty-state" role="status">
             <div class="cart-empty__icon" aria-hidden="true">&#x1F6D2;</div>
             <h2 class="cart-empty__title">Seu carrinho está vazio</h2>
             <p class="cart-empty__text">Explore nosso catálogo e adicione produtos que você gostar!</p>
-            <a href="{% url 'products:product-list' %}" id="cart-empty-catalog" class="btn">
+            <a href="{% url 'products:product-list' %}" id="cart-empty-catalog" class="btn btn--accent">
                 Ver catálogo
             </a>
         </div>
@@ -104,4 +195,8 @@
 
     </div>
 </div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="{% static 'js/cart.js' %}"></script>
 {% endblock %}

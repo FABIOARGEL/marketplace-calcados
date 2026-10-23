@@ -41,7 +41,18 @@
                     aria-label="Pesquisar"
                 >&#x1F50D;</button>
             </form>
-            <a href="/carrinho/" class="navbar__icon-btn">Carrinho</a>
+            <a href="/carrinho/" class="navbar__icon-btn navbar__cart-btn" id="navbar-cart-btn" aria-label="Carrinho de compras">
+                &#x1F6D2; Carrinho
+                {% if user.is_authenticated %}
+                    {% with count=user.cart.items.count %}
+                    {% if count > 0 %}
+                    <span class="navbar__cart-badge" id="cart-badge" aria-label="{{ count }} item{{ count|pluralize }} no carrinho">
+                        {{ count }}
+                    </span>
+                    {% endif %}
+                    {% endwith %}
+                {% endif %}
+            </a>
 
             {% if user.is_authenticated %}
                 {% if user.is_seller %}

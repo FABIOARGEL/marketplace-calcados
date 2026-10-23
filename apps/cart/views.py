@@ -4,6 +4,8 @@ Views do app cart.
 Gerencia as operações do carrinho de compras:
 - Adicionar item (criando ou atualizando quantidade)
 - Visualizar o carrinho
+- Atualizar quantidade de um item
+- Remover item do carrinho
 """
 
 from django.contrib import messages
@@ -124,3 +126,74 @@ def cart_detail(request):
             'total': cart.total,
         },
     )
+
+
+@login_required
+@require_POST
+def cart_update(request, item_pk):
+    """Atualiza a quantidade de um CartItem.
+
+    Valida estoque antes de persistir. Caso a quantidade seja 0 ou menor,
+    remove o item automaticamente.
+    """
+    cart = get_object_or_404(Cart, user=request.user)
+    item = get_object_or_404(CartItem, pk=item_pk, cart=cart)
+
+    try:
+        nova_quantidade = int(request.POST.get('quantity', 1))
+    except (ValueError, TypeError):
+        messages.error(request, 'Quantidade inválida.')
+        return redirect('cart:cart-detail')
+
+    if nova_quantidade < 1:
+        item.delete()
+        messages.info(
+            request,
+            f'"{item.product.name}" (Tam. {item.size}) removido do carrinho.',
+        )
+        return redirect('cart:cart-detail')
+
+    # Valida estoque
+    try:
+        estoque = Stock.objects.get(product=item.product, size=item.size)
+    except Stock.DoesNotExist:
+        messages.error(
+            request,
+            f'Tamanho {item.size} não disponível para "{item.product.name}".',
+        )
+        return redirect('cart:cart-detail')
+
+    if estoque.quantity < nova_quantidade:
+        messages.error(
+            request,
+            f'Estoque insuficiente. Disponível: {estoque.quantity} unidade(s) '
+            f'no tamanho {item.size} de "{item.product.name}".',
+        )
+        return redirect('cart:cart-detail')
+
+    item.quantity = nova_quantidade
+    item.save(update_fields=['quantity'])
+    messages.success(
+        request,
+        f'Quantidade de "{item.product.name}" (Tam. {item.size}) '
+        f'atualizada para {nova_quantidade}.',
+    )
+    return redirect('cart:cart-detail')
+
+
+@login_required
+@require_POST
+def cart_remove(request, item_pk):
+    """Remove um CartItem do carrinho do usuário autenticado."""
+    cart = get_object_or_404(Cart, user=request.user)
+    item = get_object_or_404(CartItem, pk=item_pk, cart=cart)
+
+    nome = item.product.name
+    tamanho = item.size
+    item.delete()
+
+    messages.success(
+        request,
+        f'"{nome}" (Tam. {tamanho}) removido do carrinho.',
+    )
+    return redirect('cart:cart-detail')

@@ -1,0 +1,552 @@
+/* ==========================================================================
+   Order Success — Confirmação do Pedido (Neo-Brutalism + Streetwear)
+   ========================================================================== */
+
+.success-page {
+    padding-block: var(--space-8);
+}
+
+/* ── Cabeçalho de Confirmação ────────────────────────────────────────────── */
+.success-header {
+    display: flex;
+    align-items: center;
+    gap: var(--space-5);
+    margin-bottom: var(--space-6);
+    padding: var(--space-6);
+    background-color: var(--color-surface);
+    border: var(--border-width) solid var(--border-color);
+    box-shadow: var(--shadow-lg);
+}
+
+.success-header__badge-wrap {
+    flex-shrink: 0;
+}
+
+.success-header__icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 64px;
+    height: 64px;
+    background-color: var(--color-success);
+    color: var(--color-surface);
+    font-size: var(--text-2xl);
+    font-weight: var(--font-weight-extrabold);
+    border: var(--border-width) solid var(--border-color);
+    box-shadow: var(--shadow-md);
+}
+
+.success-header__titles {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-1);
+}
+
+.success-header__kicker {
+    font-family: var(--font-heading);
+    font-size: var(--text-xs);
+    font-weight: var(--font-weight-bold);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--color-accent);
+}
+
+.success-header__title {
+    margin: 0;
+    font-family: var(--font-heading);
+    font-size: clamp(var(--text-xl), 3vw, var(--text-3xl));
+    font-weight: var(--font-weight-extrabold);
+    text-transform: uppercase;
+    line-height: var(--line-height-tight);
+}
+
+.success-header__meta {
+    margin: 0;
+    font-size: var(--text-sm);
+    color: var(--color-muted);
+}
+
+.success-header__order-id {
+    color: var(--color-primary);
+    font-family: var(--font-heading);
+    font-weight: var(--font-weight-bold);
+}
+
+/* ── Banner de Simulação Acadêmica ───────────────────────────────────────── */
+.sim-banner {
+    display: flex;
+    align-items: flex-start;
+    gap: var(--space-3);
+    padding: var(--space-4) var(--space-5);
+    margin-bottom: var(--space-8);
+    background-color: #FFF8E6;
+    border: var(--border-width) solid var(--border-color);
+    box-shadow: var(--shadow-md);
+}
+
+.sim-banner__icon {
+    font-size: var(--text-xl);
+    line-height: 1;
+    flex-shrink: 0;
+}
+
+.sim-banner__content {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-1);
+}
+
+.sim-banner__title {
+    font-family: var(--font-heading);
+    font-size: var(--text-sm);
+    font-weight: var(--font-weight-bold);
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+    color: #8A5200;
+}
+
+.sim-banner__desc {
+    margin: 0;
+    font-size: var(--text-sm);
+    color: var(--color-primary);
+    line-height: var(--line-height-normal);
+}
+
+/* ── Layout Grid ─────────────────────────────────────────────────────────── */
+.success-layout {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: var(--space-6);
+    align-items: start;
+}
+
+@media (min-width: 1024px) {
+    .success-layout {
+        grid-template-columns: 1fr 380px;
+    }
+}
+
+.success-main {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-6);
+}
+
+/* ── Cards Neo-Brutalist ─────────────────────────────────────────────────── */
+.success-card {
+    background-color: var(--color-surface);
+    border: var(--border-width) solid var(--border-color);
+    box-shadow: var(--shadow-md);
+}
+
+.success-card__header {
+    padding: var(--space-4) var(--space-5);
+    border-bottom: var(--border-width) solid var(--border-color);
+    background-color: var(--color-surface);
+}
+
+.success-card__title {
+    margin: 0;
+    font-family: var(--font-heading);
+    font-size: var(--text-base);
+    font-weight: var(--font-weight-extrabold);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.success-card__count {
+    font-size: var(--text-sm);
+    font-weight: var(--font-weight-medium);
+    text-transform: none;
+    color: var(--color-muted);
+}
+
+.success-card__body {
+    padding: var(--space-5);
+}
+
+/* ── Lista de Itens do Pedido ────────────────────────────────────────────── */
+.success-items {
+    display: flex;
+    flex-direction: column;
+}
+
+.success-item {
+    display: grid;
+    grid-template-columns: 80px 1fr auto;
+    gap: var(--space-4);
+    align-items: center;
+    padding: var(--space-4) var(--space-5);
+    border-bottom: var(--border-width) solid var(--color-bg);
+}
+
+.success-item:last-child {
+    border-bottom: none;
+}
+
+.success-item__image {
+    width: 80px;
+    height: 80px;
+    border: var(--border-width) solid var(--border-color);
+    background-color: var(--color-bg);
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.success-item__image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.success-item__placeholder {
+    font-size: var(--text-2xl);
+}
+
+.success-item__details {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-1);
+    min-width: 0;
+}
+
+.success-item__name {
+    margin: 0;
+    font-family: var(--font-heading);
+    font-size: var(--text-sm);
+    font-weight: var(--font-weight-bold);
+    line-height: var(--line-height-snug);
+}
+
+.success-item__name a {
+    color: var(--color-primary);
+    text-decoration: none;
+}
+
+.success-item__name a:hover {
+    color: var(--color-accent);
+}
+
+.success-item__meta {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+    font-size: var(--text-xs);
+    color: var(--color-muted);
+}
+
+.success-item__badge {
+    display: inline-block;
+    padding: 1px var(--space-2);
+    font-family: var(--font-heading);
+    font-size: var(--text-xs);
+    font-weight: var(--font-weight-bold);
+    background-color: var(--color-bg);
+    border: var(--border-width) solid var(--border-color);
+    border-radius: 2px;
+}
+
+.success-item__price-info {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+    flex-wrap: wrap;
+    margin-top: var(--space-1);
+}
+
+.success-item__unit-price {
+    font-size: var(--text-xs);
+    font-weight: var(--font-weight-medium);
+    color: var(--color-primary);
+}
+
+.success-item__snapshot-pill {
+    display: inline-flex;
+    align-items: center;
+    padding: 1px var(--space-2);
+    font-size: 11px;
+    font-weight: var(--font-weight-bold);
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    background-color: #EBF3FF;
+    color: #1A5FA8;
+    border: 1px solid #1A5FA8;
+    border-radius: 2px;
+}
+
+.success-item__subtotal {
+    text-align: right;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+}
+
+.success-item__subtotal-label {
+    font-size: 11px;
+    text-transform: uppercase;
+    color: var(--color-muted);
+}
+
+.success-item__subtotal-value {
+    font-family: var(--font-heading);
+    font-size: var(--text-base);
+    font-weight: var(--font-weight-bold);
+    color: var(--color-primary);
+}
+
+/* ── Endereço de Entrega ─────────────────────────────────────────────────── */
+.success-address {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-2);
+}
+
+.success-address__top {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+}
+
+.success-address__icon {
+    font-size: var(--text-base);
+}
+
+.success-address__nickname {
+    font-family: var(--font-heading);
+    font-size: var(--text-sm);
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+}
+
+.success-address__recipient {
+    font-size: var(--text-sm);
+    color: var(--color-primary);
+}
+
+.success-address__text {
+    margin: 0;
+    font-size: var(--text-sm);
+    color: var(--color-muted);
+    line-height: var(--line-height-normal);
+}
+
+.success-address__ref {
+    font-size: var(--text-xs);
+    color: var(--color-muted);
+    padding-top: var(--space-1);
+    border-top: 1px dashed var(--color-muted);
+}
+
+.success-empty-note {
+    margin: 0;
+    font-size: var(--text-sm);
+    color: var(--color-muted);
+    font-style: italic;
+}
+
+/* ── Sidebar Resumo ──────────────────────────────────────────────────────── */
+.success-card--summary {
+    position: sticky;
+    top: var(--space-6);
+}
+
+.success-status-block {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-3);
+    margin-bottom: var(--space-2);
+}
+
+.success-status-block__label {
+    font-size: var(--text-sm);
+    font-weight: var(--font-weight-medium);
+}
+
+.status-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-1);
+    padding: var(--space-1) var(--space-3);
+    font-family: var(--font-heading);
+    font-size: var(--text-xs);
+    font-weight: var(--font-weight-bold);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    border: var(--border-width) solid var(--border-color);
+    border-radius: 2px;
+}
+
+.status-pill--confirmed {
+    background-color: var(--color-surface);
+    color: var(--color-primary);
+}
+
+.status-pill--approved {
+    background-color: #E8F5E9;
+    color: var(--color-success);
+    border-color: var(--color-success);
+}
+
+.success-divider {
+    border: none;
+    border-top: var(--border-width) solid var(--border-color);
+    margin-block: var(--space-4);
+}
+
+.success-cost-lines {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-2);
+}
+
+.success-cost-line {
+    display: flex;
+    justify-content: space-between;
+    font-size: var(--text-sm);
+    color: var(--color-muted);
+}
+
+.success-cost-line span:last-child {
+    font-family: var(--font-heading);
+    font-weight: var(--font-weight-medium);
+    color: var(--color-primary);
+}
+
+.success-total-block {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+}
+
+.success-total-block__label {
+    font-family: var(--font-heading);
+    font-size: var(--text-base);
+    font-weight: var(--font-weight-bold);
+    text-transform: uppercase;
+}
+
+.success-total-block__value {
+    font-family: var(--font-heading);
+    font-size: var(--text-2xl);
+    font-weight: var(--font-weight-extrabold);
+    color: var(--color-primary);
+}
+
+/* ── Bloco de Pagamento ──────────────────────────────────────────────────── */
+.success-payment-block {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-2);
+    padding: var(--space-3);
+    background-color: var(--color-bg);
+    border: var(--border-width) solid var(--border-color);
+}
+
+.success-payment-block__heading {
+    margin: 0;
+    font-family: var(--font-heading);
+    font-size: var(--text-xs);
+    font-weight: var(--font-weight-bold);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--color-muted);
+}
+
+.success-payment-method {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+    font-size: var(--text-sm);
+    font-weight: var(--font-weight-bold);
+}
+
+.success-payment-method__icon {
+    font-size: var(--text-base);
+}
+
+.success-payment-tag {
+    font-size: 11px;
+    font-weight: var(--font-weight-bold);
+    color: var(--color-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+}
+
+/* ── Botões de Ação ──────────────────────────────────────────────────────── */
+.success-actions {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-3);
+    margin-top: var(--space-5);
+}
+
+.success-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    min-height: 48px;
+    padding: var(--space-3) var(--space-4);
+    font-family: var(--font-heading);
+    font-size: var(--text-sm);
+    font-weight: var(--font-weight-bold);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    text-decoration: none;
+    border: var(--border-width) solid var(--border-color);
+    cursor: pointer;
+    transition: transform var(--transition-fast), box-shadow var(--transition-fast);
+}
+
+.success-btn--primary {
+    background-color: var(--color-primary);
+    color: var(--color-surface);
+    box-shadow: var(--shadow-md);
+}
+
+.success-btn--primary:hover {
+    transform: translate(-2px, -2px);
+    box-shadow: var(--shadow-lg);
+    color: var(--color-surface);
+}
+
+.success-btn--secondary {
+    background-color: var(--color-surface);
+    color: var(--color-primary);
+    box-shadow: var(--shadow-md);
+}
+
+.success-btn--secondary:hover {
+    transform: translate(-2px, -2px);
+    box-shadow: var(--shadow-lg);
+    color: var(--color-primary);
+}
+
+/* ── Responsividade ──────────────────────────────────────────────────────── */
+@media (max-width: 640px) {
+    .success-header {
+        flex-direction: column;
+        align-items: flex-start;
+        padding: var(--space-4);
+    }
+
+    .success-item {
+        grid-template-columns: 64px 1fr;
+        grid-template-rows: auto auto;
+    }
+
+    .success-item__subtotal {
+        grid-column: 1 / -1;
+        text-align: left;
+        align-items: flex-start;
+        padding-top: var(--space-2);
+        border-top: 1px dashed var(--color-bg);
+        margin-top: var(--space-1);
+    }
+}

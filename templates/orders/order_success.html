@@ -1,0 +1,254 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Pedido #{{ order.pk }} Confirmado — SoleStep{% endblock %}
+
+{% block extra_css %}
+<meta name="description" content="Seu pedido #{{ order.pk }} foi confirmado na SoleStep. Confira os detalhes.">
+<link rel="stylesheet" href="{% static 'css/order_success.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="success-page">
+  <div class="container">
+
+    <!-- ── Cabeçalho de Confirmação ─────────────────────────────────── -->
+    <header class="success-header">
+      <div class="success-header__badge-wrap">
+        <div class="success-header__icon" aria-hidden="true">✓</div>
+      </div>
+      <div class="success-header__titles">
+        <span class="success-header__kicker">Etapa 2 de 2 · Finalizado</span>
+        <h1 class="success-header__title">Pedido Confirmado!</h1>
+        <p class="success-header__meta">
+          Pedido <strong class="success-header__order-id">#{{ order.pk }}</strong> ·
+          Realizado em {{ order.created_at|date:"d/m/Y \à\s H:i" }}
+        </p>
+      </div>
+    </header>
+
+    <!-- ── Banner de Simulação Acadêmica ───────────────────────────── -->
+    <div class="sim-banner" role="note" id="sim-payment-banner">
+      <span class="sim-banner__icon" aria-hidden="true">⚠️</span>
+      <div class="sim-banner__content">
+        <strong class="sim-banner__title">Pagamento aprovado (simulação acadêmica)</strong>
+        <p class="sim-banner__desc">
+          Nenhuma cobrança financeira real foi realizada. Este sistema é um projeto acadêmico de demonstração (MVT Django puro).
+        </p>
+      </div>
+    </div>
+
+    <!-- ── Layout em 2 Colunas ────────────────────────────────────── -->
+    <div class="success-layout">
+
+      <!-- ══════════════════════════════════════════════════════════════
+           COLUNA ESQUERDA — Itens e Entrega
+      ══════════════════════════════════════════════════════════════ -->
+      <div class="success-main">
+
+        <!-- ── Itens do Pedido ──────────────────────────────────────── -->
+        <section class="success-card" aria-labelledby="section-items-title">
+          <div class="success-card__header">
+            <h2 class="success-card__title" id="section-items-title">
+              Itens Comprados
+              <span class="success-card__count">({{ order.items.count }} item{{ order.items.count|pluralize }})</span>
+            </h2>
+          </div>
+
+          <div class="success-items">
+            {% for item in order.items.all %}
+            <article class="success-item" id="order-item-{{ item.pk }}">
+
+              <!-- Imagem do Produto -->
+              <div class="success-item__image">
+                {% with img=item.product.images.first %}
+                {% if img %}
+                  <img src="{{ img.image.url }}"
+                       alt="{{ img.alt_text|default:item.product.name }}"
+                       loading="lazy">
+                {% else %}
+                  <span class="success-item__placeholder" aria-hidden="true">👟</span>
+                {% endif %}
+                {% endwith %}
+              </div>
+
+              <!-- Informações -->
+              <div class="success-item__details">
+                <h3 class="success-item__name">
+                  {% if item.product %}
+                    <a href="{% url 'products:product-detail' item.product.pk %}">
+                      {{ item.product.name }}
+                    </a>
+                  {% else %}
+                    <em>[Produto indisponível]</em>
+                  {% endif %}
+                </h3>
+
+                <div class="success-item__meta">
+                  <span class="success-item__badge">Tamanho {{ item.size }}</span>
+                  <span class="success-item__qty">Qtd: <strong>{{ item.quantity }}</strong></span>
+                </div>
+
+                <div class="success-item__price-info">
+                  <span class="success-item__unit-price">
+                    R$&nbsp;{{ item.unit_price|floatformat:2 }} un.
+                  </span>
+                  <span class="success-item__snapshot-pill" title="Preço registrado de forma imutável no momento da confirmação">
+                    Preço snapshot
+                  </span>
+                </div>
+              </div>
+
+              <!-- Subtotal do item -->
+              <div class="success-item__subtotal">
+                <span class="success-item__subtotal-label">Total do item</span>
+                <span class="success-item__subtotal-value">
+                  R$&nbsp;{{ item.subtotal|floatformat:2 }}
+                </span>
+              </div>
+
+            </article>
+            {% endfor %}
+          </div>
+        </section>
+
+        <!-- ── Endereço de Entrega ───────────────────────────────────── -->
+        <section class="success-card" aria-labelledby="section-address-title">
+          <div class="success-card__header">
+            <h2 class="success-card__title" id="section-address-title">
+              Endereço de Entrega
+            </h2>
+          </div>
+
+          <div class="success-card__body">
+            {% if order.shipping_address %}
+            <div class="success-address" id="order-shipping-address">
+              <div class="success-address__top">
+                <span class="success-address__icon" aria-hidden="true">📍</span>
+                <strong class="success-address__nickname">
+                  {{ order.shipping_address.nickname|default:"Endereço selecionado" }}
+                </strong>
+              </div>
+              <div class="success-address__recipient">
+                Destinatário: <strong>{{ order.shipping_address.recipient_name }}</strong>
+              </div>
+              <p class="success-address__text">
+                {{ order.shipping_address.street }}, {{ order.shipping_address.number }}
+                {% if order.shipping_address.complement %}
+                  ({{ order.shipping_address.complement }})
+                {% endif %}<br>
+                {{ order.shipping_address.neighborhood }} — {{ order.shipping_address.city }}/{{ order.shipping_address.state }}<br>
+                CEP: {{ order.shipping_address.zip_code }}
+              </p>
+              {% if order.shipping_address.reference %}
+              <div class="success-address__ref">
+                Ponto de referência: <em>{{ order.shipping_address.reference }}</em>
+              </div>
+              {% endif %}
+            </div>
+            {% else %}
+            <p class="success-empty-note">Endereço de entrega não disponível.</p>
+            {% endif %}
+          </div>
+        </section>
+
+      </div>{# /.success-main #}
+
+      <!-- ══════════════════════════════════════════════════════════════
+           COLUNA DIREITA — Resumo Financeiro & Pagamento
+      ══════════════════════════════════════════════════════════════ -->
+      <aside class="success-sidebar" aria-label="Resumo do pedido">
+        <div class="success-card success-card--summary">
+
+          <div class="success-card__header">
+            <h2 class="success-card__title">Resumo do Pedido</h2>
+          </div>
+
+          <div class="success-card__body">
+
+            <!-- Status do Pedido -->
+            <div class="success-status-block">
+              <span class="success-status-block__label">Status do Pedido:</span>
+              <span class="status-pill status-pill--confirmed" id="order-status-badge">
+                {{ order.get_status_display }}
+              </span>
+            </div>
+
+            <hr class="success-divider">
+
+            <!-- Linhas de valores -->
+            <div class="success-cost-lines">
+              <div class="success-cost-line">
+                <span>Subtotal dos produtos</span>
+                <span id="order-subtotal">R$&nbsp;{{ order.subtotal|floatformat:2 }}</span>
+              </div>
+
+              <div class="success-cost-line">
+                <span>Frete calculado</span>
+                <span id="order-shipping">R$&nbsp;{{ order.shipping_cost|floatformat:2 }}</span>
+              </div>
+            </div>
+
+            <hr class="success-divider">
+
+            <!-- Total -->
+            <div class="success-total-block">
+              <span class="success-total-block__label">Total</span>
+              <span class="success-total-block__value" id="order-total">
+                R$&nbsp;{{ order.total|floatformat:2 }}
+              </span>
+            </div>
+
+            <hr class="success-divider">
+
+            <!-- Pagamento Simulado -->
+            <div class="success-payment-block" id="order-payment-info">
+              <h3 class="success-payment-block__heading">Informações de Pagamento</h3>
+
+              <div class="success-payment-method">
+                <span class="success-payment-method__icon" aria-hidden="true">
+                  {% if order.payment_method == 'CREDIT_CARD_SIM' %}💳
+                  {% elif order.payment_method == 'DEBIT_CARD_SIM' %}💳
+                  {% elif order.payment_method == 'PIX_SIM' %}⚡
+                  {% else %}🧾
+                  {% endif %}
+                </span>
+                <span class="success-payment-method__name">
+                  {{ order.get_payment_method_display }}
+                </span>
+              </div>
+
+              <div class="success-payment-status" id="order-payment-status">
+                <span class="status-pill status-pill--approved">
+                  ● {{ order.get_payment_status_display }}
+                </span>
+              </div>
+
+              <div class="success-payment-tag">
+                Pagamento aprovado (simulação acadêmica)
+              </div>
+            </div>
+
+            <!-- Botões de ação -->
+            <div class="success-actions">
+              <a href="{% url 'users:user-profile' %}"
+                 id="success-view-orders"
+                 class="success-btn success-btn--primary">
+                Ver meus pedidos →
+              </a>
+              <a href="{% url 'products:product-list' %}"
+                 id="success-continue-shopping"
+                 class="success-btn success-btn--secondary">
+                ← Continuar comprando
+              </a>
+            </div>
+
+          </div>{# /.success-card__body #}
+        </div>
+      </aside>
+
+    </div>{# /.success-layout #}
+
+  </div>{# /.container #}
+</div>
+{% endblock %}

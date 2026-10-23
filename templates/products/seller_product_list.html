@@ -62,7 +62,7 @@
             <td class="products-table__cell products-table__cell--product">
               <div class="product-thumb">
                 {% with produto.images.first as img %}
-                  {% if img %}
+                  {% if img and img.image %}
                     <div class="product-thumb__image">
                       <img src="{{ img.image.url }}"
                            alt="{{ img.alt_text|default:produto.name }}"

@@ -25,7 +25,7 @@
           <!-- Imagem principal -->
           <div class="product-card__image">
             {% with produto.images.first as img %}
-              {% if img %}
+              {% if img and img.image %}
                 <img src="{{ img.image.url }}" alt="{{ img.alt_text|default:produto.name }}">
               {% else %}
                 <div class="product-card__image--placeholder" aria-hidden="true">👟</div>
@@ -41,6 +41,7 @@
           </div>
 
           <!-- Meta: status + estoque -->
+
           <div class="product-card__meta">
             {% if produto.is_active %}
               <span class="badge badge--success">Ativo</span>
@@ -51,6 +52,30 @@
               {{ produto.stock_items.count }} tamanho{{ produto.stock_items.count|pluralize }}
             </span>
           </div>
+
+          <div class="product-card__actions">
+            <a
+              href="{% url 'products:product-edit' produto.pk %}"
+              class="btn btn--secondary"
+            >
+              Editar
+            </a>
+
+            <form
+              method="post"
+              action="{% url 'products:product-toggle-active' produto.pk %}"
+            >
+              {% csrf_token %}
+              <button type="submit" class="btn btn--secondary">
+                {% if produto.is_active %}
+                  Desativar
+                {% else %}
+                  Ativar
+                {% endif %}
+              </button>
+            </form>
+          </div>
+
 
         </article>
       {% endfor %}

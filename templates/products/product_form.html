@@ -1,7 +1,7 @@
 {% extends 'base.html' %}
 {% load static %}
 
-{% block title %}Cadastrar Produto — SoleStep{% endblock %}
+{% block title %}{% if modo_edicao %}Editar Produto{% else %}Cadastrar Produto{% endif %} — SoleStep{% endblock %}
 
 {% block extra_css %}
 <link rel="stylesheet" href="{% static 'css/products.css' %}">
@@ -12,9 +12,15 @@
 
   <!-- Cabeçalho da página -->
   <header class="product-form-page__header">
-    <h1 class="product-form-page__title">Cadastrar novo calçado</h1>
+    <h1 class="product-form-page__title">
+  {% if modo_edicao %}Editar produto{% else %}Cadastrar novo calçado{% endif %}
+    </h1>
     <p class="product-form-page__subtitle">
-      Preencha os dados abaixo para adicionar um produto ao seu catálogo.
+      {% if modo_edicao %}
+        Atualize as informações, imagens e estoque do seu produto.
+      {% else %}
+        Preencha os dados abaixo para adicionar um produto ao seu catálogo.
+      {% endif %}
     </p>
   </header>
 
@@ -346,7 +352,7 @@
             Cancelar
           </a>
           <button type="submit" class="btn btn--accent" id="btn-submit-product">
-            Salvar produto
+            {% if modo_edicao %}Salvar alterações{% else %}Cadastrar produto{% endif %}
           </button>
         </div>
 

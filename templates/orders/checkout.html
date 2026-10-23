@@ -1,0 +1,310 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Finalizar Compra — SoleStep{% endblock %}
+
+{% block extra_css %}
+<meta name="description" content="Conclua sua compra na SoleStep: escolha o endereço, confira o frete e selecione a forma de pagamento.">
+<link rel="stylesheet" href="{% static 'css/checkout.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="checkout-page">
+  <div class="container">
+
+    <!-- ── Cabeçalho ────────────────────────────────────────────────── -->
+    <header class="checkout-header">
+      <h1 class="checkout-header__title">Finalizar Compra</h1>
+      <div class="checkout-header__steps" aria-label="Etapas do checkout">
+        <span class="checkout-step checkout-step--active">1 · Resumo</span>
+        <span class="checkout-step checkout-step--inactive">2 · Confirmação</span>
+      </div>
+    </header>
+
+    <!-- ── Form principal ────────────────────────────────────────────── -->
+    <form
+      id="checkout-form"
+      method="post"
+      action=""
+      novalidate
+    >
+      {% csrf_token %}
+
+      <div class="checkout-layout">
+
+        <!-- ══════════════════════════════════════════════════════════════
+             COLUNA ESQUERDA
+        ══════════════════════════════════════════════════════════════ -->
+        <div class="checkout-main">
+
+          <!-- ── 1. Itens do Carrinho ─────────────────────────────────── -->
+          <section class="checkout-section" aria-labelledby="section-items-title">
+            <div class="checkout-section__header">
+              <h2 class="checkout-section__title" id="section-items-title">
+                Itens do Carrinho
+                <span style="font-size:var(--text-sm); font-weight:var(--font-weight-medium); text-transform:none;">
+                  ({{ items|length }} item{{ items|length|pluralize }})
+                </span>
+              </h2>
+              <a href="{% url 'cart:cart-detail' %}" class="address-add-link" id="checkout-edit-cart">
+                ✏ Editar carrinho
+              </a>
+            </div>
+
+            <div class="checkout-section__body">
+              <div class="checkout-items">
+                {% for item in items %}
+                <article class="checkout-item" id="checkout-item-{{ item.pk }}">
+
+                  <!-- Imagem -->
+                  <div class="checkout-item__image">
+                    {% with img=item.product.images.first %}
+                    {% if img %}
+                      <img src="{{ img.image.url }}"
+                           alt="{{ img.alt_text|default:item.product.name }}"
+                           loading="lazy">
+                    {% else %}
+                      <span class="checkout-item__image--placeholder" aria-hidden="true">👟</span>
+                    {% endif %}
+                    {% endwith %}
+                  </div>
+
+                  <!-- Info -->
+                  <div class="checkout-item__info">
+                    <h3 class="checkout-item__name">
+                      <a href="{% url 'products:product-detail' item.product.pk %}">
+                        {{ item.product.name }}
+                      </a>
+                    </h3>
+                    <span class="checkout-item__meta">
+                      Tam. <strong>{{ item.size }}</strong> · {{ item.quantity }} un.
+                      · R$&nbsp;{{ item.product.price|floatformat:2 }} / un.
+                    </span>
+                    <span class="checkout-item__seller">
+                      Vendido por: {{ item.product.seller.seller_profile.store_name|default:item.product.seller.email }}
+                    </span>
+                  </div>
+
+                  <!-- Subtotal do item -->
+                  <span class="checkout-item__subtotal">
+                    R$&nbsp;{{ item.subtotal|floatformat:2 }}
+                  </span>
+
+                </article>
+                {% endfor %}
+              </div>
+            </div>
+          </section>
+
+          <!-- ── 2. Endereço de Entrega ────────────────────────────────── -->
+          <section class="checkout-section" aria-labelledby="section-address-title">
+            <div class="checkout-section__header">
+              <h2 class="checkout-section__title" id="section-address-title">
+                Endereço de Entrega
+              </h2>
+              <a href="{% url 'users:address-create' %}"
+                 id="checkout-add-address"
+                 class="address-add-link">
+                + Novo endereço
+              </a>
+            </div>
+
+            <div class="checkout-section__body">
+              {% if addresses %}
+              <div class="address-list" id="address-list" role="radiogroup" aria-labelledby="section-address-title">
+                {% for address in addresses %}
+                <label class="address-option{% if address.pk == preselected_id %} is-selected{% endif %}"
+                       id="address-label-{{ address.pk }}"
+                       for="address-radio-{{ address.pk }}">
+                  <input
+                    type="radio"
+                    id="address-radio-{{ address.pk }}"
+                    name="address_id"
+                    value="{{ address.pk }}"
+                    {% if address.pk == preselected_id %}checked{% endif %}
+                    aria-describedby="address-full-{{ address.pk }}"
+                  >
+                  <div class="address-option__body">
+                    <span class="address-option__nickname">
+                      {{ address.nickname|default:"Endereço" }}
+                      {% if address.is_default %}
+                      <span class="address-option__badge">Padrão</span>
+                      {% endif %}
+                    </span>
+                    <span class="address-option__recipient">
+                      {{ address.recipient_name }}
+                    </span>
+                    <span class="address-option__full" id="address-full-{{ address.pk }}">
+                      {{ address.full_address }}
+                    </span>
+                  </div>
+                  <a href="{% url 'users:address-edit' address.pk %}"
+                     class="address-option__edit"
+                     id="edit-address-{{ address.pk }}"
+                     onclick="event.stopPropagation()">
+                    Editar
+                  </a>
+                </label>
+                {% endfor %}
+              </div>
+
+              <div id="address-validation-error"
+                   class="address-validation-error"
+                   role="alert"
+                   aria-live="polite">
+                ⚠ Selecione um endereço de entrega antes de continuar.
+              </div>
+
+              {% else %}
+              <!-- Sem endereços cadastrados -->
+              <div class="address-empty" id="address-empty">
+                <p class="address-empty__text">
+                  Você ainda não tem endereços cadastrados.<br>
+                  Adicione um endereço para continuar com o checkout.
+                </p>
+                <a href="{% url 'users:address-create' %}"
+                   id="checkout-add-first-address"
+                   class="address-add-link">
+                  + Adicionar endereço
+                </a>
+              </div>
+              {% endif %}
+            </div>
+          </section>
+
+          <!-- ── 3. Método de Pagamento ─────────────────────────────────── -->
+          <section class="checkout-section" aria-labelledby="section-payment-title">
+            <div class="checkout-section__header">
+              <h2 class="checkout-section__title" id="section-payment-title">
+                Forma de Pagamento
+              </h2>
+            </div>
+
+            <div class="checkout-section__body">
+
+              <!-- Aviso de simulação — visível e explícito -->
+              <div class="sim-warning" role="note" id="payment-sim-warning">
+                <span class="sim-warning__icon" aria-hidden="true">⚠️</span>
+                <div class="sim-warning__text">
+                  <strong>PAGAMENTO SIMULADO</strong>
+                  Nenhuma cobrança real será realizada. Este sistema é uma demonstração
+                  acadêmica. Nenhum dado financeiro é processado, coletado ou transmitido.
+                </div>
+              </div>
+
+              <div class="payment-list" id="payment-list" role="radiogroup"
+                   aria-labelledby="section-payment-title"
+                   style="margin-top: var(--space-4);">
+
+                {% for value, label in payment_methods %}
+                {% with icon=value|slice:":3" %}
+                <label class="payment-option"
+                       id="payment-label-{{ forloop.counter }}"
+                       for="payment-radio-{{ forloop.counter }}">
+                  <input
+                    type="radio"
+                    id="payment-radio-{{ forloop.counter }}"
+                    name="payment_method"
+                    value="{{ value }}"
+                    aria-label="{{ label }}"
+                  >
+                  <span class="payment-option__icon" aria-hidden="true">
+                    {% if value == "CREDIT_CARD_SIM" %}💳
+                    {% elif value == "DEBIT_CARD_SIM" %}💳
+                    {% elif value == "PIX_SIM" %}⚡
+                    {% else %}🧾
+                    {% endif %}
+                  </span>
+                  <span class="payment-option__label">{{ label }}</span>
+                  <span class="payment-option__sim-tag">Simulado</span>
+                </label>
+                {% endwith %}
+                {% endfor %}
+
+              </div>
+
+              <div id="payment-validation-error"
+                   class="payment-validation-error"
+                   role="alert"
+                   aria-live="polite">
+                ⚠ Selecione uma forma de pagamento antes de continuar.
+              </div>
+
+            </div>
+          </section>
+
+        </div>{# /.checkout-main #}
+
+        <!-- ══════════════════════════════════════════════════════════════
+             COLUNA DIREITA — Resumo do Pedido
+        ══════════════════════════════════════════════════════════════ -->
+        <aside class="checkout-summary" aria-label="Resumo do pedido">
+          <div class="checkout-summary__card">
+            <h2 class="checkout-summary__title">Resumo do Pedido</h2>
+
+            <div class="checkout-summary__rows">
+
+              <!-- Subtotal -->
+              <div class="checkout-summary__row">
+                <span>Subtotal ({{ items|length }} item{{ items|length|pluralize }})</span>
+                <span id="checkout-subtotal">R$&nbsp;{{ subtotal|floatformat:2 }}</span>
+              </div>
+
+              <!-- Frete discriminado por vendedor -->
+              <div class="checkout-summary__row checkout-summary__row--shipping-header">
+                <span>Frete</span>
+                <span id="checkout-total-shipping">R$&nbsp;{{ total_shipping|floatformat:2 }}</span>
+              </div>
+
+              {% for entry in shipping_breakdown %}
+              <div class="checkout-summary__shipping-detail" id="shipping-seller-{{ entry.seller.pk }}">
+                <span>{{ entry.profile.store_name|default:entry.seller.email }}</span>
+                <span>R$&nbsp;{{ entry.shipping|floatformat:2 }}</span>
+              </div>
+              {% endfor %}
+
+            </div>
+
+            <hr class="checkout-summary__divider">
+
+            <!-- Total -->
+            <div class="checkout-summary__total">
+              <span>Total</span>
+              <span class="checkout-summary__total-value" id="checkout-total">
+                R$&nbsp;{{ total|floatformat:2 }}
+              </span>
+            </div>
+
+            <!-- Botão Confirmar -->
+            <button
+              type="submit"
+              id="checkout-submit-btn"
+              class="checkout-submit-btn"
+              {% if not addresses %}disabled aria-disabled="true"{% endif %}
+            >
+              {% if addresses %}
+                Confirmar Pedido →
+              {% else %}
+                Cadastre um endereço para continuar
+              {% endif %}
+            </button>
+
+            <a href="{% url 'cart:cart-detail' %}"
+               id="checkout-back-to-cart"
+               class="checkout-back-link">
+              ← Voltar ao carrinho
+            </a>
+
+          </div>
+        </aside>
+
+      </div>{# /.checkout-layout #}
+    </form>
+
+  </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="{% static 'js/checkout.js' %}"></script>
+{% endblock %}

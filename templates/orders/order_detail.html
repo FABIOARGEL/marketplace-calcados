@@ -1,0 +1,356 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Pedido #{{ order.pk }} — SoleStep{% endblock %}
+
+{% block extra_css %}
+<meta name="description" content="Detalhes do pedido #{{ order.pk }} realizado na SoleStep em {{ order.created_at|date:'d/m/Y' }}.">
+<link rel="stylesheet" href="{% static 'css/client_orders.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="client-order-detail">
+
+  <!-- ── Breadcrumb ─────────────────────────────────────────── -->
+  <nav class="breadcrumb" aria-label="Caminho de navegação">
+    <a href="{% url 'products:product-list' %}" class="breadcrumb__link">Início</a>
+    <span class="breadcrumb__sep" aria-hidden="true">/</span>
+    <a href="{% url 'orders:order-list' %}" class="breadcrumb__link">Meus Pedidos</a>
+    <span class="breadcrumb__sep" aria-hidden="true">/</span>
+    <span class="breadcrumb__current">Pedido #{{ order.pk }}</span>
+  </nav>
+
+  <!-- ── Cabeçalho ─────────────────────────────────────────── -->
+  <div class="detail-header">
+    <div>
+      <h1 class="detail-header__order-id">
+        Pedido <span>#{{ order.pk }}</span>
+      </h1>
+      <p class="detail-header__meta">
+        Realizado em {{ order.created_at|date:"d/m/Y \à\s H:i" }}
+        &mdash; {{ order.items.count }} item{{ order.items.count|pluralize }}
+      </p>
+    </div>
+
+    <!-- Badge de status no cabeçalho -->
+    {% if order.status == 'PENDING' %}
+      <span class="status-badge status-badge--pending">{{ order.get_status_display }}</span>
+    {% elif order.status == 'CONFIRMED' %}
+      <span class="status-badge status-badge--confirmed">{{ order.get_status_display }}</span>
+    {% elif order.status == 'SHIPPED' %}
+      <span class="status-badge status-badge--shipped">{{ order.get_status_display }}</span>
+    {% elif order.status == 'DELIVERED' %}
+      <span class="status-badge status-badge--delivered">{{ order.get_status_display }}</span>
+    {% elif order.status == 'CANCELLED' %}
+      <span class="status-badge status-badge--cancelled">{{ order.get_status_display }}</span>
+    {% else %}
+      <span class="status-badge">{{ order.get_status_display }}</span>
+    {% endif %}
+  </div>
+
+  <!-- ── Layout 2 colunas ───────────────────────────────────── -->
+  <div class="detail-layout">
+
+    <!-- ══════════════════════════════════════════════════════
+         COLUNA ESQUERDA — Itens e Entrega
+    ══════════════════════════════════════════════════════ -->
+    <div class="detail-main">
+
+      <!-- ── Itens do Pedido ────────────────────────────────── -->
+      <section class="detail-card" aria-labelledby="section-items-title">
+        <div class="detail-card__header">
+          <h2 class="detail-card__title" id="section-items-title">
+            Itens Comprados
+            <span style="font-weight: var(--font-weight-normal); color: var(--color-muted);">
+              ({{ order.items.count }})
+            </span>
+          </h2>
+        </div>
+
+        <div class="detail-items">
+          {% for item in order.items.all %}
+          <article class="detail-item" id="item-{{ item.pk }}">
+
+            <!-- Imagem -->
+            <div class="detail-item__image">
+              {% with img=item.product.images.first %}
+                {% if img %}
+                  <img src="{{ img.image.url }}"
+                       alt="{{ img.alt_text|default:item.product.name }}"
+                       loading="lazy">
+                {% else %}
+                  <span class="detail-item__placeholder" aria-hidden="true">👟</span>
+                {% endif %}
+              {% endwith %}
+            </div>
+
+            <!-- Informações -->
+            <div class="detail-item__info">
+              <h3 class="detail-item__name">
+                {% if item.product %}
+                  <a href="{% url 'products:product-detail' item.product.pk %}">
+                    {{ item.product.name }}
+                  </a>
+                {% else %}
+                  <em>[Produto indisponível]</em>
+                {% endif %}
+              </h3>
+
+              <div class="detail-item__meta">
+                <span class="detail-item__size-badge">Tam. {{ item.size }}</span>
+                <span class="detail-item__qty">Qtd: <strong>{{ item.quantity }}</strong></span>
+              </div>
+
+              <span class="detail-item__unit-price">
+                R$&nbsp;{{ item.unit_price|floatformat:2 }} un.
+                <span class="detail-item__snapshot-pill" title="Preço registrado no momento da compra — imutável">
+                  Preço snapshot
+                </span>
+              </span>
+            </div>
+
+            <!-- Subtotal do item -->
+            <div class="detail-item__subtotal">
+              <span class="detail-item__subtotal-value">
+                R$&nbsp;{{ item.subtotal|floatformat:2 }}
+              </span>
+            </div>
+
+          </article>
+          {% endfor %}
+        </div>
+
+        <!-- Totais -->
+        <div class="order-total-block">
+          <div class="cost-line">
+            <span class="cost-line__label">Subtotal dos produtos</span>
+            <span class="cost-line__value" id="order-subtotal">
+              R$&nbsp;{{ order.subtotal|floatformat:2 }}
+            </span>
+          </div>
+          <div class="cost-line">
+            <span class="cost-line__label">Frete</span>
+            <span class="cost-line__value" id="order-shipping">
+              R$&nbsp;{{ order.shipping_cost|floatformat:2 }}
+            </span>
+          </div>
+          <div class="cost-line cost-line--total">
+            <span class="cost-line__label">Total</span>
+            <span class="cost-line__value" id="order-total">
+              R$&nbsp;{{ order.total|floatformat:2 }}
+            </span>
+          </div>
+        </div>
+      </section>
+
+      <!-- ── Endereço de Entrega ─────────────────────────────── -->
+      <section class="detail-card" aria-labelledby="section-address-title">
+        <div class="detail-card__header">
+          <h2 class="detail-card__title" id="section-address-title">
+            Endereço de Entrega
+          </h2>
+        </div>
+        <div class="detail-card__body">
+          {% if order.shipping_address %}
+          <div class="address-block" id="order-shipping-address">
+            <p class="address-block__nickname">
+              📍 {{ order.shipping_address.nickname|default:"Endereço de entrega" }}
+            </p>
+            <p class="address-block__text">
+              <strong>{{ order.shipping_address.recipient_name }}</strong><br>
+              {{ order.shipping_address.street }}, {{ order.shipping_address.number }}
+              {% if order.shipping_address.complement %}
+                ({{ order.shipping_address.complement }})
+              {% endif %}<br>
+              {{ order.shipping_address.neighborhood }}
+              — {{ order.shipping_address.city }}/{{ order.shipping_address.state }}<br>
+              CEP: {{ order.shipping_address.zip_code }}
+            </p>
+            {% if order.shipping_address.reference %}
+            <p class="address-block__ref">
+              Referência: {{ order.shipping_address.reference }}
+            </p>
+            {% endif %}
+          </div>
+          {% else %}
+          <p style="color: var(--color-muted); font-family: var(--font-body); font-size: var(--text-sm);">
+            Endereço de entrega não disponível.
+          </p>
+          {% endif %}
+        </div>
+      </section>
+
+    </div>{# /.detail-main #}
+
+    <!-- ══════════════════════════════════════════════════════
+         COLUNA DIREITA — Timeline de Status + Pagamento + Ações
+    ══════════════════════════════════════════════════════ -->
+    <aside class="detail-sidebar" aria-label="Status e pagamento do pedido">
+
+      <!-- ── Timeline de Status ────────────────────────────── -->
+      <section class="detail-card" aria-labelledby="section-timeline-title">
+        <div class="detail-card__header">
+          <h2 class="detail-card__title" id="section-timeline-title">
+            Acompanhamento
+          </h2>
+        </div>
+        <div class="detail-card__body">
+
+          {% if order.status == 'CANCELLED' %}
+          <!-- Timeline: cancelado -->
+          <ol class="status-timeline" aria-label="Histórico de status">
+            <li class="status-timeline__step status-timeline__step--done">
+              <div class="status-timeline__dot" aria-hidden="true">✓</div>
+              <div class="status-timeline__info">
+                <span class="status-timeline__label">Pedido realizado</span>
+                <span class="status-timeline__desc">{{ order.created_at|date:"d/m/Y H:i" }}</span>
+              </div>
+            </li>
+            <li class="status-timeline__step status-timeline__step--cancelled">
+              <div class="status-timeline__dot" aria-hidden="true">✕</div>
+              <div class="status-timeline__info">
+                <span class="status-timeline__label">Cancelado</span>
+                <span class="status-timeline__desc">Este pedido foi cancelado.</span>
+              </div>
+            </li>
+          </ol>
+
+          {% else %}
+          <!-- Timeline: fluxo normal -->
+          <ol class="status-timeline" aria-label="Histórico de status">
+
+            <!-- Confirmado -->
+            <li class="status-timeline__step
+                {% if order.status == 'PENDING' %}status-timeline__step--active
+                {% else %}status-timeline__step--done{% endif %}">
+              <div class="status-timeline__dot" aria-hidden="true">
+                {% if order.status == 'PENDING' %}●{% else %}✓{% endif %}
+              </div>
+              <div class="status-timeline__info">
+                <span class="status-timeline__label">Pedido confirmado</span>
+                <span class="status-timeline__desc">
+                  {% if order.status != 'PENDING' %}Pagamento aprovado (simulado){% endif %}
+                </span>
+              </div>
+            </li>
+
+            <!-- Em preparação (CONFIRMED) -->
+            <li class="status-timeline__step
+                {% if order.status == 'CONFIRMED' %}status-timeline__step--active
+                {% elif order.status == 'PENDING' %}status-timeline__step--pending-future
+                {% else %}status-timeline__step--done{% endif %}">
+              <div class="status-timeline__dot" aria-hidden="true">
+                {% if order.status == 'CONFIRMED' %}●
+                {% elif order.status != 'PENDING' %}✓
+                {% else %}○{% endif %}
+              </div>
+              <div class="status-timeline__info">
+                <span class="status-timeline__label">Em preparação</span>
+                <span class="status-timeline__desc">
+                  {% if order.status == 'CONFIRMED' %}Seu pedido está sendo preparado{% endif %}
+                </span>
+              </div>
+            </li>
+
+            <!-- Em trânsito (SHIPPED) -->
+            <li class="status-timeline__step
+                {% if order.status == 'SHIPPED' %}status-timeline__step--active
+                {% elif order.status == 'DELIVERED' %}status-timeline__step--done
+                {% else %}status-timeline__step--pending-future{% endif %}">
+              <div class="status-timeline__dot" aria-hidden="true">
+                {% if order.status == 'SHIPPED' %}●
+                {% elif order.status == 'DELIVERED' %}✓
+                {% else %}○{% endif %}
+              </div>
+              <div class="status-timeline__info">
+                <span class="status-timeline__label">Em trânsito</span>
+                <span class="status-timeline__desc">
+                  {% if order.status == 'SHIPPED' %}A caminho do endereço de entrega{% endif %}
+                </span>
+              </div>
+            </li>
+
+            <!-- Entregue (DELIVERED) -->
+            <li class="status-timeline__step
+                {% if order.status == 'DELIVERED' %}status-timeline__step--active
+                {% else %}status-timeline__step--pending-future{% endif %}">
+              <div class="status-timeline__dot" aria-hidden="true">
+                {% if order.status == 'DELIVERED' %}✓{% else %}○{% endif %}
+              </div>
+              <div class="status-timeline__info">
+                <span class="status-timeline__label">Entregue</span>
+                <span class="status-timeline__desc">
+                  {% if order.status == 'DELIVERED' %}Pedido recebido com sucesso!{% endif %}
+                </span>
+              </div>
+            </li>
+
+          </ol>
+          {% endif %}
+
+        </div>
+      </section>
+
+      <!-- ── Pagamento ─────────────────────────────────────── -->
+      <section class="detail-card" aria-labelledby="section-payment-title">
+        <div class="detail-card__header">
+          <h2 class="detail-card__title" id="section-payment-title">
+            Pagamento
+          </h2>
+        </div>
+        <div class="detail-card__body">
+          <div class="payment-block" id="order-payment-info">
+
+            <div class="payment-block__method">
+              <span class="payment-block__icon" aria-hidden="true">
+                {% if order.payment_method == 'CREDIT_CARD_SIM' %}💳
+                {% elif order.payment_method == 'DEBIT_CARD_SIM' %}💳
+                {% elif order.payment_method == 'PIX_SIM' %}⚡
+                {% else %}🧾
+                {% endif %}
+              </span>
+              <span class="payment-block__name">{{ order.get_payment_method_display }}</span>
+            </div>
+
+            <div class="payment-block__status" id="order-payment-status">
+              {% if order.payment_status == 'APPROVED' %}
+                <span class="status-pill status-pill--approved">● {{ order.get_payment_status_display }}</span>
+              {% elif order.payment_status == 'CANCELLED' %}
+                <span class="status-pill status-pill--cancelled">● {{ order.get_payment_status_display }}</span>
+              {% else %}
+                <span class="status-pill status-pill--pending">● {{ order.get_payment_status_display }}</span>
+              {% endif %}
+            </div>
+
+            <span class="payment-block__sim-tag">
+              ⚠️ Pagamento simulado — projeto acadêmico
+            </span>
+
+          </div>
+        </div>
+      </section>
+
+      <!-- ── Ações ─────────────────────────────────────────── -->
+      <div class="detail-card">
+        <div class="detail-card__body">
+          <div class="detail-actions">
+            <a href="{% url 'orders:order-list' %}"
+               class="btn--secondary"
+               id="btn-back-orders">
+              ← Voltar aos meus pedidos
+            </a>
+            <a href="{% url 'products:product-list' %}"
+               class="btn--secondary"
+               id="btn-continue-shopping">
+              Continuar comprando
+            </a>
+          </div>
+        </div>
+      </div>
+
+    </aside>
+
+  </div>{# /.detail-layout #}
+
+</div>
+{% endblock %}

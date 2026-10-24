@@ -67,6 +67,10 @@
                     <a href="{% url 'products:seller-product-list' %}" class="navbar__link" id="navbar-my-products-link">
                         Meus Produtos
                     </a>
+                {% else %}
+                    <a href="{% url 'orders:order-list' %}" class="navbar__link" id="navbar-my-orders-link">
+                        Meus Pedidos
+                    </a>
                 {% endif %}
 
                 <a href="{% url 'users:user-profile' %}" class="navbar__link navbar__profile-link" id="navbar-profile-link" aria-label="Perfil de {% if user.first_name %}{{ user.first_name.split.0 }}{% else %}{{ user.email }}{% endif %}">

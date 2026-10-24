@@ -15,9 +15,7 @@
 <div class="catalog-page">
     <div class="container">
 
-        <!-- ============================================
-             CABEÇALHO DO CATÁLOGO
-             ============================================ -->
+        <!-- CABEÇALHO DO CATÁLOGO -->
         <header class="catalog-header">
             <div class="catalog-header__text">
                 <h1 class="catalog-header__title">
@@ -36,7 +34,7 @@
                 </p>
             </div>
 
-            <!-- Campo de busca do catálogo -->
+            <!-- Campo de busca -->
             <form
                 id="catalog-search-form"
                 class="catalog-search"
@@ -45,156 +43,383 @@
                 role="search"
                 aria-label="Buscar produtos"
             >
+                {% if categoria_sel %}<input type="hidden" name="categoria" value="{{ categoria_sel }}">{% endif %}
+                {% for tam in tamanhos_sel %}<input type="hidden" name="tamanho" value="{{ tam }}">{% endfor %}
+                {% if marca_sel %}<input type="hidden" name="marca" value="{{ marca_sel }}">{% endif %}
+                {% if preco_min %}<input type="hidden" name="preco_min" value="{{ preco_min }}">{% endif %}
+                {% if preco_max %}<input type="hidden" name="preco_max" value="{{ preco_max }}">{% endif %}
+
                 <div class="catalog-search__field">
                     <label for="catalog-q" class="sr-only">Buscar calçados</label>
                     <input
                         id="catalog-q"
                         type="search"
                         name="q"
-                        class="catalog-search__input form-input"
-                        placeholder="Buscar por nome ou descrição…"
+                        class="catalog-search__input"
+                        placeholder="Buscar calçados…"
                         value="{{ query }}"
                         autocomplete="off"
-                        aria-label="Termo de busca"
+                        aria-label="Buscar calçados"
                     >
                     <button
                         type="submit"
                         id="catalog-search-btn"
-                        class="catalog-search__btn btn"
+                        class="catalog-search__btn"
                         aria-label="Pesquisar"
                     >
-                        &#x1F50D; Buscar
+                        <svg class="catalog-search__icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                            <circle cx="11" cy="11" r="8"></circle>
+                            <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                        </svg>
                     </button>
                 </div>
-                {% if query %}
-                <a
-                    href="{% url 'products:product-list' %}"
-                    id="catalog-clear-btn"
-                    class="catalog-search__clear"
-                    aria-label="Limpar busca"
-                >
-                    &#x2715; Limpar busca
-                </a>
-                {% endif %}
             </form>
         </header>
 
-        <!-- ============================================
-             GRID DE PRODUTOS
-             ============================================ -->
-        {% if page_obj.object_list %}
-        <section aria-label="Lista de produtos">
-            <div class="catalog-grid" id="products-grid">
-                {% for produto in page_obj %}
-                <a href="{% url 'products:product-detail' produto.pk %}" class="catalog-card" id="product-{{ produto.pk }}" aria-label="{{ produto.name }}">
-                    <!-- Imagem -->
-                    <div class="catalog-card__image">
-                        {% with produto.images.first as img %}
-                            {% if img %}
-                                <img src="{{ img.image.url }}" alt="{{ img.alt_text|default:produto.name }}" loading="lazy">
-                            {% else %}
-                                <div class="catalog-card__image--placeholder" aria-hidden="true">&#x1F45F;</div>
-                            {% endif %}
-                        {% endwith %}
-                        {% if produto.category %}
-                        <span class="catalog-card__badge">{{ produto.category.name }}</span>
-                        {% endif %}
-                    </div>
-
-                    <!-- Informações -->
-                    <div class="catalog-card__body">
-                        <span class="catalog-card__brand">{{ produto.brand }}</span>
-                        <h2 class="catalog-card__name">{{ produto.name }}</h2>
-                        <p class="catalog-card__description">{{ produto.description|truncatewords:12 }}</p>
-                        <div class="catalog-card__footer">
-                            <span class="catalog-card__price">
-                                R$&nbsp;{{ produto.price|floatformat:2 }}
-                            </span>
-                            <span class="catalog-card__seller">
-                                {{ produto.seller.get_full_name|default:produto.seller.email }}
-                            </span>
-                        </div>
-                    </div>
-                </a>
-                {% endfor %}
-            </div>
-
-            <!-- Paginação -->
-            {% if is_paginated %}
-            <nav class="pagination" aria-label="Paginação do catálogo">
-                {% if page_obj.has_previous %}
-                <a
-                    href="?{% if query %}q={{ query }}&{% endif %}page={{ page_obj.previous_page_number }}"
-                    class="pagination__btn"
-                    id="pagination-prev"
-                    aria-label="Página anterior"
-                >
-                    &larr; Anterior
-                </a>
-                {% else %}
-                <span class="pagination__btn pagination__btn--disabled" aria-disabled="true">&larr; Anterior</span>
-                {% endif %}
-
-                <div class="pagination__pages" aria-label="Páginas">
-                    {% for num in paginator.page_range %}
-                        {% if page_obj.number == num %}
-                        <span class="pagination__page pagination__page--current" aria-current="page">{{ num }}</span>
-                        {% elif num > page_obj.number|add:"-3" and num < page_obj.number|add:"3" %}
-                        <a
-                            href="?{% if query %}q={{ query }}&{% endif %}page={{ num }}"
-                            class="pagination__page"
-                            id="pagination-page-{{ num }}"
-                        >{{ num }}</a>
-                        {% endif %}
-                    {% endfor %}
-                </div>
-
-                {% if page_obj.has_next %}
-                <a
-                    href="?{% if query %}q={{ query }}&{% endif %}page={{ page_obj.next_page_number }}"
-                    class="pagination__btn"
-                    id="pagination-next"
-                    aria-label="Próxima página"
-                >
-                    Próxima &rarr;
-                </a>
-                {% else %}
-                <span class="pagination__btn pagination__btn--disabled" aria-disabled="true">Próxima &rarr;</span>
-                {% endif %}
-            </nav>
-            {% endif %}
-        </section>
-
-        {% else %}
-        <!-- ============================================
-             EMPTY STATE
-             ============================================ -->
-        <div class="catalog-empty" id="catalog-empty-state" role="status" aria-live="polite">
-            <div class="catalog-empty__icon" aria-hidden="true">&#x1F50D;</div>
+        <!-- FILTROS ATIVOS (Tags) -->
+        {% if filtros_ativos or query %}
+        <div class="catalog-active-filters" id="catalog-active-filters" aria-label="Filtros ativos">
+            <span class="catalog-active-filters__label">Filtros:</span>
             {% if query %}
-            <h2 class="catalog-empty__title">Nenhum resultado para "{{ query }}"</h2>
-            <p class="catalog-empty__text">
-                Tente palavras diferentes ou verifique a ortografia.
-            </p>
-            <a href="{% url 'products:product-list' %}" id="catalog-empty-clear" class="btn">
-                Ver todos os produtos
-            </a>
-            {% else %}
-            <h2 class="catalog-empty__title">Nenhum produto disponível</h2>
-            <p class="catalog-empty__text">
-                Nosso catálogo está sendo preparado. Volte em breve!
-            </p>
-            <a href="/" id="catalog-empty-home" class="btn">
-                Voltar ao início
+            <a href="?{% if categoria_sel %}categoria={{ categoria_sel }}&{% endif %}{% for t in tamanhos_sel %}tamanho={{ t }}&{% endfor %}{% if marca_sel %}marca={{ marca_sel }}&{% endif %}{% if preco_min %}preco_min={{ preco_min }}&{% endif %}{% if preco_max %}preco_max={{ preco_max }}&{% endif %}" class="catalog-active-filters__tag" aria-label="Remover filtro de busca">
+                Busca: "{{ query }}" <span aria-hidden="true">&#x00D7;</span>
             </a>
             {% endif %}
+            {% if categoria_sel %}
+            <a href="?{% if query %}q={{ query }}&{% endif %}{% for t in tamanhos_sel %}tamanho={{ t }}&{% endfor %}{% if marca_sel %}marca={{ marca_sel }}&{% endif %}{% if preco_min %}preco_min={{ preco_min }}&{% endif %}{% if preco_max %}preco_max={{ preco_max }}&{% endif %}" class="catalog-active-filters__tag" aria-label="Remover filtro de categoria">
+                {{ categoria_sel }} <span aria-hidden="true">&#x00D7;</span>
+            </a>
+            {% endif %}
+            {% for tam in tamanhos_sel %}
+            <a href="?{% if query %}q={{ query }}&{% endif %}{% if categoria_sel %}categoria={{ categoria_sel }}&{% endif %}{% for t in tamanhos_sel %}{% if t != tam %}tamanho={{ t }}&{% endif %}{% endfor %}{% if marca_sel %}marca={{ marca_sel }}&{% endif %}{% if preco_min %}preco_min={{ preco_min }}&{% endif %}{% if preco_max %}preco_max={{ preco_max }}&{% endif %}" class="catalog-active-filters__tag" aria-label="Remover filtro tamanho {{ tam }}">
+                Tam. {{ tam }} <span aria-hidden="true">&#x00D7;</span>
+            </a>
+            {% endfor %}
+            {% if marca_sel %}
+            <a href="?{% if query %}q={{ query }}&{% endif %}{% if categoria_sel %}categoria={{ categoria_sel }}&{% endif %}{% for t in tamanhos_sel %}tamanho={{ t }}&{% endfor %}{% if preco_min %}preco_min={{ preco_min }}&{% endif %}{% if preco_max %}preco_max={{ preco_max }}&{% endif %}" class="catalog-active-filters__tag" aria-label="Remover filtro de marca">
+                {{ marca_sel }} <span aria-hidden="true">&#x00D7;</span>
+            </a>
+            {% endif %}
+            {% if preco_min or preco_max %}
+            <a href="?{% if query %}q={{ query }}&{% endif %}{% if categoria_sel %}categoria={{ categoria_sel }}&{% endif %}{% for t in tamanhos_sel %}tamanho={{ t }}&{% endfor %}{% if marca_sel %}marca={{ marca_sel }}&{% endif %}" class="catalog-active-filters__tag" aria-label="Remover filtro de preco">
+                R$ {{ preco_min|default:"0" }} - {{ preco_max|default:"MAX" }} <span aria-hidden="true">&#x00D7;</span>
+            </a>
+            {% endif %}
+            <a href="{% url 'products:product-list' %}" class="catalog-active-filters__clear" id="catalog-clear-all-btn">
+                Limpar tudo
+            </a>
         </div>
         {% endif %}
 
-    </div>
-</div>
+        <!-- LAYOUT: SIDEBAR + GRID -->
+        <div class="catalog-layout">
+
+            <!-- Botão toggle filtros (mobile) -->
+            <button
+                type="button"
+                id="filters-toggle-btn"
+                class="catalog-filters-toggle"
+                aria-expanded="false"
+                aria-controls="catalog-sidebar"
+            >
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true">
+                    <line x1="4" y1="6" x2="20" y2="6"></line>
+                    <line x1="8" y1="12" x2="20" y2="12"></line>
+                    <line x1="12" y1="18" x2="20" y2="18"></line>
+                </svg>
+                Filtros
+                {% if filtros_ativos %}
+                <span class="catalog-filters-toggle__badge" aria-label="Filtros ativos">&#x25CF;</span>
+                {% endif %}
+            </button>
+
+            <!-- SIDEBAR DE FILTROS -->
+            <aside
+                id="catalog-sidebar"
+                class="catalog-sidebar"
+                aria-label="Painel de filtros"
+            >
+                <form
+                    id="catalog-filter-form"
+                    class="filter-form"
+                    action="{% url 'products:product-list' %}"
+                    method="get"
+                >
+                    {% if query %}<input type="hidden" name="q" value="{{ query }}">{% endif %}
+
+                    <div class="filter-form__header">
+                        <span class="filter-form__title">Filtros</span>
+                        {% if filtros_ativos %}
+                        <a href="{% url 'products:product-list' %}{% if query %}?q={{ query }}{% endif %}" class="filter-form__clear-link" id="filter-clear-link">
+                            Limpar filtros
+                        </a>
+                        {% endif %}
+                    </div>
+
+                    <!-- Categoria (radio) -->
+                    {% if categories %}
+                    <div class="filter-group" id="filter-group-categoria">
+                        <button
+                            type="button"
+                            class="filter-group__toggle"
+                            aria-expanded="true"
+                            aria-controls="filter-categoria-options"
+                        >
+                            <span>Categoria</span>
+                            <svg class="filter-group__chevron" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true">
+                                <polyline points="6 9 12 15 18 9"></polyline>
+                            </svg>
+                        </button>
+                        <div class="filter-group__options" id="filter-categoria-options">
+                            {% for cat in categories %}
+                            <label class="filter-option" for="cat-{{ cat.slug }}">
+                                <input
+                                    type="radio"
+                                    id="cat-{{ cat.slug }}"
+                                    name="categoria"
+                                    value="{{ cat.slug }}"
+                                    class="filter-option__input"
+                                    {% if categoria_sel == cat.slug %}checked{% endif %}
+                                >
+                                <span class="filter-option__label">{{ cat.name }}</span>
+                            </label>
+                            {% endfor %}
+                        </div>
+                    </div>
+                    {% endif %}
+
+                    <!-- Marca (radio) -->
+                    {% if marcas %}
+                    <div class="filter-group" id="filter-group-marca">
+                        <button
+                            type="button"
+                            class="filter-group__toggle"
+                            aria-expanded="true"
+                            aria-controls="filter-marca-options"
+                        >
+                            <span>Marca</span>
+                            <svg class="filter-group__chevron" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true">
+                                <polyline points="6 9 12 15 18 9"></polyline>
+                            </svg>
+                        </button>
+                        <div class="filter-group__options" id="filter-marca-options">
+                            {% for marca in marcas %}
+                            <label class="filter-option" for="marca-{{ forloop.counter }}">
+                                <input
+                                    type="radio"
+                                    id="marca-{{ forloop.counter }}"
+                                    name="marca"
+                                    value="{{ marca }}"
+                                    class="filter-option__input"
+                                    {% if marca_sel == marca %}checked{% endif %}
+                                >
+                                <span class="filter-option__label">{{ marca }}</span>
+                            </label>
+                            {% endfor %}
+                        </div>
+                    </div>
+                    {% endif %}
+
+                    <!-- Tamanho (checkboxes) -->
+                    {% if tamanhos_disponiveis %}
+                    <div class="filter-group" id="filter-group-tamanho">
+                        <button
+                            type="button"
+                            class="filter-group__toggle"
+                            aria-expanded="true"
+                            aria-controls="filter-tamanho-options"
+                        >
+                            <span>Tamanho</span>
+                            <svg class="filter-group__chevron" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true">
+                                <polyline points="6 9 12 15 18 9"></polyline>
+                            </svg>
+                        </button>
+                        <div class="filter-group__options filter-group__options--sizes" id="filter-tamanho-options">
+                            {% for tam in tamanhos_disponiveis %}
+                            <label class="filter-option filter-option--size" for="tam-{{ tam }}">
+                                <input
+                                    type="checkbox"
+                                    id="tam-{{ tam }}"
+                                    name="tamanho"
+                                    value="{{ tam }}"
+                                    class="filter-option__input"
+                                    {% if tam in tamanhos_sel %}checked{% endif %}
+                                >
+                                <span class="filter-option__size-label">{{ tam }}</span>
+                            </label>
+                            {% endfor %}
+                        </div>
+                    </div>
+                    {% endif %}
+
+                    <!-- Faixa de Preço -->
+                    <div class="filter-group" id="filter-group-preco">
+                        <button
+                            type="button"
+                            class="filter-group__toggle"
+                            aria-expanded="true"
+                            aria-controls="filter-preco-options"
+                        >
+                            <span>Faixa de Preco</span>
+                            <svg class="filter-group__chevron" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true">
+                                <polyline points="6 9 12 15 18 9"></polyline>
+                            </svg>
+                        </button>
+                        <div class="filter-group__options" id="filter-preco-options">
+                            <div class="filter-price">
+                                <div class="filter-price__field">
+                                    <label for="filter-preco-min" class="filter-price__label">Min (R$)</label>
+                                    <input
+                                        type="number"
+                                        id="filter-preco-min"
+                                        name="preco_min"
+                                        class="filter-price__input"
+                                        value="{{ preco_min }}"
+                                        min="0"
+                                        step="1"
+                                        placeholder="0"
+                                    >
+                                </div>
+                                <span class="filter-price__sep" aria-hidden="true">-</span>
+                                <div class="filter-price__field">
+                                    <label for="filter-preco-max" class="filter-price__label">Max (R$)</label>
+                                    <input
+                                        type="number"
+                                        id="filter-preco-max"
+                                        name="preco_max"
+                                        class="filter-price__input"
+                                        value="{{ preco_max }}"
+                                        min="0"
+                                        step="1"
+                                        placeholder="MAX"
+                                    >
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <button
+                        type="submit"
+                        id="filter-submit-btn"
+                        class="filter-form__submit"
+                    >
+                        Filtrar
+                    </button>
+                </form>
+            </aside>
+
+            <!-- GRID DE PRODUTOS -->
+            <main class="catalog-main" aria-label="Resultados do catalogo">
+                {% if page_obj.object_list %}
+                <div class="catalog-grid" id="products-grid">
+                    {% for produto in page_obj %}
+                    <a href="{% url 'products:product-detail' produto.pk %}" class="catalog-card" id="product-{{ produto.pk }}" aria-label="{{ produto.name }}">
+                        <div class="catalog-card__image">
+                            {% with produto.images.first as img %}
+                                {% if img %}
+                                    <img src="{{ img.image.url }}" alt="{{ img.alt_text|default:produto.name }}" loading="lazy">
+                                {% else %}
+                                    <div class="catalog-card__image--placeholder" aria-hidden="true">&#x1F45F;</div>
+                                {% endif %}
+                            {% endwith %}
+                            {% if produto.category %}
+                            <span class="catalog-card__badge">{{ produto.category.name }}</span>
+                            {% endif %}
+                        </div>
+
+                        <div class="catalog-card__body">
+                            <span class="catalog-card__brand">{{ produto.brand }}</span>
+                            <h2 class="catalog-card__name">{{ produto.name }}</h2>
+                            <p class="catalog-card__description">{{ produto.description|truncatewords:12 }}</p>
+                            <div class="catalog-card__footer">
+                                <span class="catalog-card__price">
+                                    R$&nbsp;{{ produto.price|floatformat:2 }}
+                                </span>
+                                <span class="catalog-card__seller">
+                                    {{ produto.seller.get_full_name|default:produto.seller.email }}
+                                </span>
+                            </div>
+                        </div>
+                    </a>
+                    {% endfor %}
+                </div>
+
+                <!-- Paginacao (preserva filtros) -->
+                {% if is_paginated %}
+                <nav class="pagination" aria-label="Paginacao do catalogo">
+                    {% if page_obj.has_previous %}
+                    <a
+                        href="?{% if query %}q={{ query }}&{% endif %}{% if categoria_sel %}categoria={{ categoria_sel }}&{% endif %}{% for t in tamanhos_sel %}tamanho={{ t }}&{% endfor %}{% if marca_sel %}marca={{ marca_sel }}&{% endif %}{% if preco_min %}preco_min={{ preco_min }}&{% endif %}{% if preco_max %}preco_max={{ preco_max }}&{% endif %}page={{ page_obj.previous_page_number }}"
+                        class="pagination__btn"
+                        id="pagination-prev"
+                        aria-label="Pagina anterior"
+                    >
+                        &larr; Anterior
+                    </a>
+                    {% else %}
+                    <span class="pagination__btn pagination__btn--disabled" aria-disabled="true">&larr; Anterior</span>
+                    {% endif %}
+
+                    <div class="pagination__pages" aria-label="Paginas">
+                        {% for num in paginator.page_range %}
+                            {% if page_obj.number == num %}
+                            <span class="pagination__page pagination__page--current" aria-current="page">{{ num }}</span>
+                            {% elif num > page_obj.number|add:"-3" and num < page_obj.number|add:"3" %}
+                            <a
+                                href="?{% if query %}q={{ query }}&{% endif %}{% if categoria_sel %}categoria={{ categoria_sel }}&{% endif %}{% for t in tamanhos_sel %}tamanho={{ t }}&{% endfor %}{% if marca_sel %}marca={{ marca_sel }}&{% endif %}{% if preco_min %}preco_min={{ preco_min }}&{% endif %}{% if preco_max %}preco_max={{ preco_max }}&{% endif %}page={{ num }}"
+                                class="pagination__page"
+                                id="pagination-page-{{ num }}"
+                            >{{ num }}</a>
+                            {% endif %}
+                        {% endfor %}
+                    </div>
+
+                    {% if page_obj.has_next %}
+                    <a
+                        href="?{% if query %}q={{ query }}&{% endif %}{% if categoria_sel %}categoria={{ categoria_sel }}&{% endif %}{% for t in tamanhos_sel %}tamanho={{ t }}&{% endfor %}{% if marca_sel %}marca={{ marca_sel }}&{% endif %}{% if preco_min %}preco_min={{ preco_min }}&{% endif %}{% if preco_max %}preco_max={{ preco_max }}&{% endif %}page={{ page_obj.next_page_number }}"
+                        class="pagination__btn"
+                        id="pagination-next"
+                        aria-label="Proxima pagina"
+                    >
+                        Proxima &rarr;
+                    </a>
+                    {% else %}
+                    <span class="pagination__btn pagination__btn--disabled" aria-disabled="true">Proxima &rarr;</span>
+                    {% endif %}
+                </nav>
+                {% endif %}
+
+                {% else %}
+                <!-- EMPTY STATE -->
+                <div class="catalog-empty" id="catalog-empty-state" role="status" aria-live="polite">
+                    <div class="catalog-empty__icon" aria-hidden="true">&#x1F50D;</div>
+                    {% if query or filtros_ativos %}
+                    <h2 class="catalog-empty__title">Nenhum resultado encontrado</h2>
+                    <p class="catalog-empty__text">
+                        Tente remover alguns filtros ou usar palavras diferentes.
+                    </p>
+                    <a href="{% url 'products:product-list' %}" id="catalog-empty-clear" class="btn">
+                        Limpar filtros
+                    </a>
+                    {% else %}
+                    <h2 class="catalog-empty__title">Nenhum produto disponivel</h2>
+                    <p class="catalog-empty__text">
+                        Nosso catalogo esta sendo preparado. Volte em breve!
+                    </p>
+                    <a href="/" id="catalog-empty-home" class="btn">
+                        Voltar ao inicio
+                    </a>
+                    {% endif %}
+                </div>
+                {% endif %}
+            </main>
+
+        </div><!-- /.catalog-layout -->
+    </div><!-- /.container -->
+</div><!-- /.catalog-page -->
 {% endblock %}
 
 {% block extra_js %}
 <script src="{% static 'js/search.js' %}"></script>
+<script src="{% static 'js/filters.js' %}"></script>
 {% endblock %}

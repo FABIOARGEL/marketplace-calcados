@@ -10,7 +10,6 @@
         <nav class="navbar__links" aria-label="Navegação principal">
             <a href="/" class="navbar__link navbar__link--active">Início</a>
             <a href="/produtos/" class="navbar__link">Produtos</a>
-            <a href="/categorias/" class="navbar__link">Categorias</a>
         </nav>
 
         <!-- Autenticação -->
@@ -39,17 +38,26 @@
                     id="header-search-btn"
                     class="navbar__search-btn"
                     aria-label="Pesquisar"
-                >&#x1F50D;</button>
+                >
+                    <svg class="navbar__search-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                        <circle cx="11" cy="11" r="8"></circle>
+                        <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                    </svg>
+                </button>
             </form>
             <a href="/carrinho/" class="navbar__icon-btn navbar__cart-btn" id="navbar-cart-btn" aria-label="Carrinho de compras">
-                &#x1F6D2; Carrinho
+                <svg class="navbar__cart-icon" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                    <circle cx="9" cy="21" r="1"></circle>
+                    <circle cx="20" cy="21" r="1"></circle>
+                    <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path>
+                </svg>
                 {% if user.is_authenticated %}
                     {% with count=user.cart.items.count %}
                     {% if count > 0 %}
                     <span class="navbar__cart-badge" id="cart-badge" aria-label="{{ count }} item{{ count|pluralize }} no carrinho">
                         {{ count }}
                     </span>
-                    {% endif %}
+                    {% endif %}/
                     {% endwith %}
                 {% endif %}
             </a>
@@ -59,13 +67,16 @@
                     <a href="{% url 'products:seller-product-list' %}" class="navbar__link" id="navbar-my-products-link">
                         Meus Produtos
                     </a>
-                    <a href="{% url 'products:product-create' %}" class="btn btn--accent" style="padding: var(--space-2) var(--space-4); min-height: auto; font-size: var(--text-sm);" id="navbar-new-product-link">
-                        + Novo produto
-                    </a>
                 {% endif %}
 
-                <a href="{% url 'users:user-profile' %}" class="navbar__link" id="navbar-profile-link">
-                    Olá, {{ user.first_name|default:user.email }}
+                <a href="{% url 'users:user-profile' %}" class="navbar__link navbar__profile-link" id="navbar-profile-link" aria-label="Perfil de {% if user.first_name %}{{ user.first_name.split.0 }}{% else %}{{ user.email }}{% endif %}">
+                    <span class="navbar__avatar" aria-hidden="true">
+                        <svg class="navbar__avatar-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                            <circle cx="12" cy="7" r="4"></circle>
+                        </svg>
+                    </span>
+                    <span class="navbar__profile-name">{% if user.first_name %}{{ user.first_name.split.0 }}{% else %}{{ user.email }}{% endif %}</span>
                 </a>
 
                 <form method="post" action="{% url 'users:user-logout' %}">
@@ -106,7 +117,6 @@
     >
         <a href="/" class="navbar__link">Início</a>
         <a href="/produtos/" class="navbar__link">Produtos</a>
-        <a href="/categorias/" class="navbar__link">Categorias</a>
         <!-- Busca rápida mobile -->
         <form
             id="mobile-search-form"
@@ -131,15 +141,27 @@
                 id="mobile-search-btn"
                 class="navbar__search-btn"
                 aria-label="Pesquisar"
-            >&#x1F50D;</button>
+            >
+                <svg class="navbar__search-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                    <circle cx="11" cy="11" r="8"></circle>
+                    <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                </svg>
+            </button>
         </form>
 
         {% if user.is_authenticated %}
             {% if user.is_seller %}
                 <a href="{% url 'products:seller-product-list' %}" class="navbar__link">Meus Produtos</a>
-                <a href="{% url 'products:product-create' %}" class="navbar__link">+ Novo produto</a>
             {% endif %}
-            <a href="{% url 'users:user-profile' %}" class="navbar__link">Minha conta</a>
+            <a href="{% url 'users:user-profile' %}" class="navbar__link navbar__profile-link" aria-label="Perfil de {% if user.first_name %}{{ user.first_name.split.0 }}{% else %}{{ user.email }}{% endif %}">
+                <span class="navbar__avatar" aria-hidden="true">
+                    <svg class="navbar__avatar-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                        <circle cx="12" cy="7" r="4"></circle>
+                    </svg>
+                </span>
+                <span class="navbar__profile-name">{% if user.first_name %}{{ user.first_name.split.0 }}{% else %}{{ user.email }}{% endif %}</span>
+            </a>
 
             <form method="post" action="{% url 'users:user-logout' %}">
                 {% csrf_token %}

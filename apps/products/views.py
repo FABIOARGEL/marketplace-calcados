@@ -17,14 +17,25 @@ from .models import Category, Product
 
 
 def product_list(request):
-    """Catálogo público de calçados com busca e paginação.
+    """Catálogo público de calçados com busca, filtros e paginação.
 
     Parâmetros de query string:
-        q: termo de busca (name ou description, icontains)
-        page: página da paginação
+        q:          termo de busca (name ou description, icontains)
+        categoria:  slug da categoria
+        tamanho:    tamanho do calçado (pode ser múltiplo: ?tamanho=38&tamanho=39)
+        marca:      nome da marca (iexact)
+        preco_min:  preço mínimo (Decimal)
+        preco_max:  preço máximo (Decimal)
+        page:       página da paginação
     """
+    from .models import Stock
+
     query = request.GET.get('q', '').strip()
-    categories = Category.objects.all()
+    categoria_slug = request.GET.get('categoria', '').strip()
+    tamanhos_sel = request.GET.getlist('tamanho')
+    marca_sel = request.GET.get('marca', '').strip()
+    preco_min = request.GET.get('preco_min', '').strip()
+    preco_max = request.GET.get('preco_max', '').strip()
 
     qs = (
         Product.objects
@@ -34,12 +45,61 @@ def product_list(request):
         .order_by('-created_at')
     )
 
+    # Filtro por texto
     if query:
         qs = qs.filter(
             Q(name__icontains=query) | Q(description__icontains=query)
         )
 
+    # Filtro por categoria (slug)
+    if categoria_slug:
+        qs = qs.filter(category__slug=categoria_slug)
+
+    # Filtro por tamanho — JOIN com Stock onde quantity > 0
+    if tamanhos_sel:
+        qs = qs.filter(
+            stock_items__size__in=tamanhos_sel,
+            stock_items__quantity__gt=0,
+        ).distinct()
+
+    # Filtro por marca (case-insensitive)
+    if marca_sel:
+        qs = qs.filter(brand__iexact=marca_sel)
+
+    # Filtro por faixa de preço
+    if preco_min:
+        try:
+            qs = qs.filter(price__gte=preco_min)
+        except Exception:
+            pass
+    if preco_max:
+        try:
+            qs = qs.filter(price__lte=preco_max)
+        except Exception:
+            pass
+
     total_count = qs.count()
+
+    # --- Opções dinâmicas de filtro (apenas valores existentes no banco) ---
+    categories = Category.objects.filter(products__is_active=True).distinct().order_by('name')
+    marcas = (
+        Product.objects
+        .filter(is_active=True)
+        .values_list('brand', flat=True)
+        .distinct()
+        .order_by('brand')
+    )
+    tamanhos_disponiveis = (
+        Stock.objects
+        .filter(quantity__gt=0, product__is_active=True)
+        .values_list('size', flat=True)
+        .distinct()
+        .order_by('size')
+    )
+
+    # Verifica se há algum filtro ativo (exceto busca por texto)
+    filtros_ativos = any([categoria_slug, tamanhos_sel, marca_sel, preco_min, preco_max])
+
     paginator = Paginator(qs, 12)
     page_obj = paginator.get_page(request.GET.get('page'))
 
@@ -53,6 +113,15 @@ def product_list(request):
             'query': query,
             'total_count': total_count,
             'categories': categories,
+            'marcas': marcas,
+            'tamanhos_disponiveis': tamanhos_disponiveis,
+            # Filtros selecionados (para manter estado na UI)
+            'categoria_sel': categoria_slug,
+            'tamanhos_sel': tamanhos_sel,
+            'marca_sel': marca_sel,
+            'preco_min': preco_min,
+            'preco_max': preco_max,
+            'filtros_ativos': filtros_ativos,
         },
     )
 

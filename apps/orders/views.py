@@ -21,14 +21,27 @@ order_confirm: Processa a confirmação do pedido (RF16, RF17, RF18, RF19).
 order_success: Exibe a página de confirmação do pedido.
     - Exige autenticação
     - Apresenta detalhes do Order criado (itens, valores, endereço, pagamento)
+
+seller_order_list: Dashboard do vendedor — lista de pedidos com seus itens.
+    - Exige autenticação e que o usuário seja SELLER
+    - Busca OrderItems onde product__seller == request.user
+    - Agrupa por Order, exibindo apenas os itens do vendedor logado
+    - Filtro por status e paginação
+
+seller_order_detail: Detalhe de um pedido específico do ponto de vista do vendedor.
+    - Exige autenticação e que o usuário seja SELLER
+    - Exibe apenas os itens do vendedor naquele pedido
+    - Exibe dados do comprador e endereço de entrega
+    - Permite atualizar o status do pedido via POST
 """
 
 from decimal import Decimal
 
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
+from django.core.paginator import Paginator
 from django.db import transaction
-from django.db.models import F
+from django.db.models import F, Sum
 from django.shortcuts import get_object_or_404, redirect, render
 from django.views.decorators.http import require_POST
 
@@ -284,3 +297,118 @@ def order_success(request, pk):
     )
 
     return render(request, 'orders/order_success.html', {'order': order})
+
+
+@login_required
+def seller_order_list(request):
+    """Dashboard do vendedor: lista pedidos que contêm produtos do vendedor logado.
+
+    Apenas usuários com user_type == SELLER podem acessar.
+    Agrupa os OrderItems por Order, calculando o subtotal dos itens do vendedor.
+    Suporta filtro por status via query param ?status= e paginação.
+    """
+    if not request.user.is_seller:
+        messages.error(request, 'Acesso restrito a vendedores.')
+        return redirect('home')
+
+    # Filtro por status
+    status_filter = request.GET.get('status', '').strip().upper()
+    status_choices = Order.Status.choices
+
+    # Buscar OrderItems do vendedor logado
+    items_qs = (
+        OrderItem.objects
+        .filter(product__seller=request.user)
+        .select_related(
+            'order',
+            'order__user',
+            'order__shipping_address',
+            'product',
+        )
+        .order_by('-order__created_at')
+    )
+
+    if status_filter and status_filter in dict(Order.Status.choices):
+        items_qs = items_qs.filter(order__status=status_filter)
+
+    # Agrupar por Order, mantendo apenas os itens do vendedor
+    orders_dict: dict = {}
+    for item in items_qs:
+        order = item.order
+        if order.pk not in orders_dict:
+            orders_dict[order.pk] = {
+                'order': order,
+                'items': [],
+                'seller_subtotal': Decimal('0.00'),
+            }
+        orders_dict[order.pk]['items'].append(item)
+        orders_dict[order.pk]['seller_subtotal'] += item.subtotal
+
+    orders_list = list(orders_dict.values())
+
+    # Paginação
+    paginator = Paginator(orders_list, 10)
+    page_number = request.GET.get('page')
+    page_obj = paginator.get_page(page_number)
+
+    context = {
+        'page_obj': page_obj,
+        'paginator': paginator,
+        'is_paginated': paginator.num_pages > 1,
+        'status_filter': status_filter,
+        'status_choices': status_choices,
+        'total_orders': len(orders_list),
+    }
+    return render(request, 'sellers/order_list.html', context)
+
+
+@login_required
+def seller_order_detail(request, pk):
+    """Detalhe de um pedido do ponto de vista do vendedor.
+
+    Apenas usuários com user_type == SELLER podem acessar.
+    Exibe apenas os itens do vendedor naquele pedido.
+    Permite atualizar o status via POST.
+    """
+    if not request.user.is_seller:
+        messages.error(request, 'Acesso restrito a vendedores.')
+        return redirect('home')
+
+    # Verificar que o pedido contém ao menos um produto do vendedor
+    order = get_object_or_404(Order, pk=pk)
+
+    seller_items = (
+        OrderItem.objects
+        .filter(order=order, product__seller=request.user)
+        .select_related('product', 'product__images')
+        .prefetch_related('product__images')
+    )
+
+    if not seller_items.exists():
+        messages.error(request, 'Este pedido não contém produtos seus.')
+        return redirect('orders:seller-order-list')
+
+    # Atualização de status via POST
+    if request.method == 'POST':
+        novo_status = request.POST.get('status', '').strip().upper()
+        status_validos = [s[0] for s in Order.Status.choices]
+        if novo_status in status_validos:
+            order.status = novo_status
+            order.save(update_fields=['status', 'updated_at'])
+            messages.success(
+                request,
+                f'Status atualizado para "{order.get_status_display()}".'
+            )
+        else:
+            messages.error(request, 'Status inválido.')
+        return redirect('orders:seller-order-detail', pk=pk)
+
+    seller_subtotal = sum(item.subtotal for item in seller_items)
+
+    context = {
+        'order': order,
+        'seller_items': seller_items,
+        'seller_subtotal': seller_subtotal,
+        'status_choices': Order.Status.choices,
+    }
+    return render(request, 'sellers/order_detail.html', context)

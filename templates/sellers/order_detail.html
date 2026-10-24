@@ -1,0 +1,271 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Pedido #{{ order.pk }} — SoleStep Vendedor{% endblock %}
+
+{% block extra_css %}
+<meta name="description" content="Detalhes do pedido #{{ order.pk }} para o vendedor na SoleStep.">
+<link rel="stylesheet" href="{% static 'css/seller_orders.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="seller-order-detail">
+
+  <!-- ── Breadcrumb ─────────────────────────────────────────── -->
+  <nav class="breadcrumb" aria-label="Breadcrumb">
+    <a href="{% url 'orders:seller-order-list' %}" class="breadcrumb__link">Meus Pedidos</a>
+    <span class="breadcrumb__sep" aria-hidden="true">/</span>
+    <span class="breadcrumb__current">Pedido #{{ order.pk }}</span>
+  </nav>
+
+  <!-- ── Cabeçalho ──────────────────────────────────────────── -->
+  <header class="detail-header">
+    <div>
+      <h1 class="detail-header__order-id">
+        Pedido <span>#{{ order.pk }}</span>
+      </h1>
+      <p class="detail-header__meta">
+        Realizado em {{ order.created_at|date:"d/m/Y \à\s H:i" }}
+        &mdash; Atualizado em {{ order.updated_at|date:"d/m/Y H:i" }}
+      </p>
+    </div>
+
+    <!-- Status badge no cabeçalho -->
+    <div>
+      {% if order.status == 'PENDING' %}
+        <span class="status-badge status-badge--pending" id="header-status-badge">{{ order.get_status_display }}</span>
+      {% elif order.status == 'CONFIRMED' %}
+        <span class="status-badge status-badge--confirmed" id="header-status-badge">{{ order.get_status_display }}</span>
+      {% elif order.status == 'SHIPPED' %}
+        <span class="status-badge status-badge--shipped" id="header-status-badge">{{ order.get_status_display }}</span>
+      {% elif order.status == 'DELIVERED' %}
+        <span class="status-badge status-badge--delivered" id="header-status-badge">{{ order.get_status_display }}</span>
+      {% elif order.status == 'CANCELLED' %}
+        <span class="status-badge status-badge--cancelled" id="header-status-badge">{{ order.get_status_display }}</span>
+      {% else %}
+        <span class="status-badge" id="header-status-badge">{{ order.get_status_display }}</span>
+      {% endif %}
+    </div>
+  </header>
+
+  <!-- ── Layout 2 colunas ───────────────────────────────────── -->
+  <div class="detail-layout">
+
+    <!-- ════════════════════════════════════════════════════════
+         COLUNA ESQUERDA — Itens + Comprador + Endereço
+    ════════════════════════════════════════════════════════ -->
+    <div class="detail-main">
+
+      <!-- ── Seus itens neste pedido ────────────────────────── -->
+      <section class="detail-card" aria-labelledby="section-items-title">
+        <div class="detail-card__header">
+          <h2 class="detail-card__title" id="section-items-title">
+            Seus Itens
+            <span style="font-weight: var(--font-weight-regular); color: var(--color-muted);">
+              ({{ seller_items|length }} item{{ seller_items|length|pluralize }})
+            </span>
+          </h2>
+        </div>
+
+        <div class="detail-items">
+          {% for item in seller_items %}
+          <article class="detail-item" id="seller-item-{{ item.pk }}">
+
+            <!-- Imagem -->
+            <div class="detail-item__image">
+              {% with img=item.product.images.first %}
+              {% if img %}
+                <img src="{{ img.image.url }}"
+                     alt="{{ img.alt_text|default:item.product.name }}"
+                     loading="lazy">
+              {% else %}
+                <span class="detail-item__placeholder" aria-hidden="true">👟</span>
+              {% endif %}
+              {% endwith %}
+            </div>
+
+            <!-- Informações -->
+            <div class="detail-item__info">
+              <h3 class="detail-item__name">
+                {% if item.product %}
+                  <a href="{% url 'products:product-detail' item.product.pk %}">
+                    {{ item.product.name }}
+                  </a>
+                {% else %}
+                  <em>[Produto indisponível]</em>
+                {% endif %}
+              </h3>
+
+              <div class="detail-item__meta">
+                <span class="detail-item__size-badge">Tam. {{ item.size }}</span>
+                <span class="detail-item__qty">Qtd: <strong>{{ item.quantity }}</strong></span>
+              </div>
+
+              <span class="detail-item__unit-price">
+                R$&nbsp;{{ item.unit_price|floatformat:2 }} un. (preço snapshot)
+              </span>
+            </div>
+
+            <!-- Subtotal do item -->
+            <div class="detail-item__subtotal">
+              <span class="detail-item__subtotal-value">
+                R$&nbsp;{{ item.subtotal|floatformat:2 }}
+              </span>
+            </div>
+
+          </article>
+          {% endfor %}
+        </div>
+
+        <!-- Subtotal dos itens do vendedor -->
+        <div class="seller-summary" id="seller-items-subtotal">
+          <span class="seller-summary__label">Seus produtos neste pedido</span>
+          <span class="seller-summary__value">R$&nbsp;{{ seller_subtotal|floatformat:2 }}</span>
+        </div>
+      </section>
+
+      <!-- ── Dados do comprador ──────────────────────────────── -->
+      <section class="detail-card" aria-labelledby="section-buyer-title">
+        <div class="detail-card__header">
+          <h2 class="detail-card__title" id="section-buyer-title">Dados do Comprador</h2>
+        </div>
+        <div class="detail-card__body" id="buyer-details">
+          <div class="buyer-detail__row">
+            <span class="buyer-detail__key">Nome</span>
+            <span class="buyer-detail__val">{{ order.user.full_name }}</span>
+          </div>
+          <div class="buyer-detail__row">
+            <span class="buyer-detail__key">E-mail</span>
+            <span class="buyer-detail__val">{{ order.user.email }}</span>
+          </div>
+        </div>
+      </section>
+
+      <!-- ── Endereço de entrega ─────────────────────────────── -->
+      <section class="detail-card" aria-labelledby="section-address-title">
+        <div class="detail-card__header">
+          <h2 class="detail-card__title" id="section-address-title">Endereço de Entrega</h2>
+        </div>
+        <div class="detail-card__body" id="shipping-address-details">
+          {% if order.shipping_address %}
+          <div class="address-block">
+            <p class="address-block__nickname">
+              <span aria-hidden="true">📍</span>
+              {{ order.shipping_address.nickname|default:"Endereço de entrega" }}
+            </p>
+            <p class="address-block__text">
+              Destinatário: <strong>{{ order.shipping_address.recipient_name }}</strong><br>
+              {{ order.shipping_address.street }}, {{ order.shipping_address.number }}
+              {% if order.shipping_address.complement %}
+                ({{ order.shipping_address.complement }})
+              {% endif %}<br>
+              {{ order.shipping_address.neighborhood }} — {{ order.shipping_address.city }}/{{ order.shipping_address.state }}<br>
+              CEP: {{ order.shipping_address.zip_code }}
+            </p>
+            {% if order.shipping_address.reference %}
+            <p class="address-block__ref">
+              Referência: {{ order.shipping_address.reference }}
+            </p>
+            {% endif %}
+          </div>
+          {% else %}
+          <p style="color: var(--color-muted); font-family: var(--font-body); font-size: var(--text-sm);">
+            Endereço não disponível.
+          </p>
+          {% endif %}
+        </div>
+      </section>
+
+    </div>{# /.detail-main #}
+
+    <!-- ════════════════════════════════════════════════════════
+         COLUNA DIREITA — Status + Resumo Financeiro
+    ════════════════════════════════════════════════════════ -->
+    <aside class="detail-sidebar" aria-label="Gestão do pedido">
+
+      <!-- ── Atualizar status ────────────────────────────────── -->
+      <div class="detail-card" id="status-update-card">
+        <div class="detail-card__header">
+          <h2 class="detail-card__title">Atualizar Status</h2>
+        </div>
+        <div class="detail-card__body">
+
+          <div class="status-update-form__current">
+            <span class="status-update-form__current-label">Status atual</span>
+            {% if order.status == 'PENDING' %}
+              <span class="status-badge status-badge--pending">{{ order.get_status_display }}</span>
+            {% elif order.status == 'CONFIRMED' %}
+              <span class="status-badge status-badge--confirmed">{{ order.get_status_display }}</span>
+            {% elif order.status == 'SHIPPED' %}
+              <span class="status-badge status-badge--shipped">{{ order.get_status_display }}</span>
+            {% elif order.status == 'DELIVERED' %}
+              <span class="status-badge status-badge--delivered">{{ order.get_status_display }}</span>
+            {% elif order.status == 'CANCELLED' %}
+              <span class="status-badge status-badge--cancelled">{{ order.get_status_display }}</span>
+            {% endif %}
+          </div>
+
+          <form method="post"
+                action="{% url 'orders:seller-order-detail' order.pk %}"
+                class="status-update-form"
+                id="form-update-status"
+                style="margin-top: var(--space-4);">
+            {% csrf_token %}
+
+            <label for="status-select" class="filter-label">Novo status</label>
+            <select name="status"
+                    id="status-select"
+                    class="status-select"
+                    aria-label="Selecione o novo status do pedido">
+              {% for value, label in status_choices %}
+              <option value="{{ value }}" {% if value == order.status %}selected{% endif %}>
+                {{ label }}
+              </option>
+              {% endfor %}
+            </select>
+
+            <button type="submit"
+                    class="btn-update-status"
+                    id="btn-update-status">
+              Atualizar Status →
+            </button>
+          </form>
+        </div>
+      </div>
+
+      <!-- ── Resumo financeiro do pedido ────────────────────── -->
+      <div class="detail-card" id="order-financials-card">
+        <div class="detail-card__header">
+          <h2 class="detail-card__title">Resumo do Pedido</h2>
+        </div>
+
+        <div class="order-total-block">
+          <div class="cost-line">
+            <span class="cost-line__label">Subtotal dos produtos</span>
+            <span class="cost-line__value" id="order-subtotal">R$&nbsp;{{ order.subtotal|floatformat:2 }}</span>
+          </div>
+          <div class="cost-line">
+            <span class="cost-line__label">Frete</span>
+            <span class="cost-line__value" id="order-shipping">R$&nbsp;{{ order.shipping_cost|floatformat:2 }}</span>
+          </div>
+          <div class="cost-line cost-line--total">
+            <span class="cost-line__label">Total do pedido</span>
+            <span class="cost-line__value" id="order-total">R$&nbsp;{{ order.total|floatformat:2 }}</span>
+          </div>
+        </div>
+
+        <!-- Nota: o total é do pedido inteiro, não só dos itens do vendedor -->
+        <div class="detail-card__body" style="padding-top: 0;">
+          <p style="font-family: var(--font-body); font-size: var(--text-xs); color: var(--color-muted); margin: 0;">
+            * O total inclui todos os itens e vendedores deste pedido.
+            Seus itens somam <strong>R$&nbsp;{{ seller_subtotal|floatformat:2 }}</strong>.
+          </p>
+        </div>
+      </div>
+
+    </aside>
+
+  </div>{# /.detail-layout #}
+
+</div>
+{% endblock %}

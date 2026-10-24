@@ -22,6 +22,16 @@ order_success: Exibe a página de confirmação do pedido.
     - Exige autenticação
     - Apresenta detalhes do Order criado (itens, valores, endereço, pagamento)
 
+order_list: Histórico de pedidos do cliente.
+    - Exige autenticação (@login_required)
+    - Lista apenas pedidos do usuário logado, ordenados por data decrescente
+    - Paginação de 10 por página
+
+order_detail: Detalhe de um pedido do cliente.
+    - Exige autenticação (@login_required)
+    - get_object_or_404(Order, pk=pk, user=request.user) — garante posse
+    - Exibe itens, subtotal, frete, total, endereço, pagamento e status
+
 seller_order_list: Dashboard do vendedor — lista de pedidos com seus itens.
     - Exige autenticação e que o usuário seja SELLER
     - Busca OrderItems onde product__seller == request.user
@@ -297,6 +307,61 @@ def order_success(request, pk):
     )
 
     return render(request, 'orders/order_success.html', {'order': order})
+
+
+@login_required
+def order_list(request):
+    """Histórico de pedidos do cliente autenticado.
+
+    Lista apenas os pedidos do usuário logado, ordenados do mais recente
+    para o mais antigo. Paginação de 10 itens por página.
+    """
+    orders_qs = (
+        Order.objects
+        .filter(user=request.user)
+        .select_related('shipping_address')
+        .prefetch_related('items')
+        .order_by('-created_at')
+    )
+
+    paginator = Paginator(orders_qs, 10)
+    page_number = request.GET.get('page')
+    page_obj = paginator.get_page(page_number)
+
+    context = {
+        'page_obj': page_obj,
+        'paginator': paginator,
+        'is_paginated': paginator.num_pages > 1,
+        'total_orders': paginator.count,
+    }
+    return render(request, 'orders/order_list.html', context)
+
+
+@login_required
+def order_detail(request, pk):
+    """Detalhe de um pedido do cliente autenticado.
+
+    Usa get_object_or_404 com filtro user=request.user para garantir que
+    apenas o dono do pedido consiga visualizá-lo. Retorna 404 para pedidos
+    de outros usuários, evitando vazamento de dados.
+    """
+    order = get_object_or_404(
+        Order.objects.select_related(
+            'shipping_address',
+        ).prefetch_related(
+            'items',
+            'items__product',
+            'items__product__images',
+        ),
+        pk=pk,
+        user=request.user,
+    )
+
+    context = {
+        'order': order,
+        'status_choices': Order.Status.choices,
+    }
+    return render(request, 'orders/order_detail.html', context)
 
 
 @login_required

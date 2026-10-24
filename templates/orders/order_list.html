@@ -1,0 +1,188 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Meus Pedidos — SoleStep{% endblock %}
+
+{% block extra_css %}
+<meta name="description" content="Histórico de pedidos realizados na SoleStep. Acompanhe status, data e valores.">
+<link rel="stylesheet" href="{% static 'css/client_orders.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="client-orders-page">
+
+  <!-- ── Cabeçalho ──────────────────────────────────────────── -->
+  <div class="client-orders__header">
+    <div>
+      <h1 class="client-orders__title">Meus Pedidos</h1>
+      <p class="client-orders__subtitle">Histórico completo de compras realizadas na SoleStep</p>
+    </div>
+    <a href="{% url 'products:product-list' %}"
+       class="btn btn--secondary"
+       id="btn-continue-shopping">
+      ← Continuar comprando
+    </a>
+  </div>
+
+  <!-- ── Contador ───────────────────────────────────────────── -->
+  <div class="client-orders__stat">
+    <div class="stat-card stat-card--accent">
+      <span class="stat-card__value">{{ total_orders }}</span>
+      <span class="stat-card__label">Pedido{{ total_orders|pluralize }}</span>
+    </div>
+  </div>
+
+  <!-- ── Lista de pedidos ───────────────────────────────────── -->
+  {% if page_obj %}
+  <div class="client-orders__list">
+
+    {% for order in page_obj %}
+    <article class="order-card" id="order-card-{{ order.pk }}">
+
+      <!-- Cabeçalho do card -->
+      <div class="order-card__header">
+        <div class="order-card__id-group">
+          <span class="order-card__id">#{{ order.pk }}</span>
+          <span class="order-card__date">
+            {{ order.created_at|date:"d/m/Y \à\s H:i" }}
+          </span>
+        </div>
+
+        <div class="order-card__meta">
+          <span class="order-card__item-count">
+            {{ order.items.count }} item{{ order.items.count|pluralize }}
+          </span>
+          <span class="order-card__total">R$&nbsp;{{ order.total|floatformat:2 }}</span>
+
+          <!-- Badge de status -->
+          {% if order.status == 'PENDING' %}
+            <span class="status-badge status-badge--pending">{{ order.get_status_display }}</span>
+          {% elif order.status == 'CONFIRMED' %}
+            <span class="status-badge status-badge--confirmed">{{ order.get_status_display }}</span>
+          {% elif order.status == 'SHIPPED' %}
+            <span class="status-badge status-badge--shipped">{{ order.get_status_display }}</span>
+          {% elif order.status == 'DELIVERED' %}
+            <span class="status-badge status-badge--delivered">{{ order.get_status_display }}</span>
+          {% elif order.status == 'CANCELLED' %}
+            <span class="status-badge status-badge--cancelled">{{ order.get_status_display }}</span>
+          {% else %}
+            <span class="status-badge">{{ order.get_status_display }}</span>
+          {% endif %}
+        </div>
+      </div>
+
+      <!-- Preview dos primeiros itens -->
+      <div class="order-card__body">
+        <div class="order-card__preview" aria-label="Itens do pedido #{{ order.pk }}">
+          {% for item in order.items.all|slice:":4" %}
+            <div class="order-preview-thumb" title="{{ item.product.name|default:'Produto removido' }}">
+              {% with img=item.product.images.first %}
+                {% if img %}
+                  <img src="{{ img.image.url }}"
+                       alt="{{ img.alt_text|default:item.product.name }}"
+                       loading="lazy">
+                {% else %}
+                  <span class="order-preview-thumb__placeholder" aria-hidden="true">👟</span>
+                {% endif %}
+              {% endwith %}
+            </div>
+          {% endfor %}
+          {% if order.items.count > 4 %}
+            <span class="order-preview-more">+{{ order.items.count|add:"-4" }} mais</span>
+          {% endif %}
+        </div>
+      </div>
+
+      <!-- Rodapé com link de detalhe -->
+      <div class="order-card__footer">
+        <span class="order-card__date" style="font-size: var(--text-xs); color: var(--color-muted);">
+          {% if order.shipping_address %}
+            📍 {{ order.shipping_address.city }}/{{ order.shipping_address.state }}
+          {% else %}
+            Endereço não disponível
+          {% endif %}
+        </span>
+        <a href="{% url 'orders:order-detail' order.pk %}"
+           class="btn-order-detail"
+           id="btn-detail-{{ order.pk }}"
+           aria-label="Ver detalhes do pedido #{{ order.pk }}">
+          Ver detalhes →
+        </a>
+      </div>
+
+    </article>
+    {% endfor %}
+
+  </div>
+
+  <!-- ── Paginação ──────────────────────────────────────────── -->
+  {% if is_paginated %}
+  <nav class="pagination" aria-label="Navegação de páginas">
+    <div class="pagination__info">
+      Página {{ page_obj.number }} de {{ paginator.num_pages }}
+      &mdash; {{ total_orders }} pedido{{ total_orders|pluralize }}
+    </div>
+
+    <div class="pagination__controls">
+      {% if page_obj.has_previous %}
+        <a href="?page=1"
+           class="pagination__btn"
+           id="page-first"
+           aria-label="Primeira página">&laquo;</a>
+        <a href="?page={{ page_obj.previous_page_number }}"
+           class="pagination__btn"
+           id="page-prev"
+           aria-label="Página anterior">&lsaquo;</a>
+      {% else %}
+        <span class="pagination__btn pagination__btn--disabled" aria-disabled="true">&laquo;</span>
+        <span class="pagination__btn pagination__btn--disabled" aria-disabled="true">&lsaquo;</span>
+      {% endif %}
+
+      {% for num in paginator.page_range %}
+        {% if num == page_obj.number %}
+          <span class="pagination__btn pagination__btn--current"
+                aria-current="page"
+                aria-label="Página {{ num }}, atual">{{ num }}</span>
+        {% elif num >= page_obj.number|add:"-2" and num <= page_obj.number|add:"2" %}
+          <a href="?page={{ num }}"
+             class="pagination__btn"
+             id="page-{{ num }}"
+             aria-label="Página {{ num }}">{{ num }}</a>
+        {% endif %}
+      {% endfor %}
+
+      {% if page_obj.has_next %}
+        <a href="?page={{ page_obj.next_page_number }}"
+           class="pagination__btn"
+           id="page-next"
+           aria-label="Próxima página">&rsaquo;</a>
+        <a href="?page={{ paginator.num_pages }}"
+           class="pagination__btn"
+           id="page-last"
+           aria-label="Última página">&raquo;</a>
+      {% else %}
+        <span class="pagination__btn pagination__btn--disabled" aria-disabled="true">&rsaquo;</span>
+        <span class="pagination__btn pagination__btn--disabled" aria-disabled="true">&raquo;</span>
+      {% endif %}
+    </div>
+  </nav>
+  {% endif %}
+
+  {% else %}
+  <!-- ── Estado vazio ───────────────────────────────────────── -->
+  <div class="empty-state" role="status">
+    <span class="empty-state__icon" aria-hidden="true">📦</span>
+    <h2 class="empty-state__title">Nenhum pedido ainda</h2>
+    <p class="empty-state__text">
+      Quando você finalizar sua primeira compra, os pedidos aparecerão aqui.
+    </p>
+    <a href="{% url 'products:product-list' %}"
+       class="btn--primary"
+       id="btn-start-shopping">
+      Explorar produtos →
+    </a>
+  </div>
+  {% endif %}
+
+</div>
+{% endblock %}

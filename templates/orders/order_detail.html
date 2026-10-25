@@ -79,7 +79,9 @@
                        alt="{{ img.alt_text|default:item.product.name }}"
                        loading="lazy">
                 {% else %}
-                  <span class="detail-item__placeholder" aria-hidden="true">👟</span>
+                  <span class="detail-item__placeholder" aria-hidden="true" style="display:flex;align-items:center;justify-content:center;">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"/><line x1="7" y1="7" x2="7.01" y2="7"/></svg>
+                  </span>
                 {% endif %}
               {% endwith %}
             </div>
@@ -153,8 +155,9 @@
         <div class="detail-card__body">
           {% if order.shipping_address %}
           <div class="address-block" id="order-shipping-address">
-            <p class="address-block__nickname">
-              📍 {{ order.shipping_address.nickname|default:"Endereço de entrega" }}
+            <p class="address-block__nickname" style="display:inline-flex;align-items:center;gap:4px;">
+              <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+              {{ order.shipping_address.nickname|default:"Endereço de entrega" }}
             </p>
             <p class="address-block__text">
               <strong>{{ order.shipping_address.recipient_name }}</strong><br>
@@ -200,14 +203,18 @@
           <!-- Timeline: cancelado -->
           <ol class="status-timeline" aria-label="Histórico de status">
             <li class="status-timeline__step status-timeline__step--done">
-              <div class="status-timeline__dot" aria-hidden="true">✓</div>
+              <div class="status-timeline__dot" aria-hidden="true">
+                <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>
+              </div>
               <div class="status-timeline__info">
                 <span class="status-timeline__label">Pedido realizado</span>
                 <span class="status-timeline__desc">{{ order.created_at|date:"d/m/Y H:i" }}</span>
               </div>
             </li>
             <li class="status-timeline__step status-timeline__step--cancelled">
-              <div class="status-timeline__dot" aria-hidden="true">✕</div>
+              <div class="status-timeline__dot" aria-hidden="true">
+                <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+              </div>
               <div class="status-timeline__info">
                 <span class="status-timeline__label">Cancelado</span>
                 <span class="status-timeline__desc">Este pedido foi cancelado.</span>
@@ -224,7 +231,7 @@
                 {% if order.status == 'PENDING' %}status-timeline__step--active
                 {% else %}status-timeline__step--done{% endif %}">
               <div class="status-timeline__dot" aria-hidden="true">
-                {% if order.status == 'PENDING' %}●{% else %}✓{% endif %}
+                {% if order.status == 'PENDING' %}●{% else %}<svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>{% endif %}
               </div>
               <div class="status-timeline__info">
                 <span class="status-timeline__label">Pedido confirmado</span>
@@ -241,7 +248,7 @@
                 {% else %}status-timeline__step--done{% endif %}">
               <div class="status-timeline__dot" aria-hidden="true">
                 {% if order.status == 'CONFIRMED' %}●
-                {% elif order.status != 'PENDING' %}✓
+                {% elif order.status != 'PENDING' %}<svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>
                 {% else %}○{% endif %}
               </div>
               <div class="status-timeline__info">
@@ -259,7 +266,7 @@
                 {% else %}status-timeline__step--pending-future{% endif %}">
               <div class="status-timeline__dot" aria-hidden="true">
                 {% if order.status == 'SHIPPED' %}●
-                {% elif order.status == 'DELIVERED' %}✓
+                {% elif order.status == 'DELIVERED' %}<svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>
                 {% else %}○{% endif %}
               </div>
               <div class="status-timeline__info">
@@ -275,7 +282,7 @@
                 {% if order.status == 'DELIVERED' %}status-timeline__step--active
                 {% else %}status-timeline__step--pending-future{% endif %}">
               <div class="status-timeline__dot" aria-hidden="true">
-                {% if order.status == 'DELIVERED' %}✓{% else %}○{% endif %}
+                {% if order.status == 'DELIVERED' %}<svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>{% else %}○{% endif %}
               </div>
               <div class="status-timeline__info">
                 <span class="status-timeline__label">Entregue</span>
@@ -302,11 +309,13 @@
           <div class="payment-block" id="order-payment-info">
 
             <div class="payment-block__method">
-              <span class="payment-block__icon" aria-hidden="true">
-                {% if order.payment_method == 'CREDIT_CARD_SIM' %}💳
-                {% elif order.payment_method == 'DEBIT_CARD_SIM' %}💳
-                {% elif order.payment_method == 'PIX_SIM' %}⚡
-                {% else %}🧾
+              <span class="payment-block__icon" aria-hidden="true" style="display:inline-flex;align-items:center;">
+                {% if order.payment_method == 'CREDIT_CARD_SIM' or order.payment_method == 'DEBIT_CARD_SIM' %}
+                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="4" width="22" height="16" rx="2" ry="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg>
+                {% elif order.payment_method == 'PIX_SIM' %}
+                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+                {% else %}
+                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
                 {% endif %}
               </span>
               <span class="payment-block__name">{{ order.get_payment_method_display }}</span>
@@ -322,8 +331,9 @@
               {% endif %}
             </div>
 
-            <span class="payment-block__sim-tag">
-              ⚠️ Pagamento simulado — projeto acadêmico
+            <span class="payment-block__sim-tag" style="display:inline-flex;align-items:center;gap:4px;">
+              <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+              Pagamento simulado — projeto acadêmico
             </span>
 
           </div>

@@ -1,0 +1,143 @@
+{% extends 'sellers/base.html' %}
+{% load static %}
+
+{% block title %}Pedidos — Painel do Vendedor SoleStep{% endblock %}
+{% block meta %}<meta name="description" content="Gerencie todos os pedidos com seus produtos na SoleStep.">{% endblock %}
+{% block nav_orders %}seller-nav__link--active{% endblock %}
+{% block breadcrumb %}Pedidos{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/seller_orders.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="seller-page-header">
+  <div class="seller-page-header__eyebrow">Área do Vendedor</div>
+  <h1 class="seller-page-header__title">Pedidos dos Clientes</h1>
+  <p class="seller-page-header__subtitle">
+    Pedidos que contêm produtos da sua loja
+    {% if status_filter %}— filtrados por <strong>{{ status_filter }}</strong>{% endif %}
+  </p>
+</div>
+
+<!-- Filtros -->
+<div class="panel-filters" role="navigation" aria-label="Filtrar pedidos por status">
+  <span class="panel-filters__label">Status:</span>
+  <a href="{% url 'sellers:order-list' %}"
+     class="filter-btn {% if not status_filter %}filter-btn--active{% endif %}"
+     id="filter-todos">Todos ({{ total_orders }})</a>
+  {% for value, label in status_choices %}
+  <a href="?status={{ value }}"
+     class="filter-btn {% if status_filter == value %}filter-btn--active{% endif %}"
+     id="filter-{{ value|lower }}">{{ label }}</a>
+  {% endfor %}
+</div>
+
+<!-- Tabela de pedidos -->
+{% if page_obj %}
+<div class="panel-table-wrapper" id="orders-table-wrapper">
+  <div class="panel-table-header">
+    <h2 class="panel-table-header__title">
+      {{ total_orders }} pedido{{ total_orders|pluralize }}
+    </h2>
+  </div>
+  <div style="overflow-x:auto;">
+    <table class="panel-table" aria-label="Lista de pedidos do vendedor">
+      <thead>
+        <tr>
+          <th scope="col">#</th>
+          <th scope="col">Comprador</th>
+          <th scope="col">Data</th>
+          <th scope="col">Itens</th>
+          <th scope="col">Seus produtos (R$)</th>
+          <th scope="col">Status</th>
+          <th scope="col">Ações</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for entry in page_obj %}
+        {% with order=entry.order items=entry.items seller_subtotal=entry.seller_subtotal %}
+        <tr id="order-row-{{ order.pk }}">
+          <td style="font-family:var(--font-heading);font-weight:800;">#{{ order.pk }}</td>
+          <td>
+            <div style="font-weight:600;font-size:var(--text-sm);">{{ order.user.full_name }}</div>
+            <div style="font-size:var(--text-xs);color:var(--color-muted);">{{ order.user.email }}</div>
+          </td>
+          <td style="font-size:var(--text-sm);white-space:nowrap;">{{ order.created_at|date:"d/m/Y H:i" }}</td>
+          <td style="font-size:var(--text-sm);">{{ items|length }} item{{ items|length|pluralize }}</td>
+          <td style="font-family:var(--font-heading);font-weight:700;">R$&nbsp;{{ seller_subtotal|floatformat:2 }}</td>
+          <td>
+            {% if order.status == 'PENDING' %}<span class="status-badge status-badge--pending">{{ order.get_status_display }}</span>
+            {% elif order.status == 'CONFIRMED' %}<span class="status-badge status-badge--confirmed">{{ order.get_status_display }}</span>
+            {% elif order.status == 'SHIPPED' %}<span class="status-badge status-badge--shipped">{{ order.get_status_display }}</span>
+            {% elif order.status == 'DELIVERED' %}<span class="status-badge status-badge--delivered">{{ order.get_status_display }}</span>
+            {% elif order.status == 'CANCELLED' %}<span class="status-badge status-badge--cancelled">{{ order.get_status_display }}</span>
+            {% else %}<span class="status-badge">{{ order.get_status_display }}</span>{% endif %}
+          </td>
+          <td>
+            <a href="{% url 'sellers:order-detail' order.pk %}"
+               class="btn-panel btn-panel--outline btn-panel--sm"
+               id="btn-order-{{ order.pk }}"
+               aria-label="Ver detalhes do pedido #{{ order.pk }}">Ver &rarr;</a>
+          </td>
+        </tr>
+        {% endwith %}
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Paginação -->
+  {% if is_paginated %}
+  <div class="panel-pagination">
+    <span class="panel-pagination__info">
+      Página {{ page_obj.number }} de {{ paginator.num_pages }} — {{ total_orders }} pedido{{ total_orders|pluralize }}
+    </span>
+    <div class="panel-pagination__controls">
+      {% if page_obj.has_previous %}
+        <a href="?page=1{% if status_filter %}&status={{ status_filter }}{% endif %}" class="panel-pagination__btn" id="page-first" aria-label="Primeira página">&laquo;</a>
+        <a href="?page={{ page_obj.previous_page_number }}{% if status_filter %}&status={{ status_filter }}{% endif %}" class="panel-pagination__btn" id="page-prev" aria-label="Anterior">&lsaquo;</a>
+      {% else %}
+        <span class="panel-pagination__btn panel-pagination__btn--disabled">&laquo;</span>
+        <span class="panel-pagination__btn panel-pagination__btn--disabled">&lsaquo;</span>
+      {% endif %}
+      {% for num in paginator.page_range %}
+        {% if num == page_obj.number %}
+          <span class="panel-pagination__btn panel-pagination__btn--active" aria-current="page">{{ num }}</span>
+        {% elif num >= page_obj.number|add:"-2" and num <= page_obj.number|add:"2" %}
+          <a href="?page={{ num }}{% if status_filter %}&status={{ status_filter }}{% endif %}" class="panel-pagination__btn" id="page-{{ num }}">{{ num }}</a>
+        {% endif %}
+      {% endfor %}
+      {% if page_obj.has_next %}
+        <a href="?page={{ page_obj.next_page_number }}{% if status_filter %}&status={{ status_filter }}{% endif %}" class="panel-pagination__btn" id="page-next" aria-label="Próxima">&rsaquo;</a>
+        <a href="?page={{ paginator.num_pages }}{% if status_filter %}&status={{ status_filter }}{% endif %}" class="panel-pagination__btn" id="page-last" aria-label="Última">&raquo;</a>
+      {% else %}
+        <span class="panel-pagination__btn panel-pagination__btn--disabled">&rsaquo;</span>
+        <span class="panel-pagination__btn panel-pagination__btn--disabled">&raquo;</span>
+      {% endif %}
+    </div>
+  </div>
+  {% endif %}
+</div>
+
+{% else %}
+<div class="panel-card">
+  <div class="empty-panel">
+    <span class="empty-panel__icon">
+      <svg xmlns="http://www.w3.org/2000/svg" width="56" height="56" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M16.5 9.4l-9-5.19M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><polyline points="3.27 6.96 12 12.01 20.73 6.96"/><line x1="12" y1="22.08" x2="12" y2="12"/></svg>
+    </span>
+    <h2 class="empty-panel__title">
+      {% if status_filter %}Nenhum pedido com status "{{ status_filter }}"{% else %}Nenhum pedido encontrado{% endif %}
+    </h2>
+    <p class="empty-panel__text">
+      {% if status_filter %}
+        Tente outro filtro ou <a href="{% url 'sellers:order-list' %}">veja todos os pedidos</a>.
+      {% else %}
+        Quando um cliente comprar seus produtos, o pedido aparecerá aqui.
+      {% endif %}
+    </p>
+    <a href="{% url 'sellers:product-list' %}" class="btn-panel" id="btn-go-products">Ver Produtos</a>
+  </div>
+</div>
+{% endif %}
+{% endblock %}

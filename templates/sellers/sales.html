@@ -1,0 +1,208 @@
+{% extends 'sellers/base.html' %}
+{% load static %}
+
+{% block title %}Vendas e Relatórios — Painel SoleStep{% endblock %}
+{% block meta %}<meta name="description" content="Acompanhe o desempenho de vendas da sua loja SoleStep.">{% endblock %}
+{% block nav_sales %}seller-nav__link--active{% endblock %}
+{% block breadcrumb %}Vendas e Relatórios{% endblock %}
+
+{% block content %}
+<div class="seller-page-header">
+  <div class="seller-page-header__eyebrow">Relatórios</div>
+  <h1 class="seller-page-header__title">Vendas e Desempenho</h1>
+  <p class="seller-page-header__subtitle">Acompanhe sua performance comercial. Apenas pedidos confirmados, enviados ou entregues são contabilizados.</p>
+</div>
+
+<!-- Seletor de período -->
+<div style="margin-bottom:var(--space-6);display:flex;align-items:center;gap:var(--space-4);flex-wrap:wrap;">
+  <div class="period-selector" role="group" aria-label="Selecionar período">
+    <a href="?periodo=hoje" class="period-btn {% if periodo == 'hoje' %}period-btn--active{% endif %}" id="period-hoje">Hoje</a>
+    <a href="?periodo=7d" class="period-btn {% if periodo == '7d' %}period-btn--active{% endif %}" id="period-7d">7 dias</a>
+    <a href="?periodo=30d" class="period-btn {% if periodo == '30d' %}period-btn--active{% endif %}" id="period-30d">30 dias</a>
+    <a href="?periodo=mes" class="period-btn {% if periodo == 'mes' %}period-btn--active{% endif %}" id="period-mes">Este mês</a>
+    <span class="period-btn {% if periodo == 'custom' %}period-btn--active{% endif %}" id="period-custom-label" style="cursor:pointer;" onclick="document.getElementById('custom-period-form').style.display='flex'">Personalizado</span>
+  </div>
+  <span style="font-family:var(--font-body);font-size:var(--text-sm);color:var(--color-muted);">
+    {{ data_inicio|date:"d/m/Y" }} — {{ data_fim|date:"d/m/Y" }}
+  </span>
+</div>
+
+<!-- Formulário período personalizado -->
+<form method="get" id="custom-period-form" style="display:{% if periodo == 'custom' %}flex{% else %}none{% endif %};align-items:center;gap:var(--space-3);flex-wrap:wrap;margin-bottom:var(--space-6);padding:var(--space-4);background:var(--color-surface);border:var(--border-width) solid var(--color-primary);">
+  <input type="hidden" name="periodo" value="custom">
+  <div style="display:flex;flex-direction:column;gap:var(--space-1);">
+    <label style="font-family:var(--font-body);font-size:var(--text-xs);font-weight:600;">De</label>
+    <input type="date" name="data_inicio" value="{{ data_inicio_str }}" id="input-date-inicio"
+           style="border:var(--border-width) solid var(--color-primary);padding:var(--space-2) var(--space-3);font-family:var(--font-body);font-size:var(--text-sm);outline:none;">
+  </div>
+  <div style="display:flex;flex-direction:column;gap:var(--space-1);">
+    <label style="font-family:var(--font-body);font-size:var(--text-xs);font-weight:600;">Até</label>
+    <input type="date" name="data_fim" value="{{ data_fim_str }}" id="input-date-fim"
+           style="border:var(--border-width) solid var(--color-primary);padding:var(--space-2) var(--space-3);font-family:var(--font-body);font-size:var(--text-sm);outline:none;">
+  </div>
+  <button type="submit" class="btn-panel" id="btn-apply-period" style="align-self:flex-end;">Aplicar</button>
+</form>
+
+<!-- KPIs do período -->
+<div class="kpi-grid" id="sales-kpis">
+  <div class="kpi-card kpi-card--accent">
+    <span class="kpi-card__icon" aria-hidden="true">
+      <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+    </span>
+    <span class="kpi-card__value">R$&nbsp;{{ faturamento|floatformat:2 }}</span>
+    <span class="kpi-card__label">Faturamento</span>
+  </div>
+  <div class="kpi-card kpi-card--info">
+    <span class="kpi-card__icon" aria-hidden="true">
+      <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M16.5 9.4l-9-5.19M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><polyline points="3.27 6.96 12 12.01 20.73 6.96"/><line x1="12" y1="22.08" x2="12" y2="12"/></svg>
+    </span>
+    <span class="kpi-card__value">{{ qtd_pedidos_periodo }}</span>
+    <span class="kpi-card__label">Pedidos</span>
+  </div>
+  <div class="kpi-card">
+    <span class="kpi-card__icon" aria-hidden="true">
+      <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg>
+    </span>
+    <span class="kpi-card__value">R$&nbsp;{{ ticket_medio|floatformat:2 }}</span>
+    <span class="kpi-card__label">Ticket médio</span>
+  </div>
+  <div class="kpi-card kpi-card--success">
+    <span class="kpi-card__icon" aria-hidden="true">
+      <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"/><line x1="7" y1="7" x2="7.01" y2="7"/></svg>
+    </span>
+    <span class="kpi-card__value">{{ qtd_itens_vendidos }}</span>
+    <span class="kpi-card__label">Itens vendidos</span>
+  </div>
+</div>
+
+<!-- Gráfico evolução + Top produtos -->
+<div class="dashboard-grid">
+
+  <!-- Gráfico de evolução diária -->
+  <div class="panel-card" id="chart-sales">
+    <div class="panel-card__header">
+      <h2 class="panel-card__title">
+        <span class="panel-card__title-icon" aria-hidden="true">
+          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/></svg>
+        </span>
+        Evolução de Pedidos
+      </h2>
+    </div>
+    <div class="panel-card__body">
+      {% if grafico_evolucao %}
+      <div class="bar-chart" id="bar-chart-sales" aria-label="Gráfico de evolução de pedidos">
+        {% for d in grafico_evolucao %}
+        {% if d.count > 0 or forloop.first or forloop.last %}
+        <div class="bar-chart__row">
+          <span class="bar-chart__label">{{ d.dia }}</span>
+          <div class="bar-chart__track">
+            <div class="bar-chart__fill bar-chart__fill--accent"
+                 style="width:{% if max_receita > 0 %}{% widthratio d.count max_receita 100 %}{% else %}0{% endif %}%"></div>
+          </div>
+          <span class="bar-chart__value">{{ d.count }}</span>
+        </div>
+        {% endif %}
+        {% endfor %}
+      </div>
+      {% else %}
+      <p style="font-family:var(--font-body);color:var(--color-muted);font-size:var(--text-sm);">Nenhum dado para o período selecionado.</p>
+      {% endif %}
+    </div>
+  </div>
+
+  <!-- Top 5 produtos do período -->
+  <div class="panel-card" id="top-products-period">
+    <div class="panel-card__header">
+      <h2 class="panel-card__title">
+        <span class="panel-card__title-icon" aria-hidden="true">
+          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="8" r="7"/><polyline points="8.21 13.89 7 23 12 20 17 23 15.79 13.88"/></svg>
+        </span>
+        Top Produtos
+      </h2>
+    </div>
+    <div class="panel-card__body">
+      {% if top_produtos_periodo %}
+        {% for p in top_produtos_periodo %}
+        <div class="top-product-row" id="top-produto-{{ forloop.counter }}">
+          <span class="top-product-row__rank top-product-row__rank--{{ forloop.counter }}">#{{ forloop.counter }}</span>
+          <div class="top-product-row__info">
+            <div class="top-product-row__name">{{ p.product__name }}</div>
+            <div class="top-product-row__meta">{{ p.product__brand }}</div>
+          </div>
+          <span class="top-product-row__value">{{ p.total_qty }} vend.</span>
+        </div>
+        {% endfor %}
+      {% else %}
+        <p style="font-family:var(--font-body);color:var(--color-muted);font-size:var(--text-sm);">Sem dados para este período.</p>
+      {% endif %}
+    </div>
+  </div>
+
+</div>
+
+<!-- Histórico de pedidos do período -->
+<div class="panel-table-wrapper" id="sales-history">
+  <div class="panel-table-header">
+    <h2 class="panel-table-header__title">Histórico de Pedidos</h2>
+  </div>
+  {% if page_obj %}
+  <div style="overflow-x:auto;">
+    <table class="panel-table" aria-label="Histórico de pedidos do período">
+      <thead>
+        <tr>
+          <th scope="col">#</th>
+          <th scope="col">Cliente</th>
+          <th scope="col">Data</th>
+          <th scope="col">Status</th>
+          <th scope="col">Total</th>
+          <th scope="col"></th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for order in page_obj %}
+        <tr id="sales-order-{{ order.pk }}">
+          <td style="font-family:var(--font-heading);font-weight:800;">#{{ order.pk }}</td>
+          <td>
+            <div style="font-weight:600;font-size:var(--text-sm);">{{ order.user.full_name }}</div>
+            <div style="font-size:var(--text-xs);color:var(--color-muted);">{{ order.user.email }}</div>
+          </td>
+          <td style="font-size:var(--text-sm);white-space:nowrap;">{{ order.created_at|date:"d/m/Y H:i" }}</td>
+          <td>
+            {% if order.status == 'CONFIRMED' %}<span class="status-badge status-badge--confirmed">{{ order.get_status_display }}</span>
+            {% elif order.status == 'SHIPPED' %}<span class="status-badge status-badge--shipped">{{ order.get_status_display }}</span>
+            {% elif order.status == 'DELIVERED' %}<span class="status-badge status-badge--delivered">{{ order.get_status_display }}</span>
+            {% else %}<span class="status-badge">{{ order.get_status_display }}</span>{% endif %}
+          </td>
+          <td style="font-family:var(--font-heading);font-weight:700;">R$&nbsp;{{ order.total|floatformat:2 }}</td>
+          <td>
+            <a href="{% url 'sellers:order-detail' order.pk %}" class="btn-panel btn-panel--outline btn-panel--sm" id="btn-view-order-{{ order.pk }}">Ver &rarr;</a>
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+  <!-- Paginação -->
+  {% if is_paginated %}
+  <div class="panel-pagination">
+    <span class="panel-pagination__info">Página {{ page_obj.number }} de {{ paginator.num_pages }}</span>
+    <div class="panel-pagination__controls">
+      {% if page_obj.has_previous %}
+        <a href="?periodo={{ periodo }}&page={{ page_obj.previous_page_number }}" class="panel-pagination__btn" id="page-prev">&lsaquo;</a>
+      {% else %}<span class="panel-pagination__btn panel-pagination__btn--disabled">&lsaquo;</span>{% endif %}
+      {% if page_obj.has_next %}
+        <a href="?periodo={{ periodo }}&page={{ page_obj.next_page_number }}" class="panel-pagination__btn" id="page-next">&rsaquo;</a>
+      {% else %}<span class="panel-pagination__btn panel-pagination__btn--disabled">&rsaquo;</span>{% endif %}
+    </div>
+  </div>
+  {% endif %}
+  {% else %}
+  <div class="empty-panel" style="padding:var(--space-10);">
+    <span class="empty-panel__icon">
+      <svg xmlns="http://www.w3.org/2000/svg" width="56" height="56" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
+    </span>
+    <p class="empty-panel__text">Nenhum pedido neste período.</p>
+  </div>
+  {% endif %}
+</div>
+{% endblock %}

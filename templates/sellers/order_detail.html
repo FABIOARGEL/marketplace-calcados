@@ -79,7 +79,9 @@
                      alt="{{ img.alt_text|default:item.product.name }}"
                      loading="lazy">
               {% else %}
-                <span class="detail-item__placeholder" aria-hidden="true">👟</span>
+                <span class="detail-item__placeholder" aria-hidden="true">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"/><line x1="7" y1="7" x2="7.01" y2="7"/></svg>
+                </span>
               {% endif %}
               {% endwith %}
             </div>
@@ -150,7 +152,9 @@
           {% if order.shipping_address %}
           <div class="address-block">
             <p class="address-block__nickname">
-              <span aria-hidden="true">📍</span>
+              <span aria-hidden="true">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+              </span>
               {{ order.shipping_address.nickname|default:"Endereço de entrega" }}
             </p>
             <p class="address-block__text">
@@ -236,9 +240,9 @@
                       font-size: var(--text-sm);
                       color: var(--color-muted);">
               {% if order.status == 'DELIVERED' %}
-                ✅ Pedido entregue. Nenhuma alteração de status disponível.
+                <span style="display:inline-flex;align-items:center;gap:4px;"><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--color-success)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg> Pedido entregue. Nenhuma alteração de status disponível.</span>
               {% elif order.status == 'CANCELLED' %}
-                ❌ Pedido cancelado. Nenhuma alteração de status disponível.
+                <span style="display:inline-flex;align-items:center;gap:4px;"><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--color-error)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg> Pedido cancelado. Nenhuma alteração de status disponível.</span>
               {% else %}
                 Nenhuma transição de status disponível.
               {% endif %}

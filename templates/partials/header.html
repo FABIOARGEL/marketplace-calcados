@@ -57,15 +57,16 @@
                     <span class="navbar__cart-badge" id="cart-badge" aria-label="{{ count }} item{{ count|pluralize }} no carrinho">
                         {{ count }}
                     </span>
-                    {% endif %}/
+                    {% endif %}
                     {% endwith %}
                 {% endif %}
             </a>
 
             {% if user.is_authenticated %}
                 {% if user.is_seller %}
-                    <a href="{% url 'products:seller-product-list' %}" class="navbar__link" id="navbar-my-products-link">
-                        Meus Produtos
+                    <a href="{% url 'sellers:dashboard' %}" class="navbar__link" id="navbar-seller-panel-link"
+                       style="background-color:var(--color-accent);color:var(--color-surface);padding:var(--space-1) var(--space-3);font-weight:700;border:2px solid var(--color-accent);">
+                        Painel do Vendedor
                     </a>
                 {% else %}
                     <a href="{% url 'orders:order-list' %}" class="navbar__link" id="navbar-my-orders-link">
@@ -155,7 +156,7 @@
 
         {% if user.is_authenticated %}
             {% if user.is_seller %}
-                <a href="{% url 'products:seller-product-list' %}" class="navbar__link">Meus Produtos</a>
+                <a href="{% url 'sellers:dashboard' %}" class="navbar__link" id="mobile-seller-panel-link">Painel do Vendedor</a>
             {% endif %}
             <a href="{% url 'users:user-profile' %}" class="navbar__link navbar__profile-link" aria-label="Perfil de {% if user.first_name %}{{ user.first_name.split.0 }}{% else %}{{ user.email }}{% endif %}">
                 <span class="navbar__avatar" aria-hidden="true">

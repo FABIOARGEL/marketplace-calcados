@@ -1,0 +1,172 @@
+{% extends 'sellers/base.html' %}
+{% load static %}
+
+{% block title %}Produtos — Painel SoleStep{% endblock %}
+{% block meta %}<meta name="description" content="Gerencie seus produtos no marketplace SoleStep.">{% endblock %}
+{% block nav_products %}seller-nav__link--active{% endblock %}
+{% block breadcrumb %}Produtos{% endblock %}
+
+{% block content %}
+<div class="seller-page-header">
+  <div class="seller-page-header__eyebrow">Catálogo</div>
+  <h1 class="seller-page-header__title">Meus Produtos</h1>
+  <p class="seller-page-header__subtitle">
+    <strong style="color:var(--color-success);">{{ total_ativos }}</strong> ativo{{ total_ativos|pluralize }} &mdash;
+    <strong style="color:var(--color-error);">{{ total_inativos }}</strong> inativo{{ total_inativos|pluralize }}
+  </p>
+  <div class="seller-page-header__actions">
+    <a href="{% url 'sellers:product-create' %}" class="btn-panel btn-panel--accent" id="btn-new-product">+ Novo Produto</a>
+  </div>
+</div>
+
+<!-- Filtros -->
+<div class="panel-filters" role="search" aria-label="Filtrar produtos">
+  <form method="get" id="form-filter-products" style="display:contents;">
+    <div class="panel-filters__search">
+      <input type="search" name="q" value="{{ q }}" placeholder="Buscar por nome ou marca…"
+             class="panel-filters__search-input" id="input-search-products" aria-label="Buscar produto">
+      <button type="submit" class="panel-filters__search-btn" aria-label="Buscar">
+        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+      </button>
+    </div>
+    {% if status_filter %}<input type="hidden" name="status" value="{{ status_filter }}">{% endif %}
+  </form>
+  <span class="panel-filters__label">Status:</span>
+  <a href="?{% if q %}q={{ q }}&{% endif %}" class="filter-btn {% if not status_filter %}filter-btn--active{% endif %}" id="filter-all">Todos</a>
+  <a href="?{% if q %}q={{ q }}&{% endif %}status=active" class="filter-btn {% if status_filter == 'active' %}filter-btn--active{% endif %}" id="filter-active">Ativos</a>
+  <a href="?{% if q %}q={{ q }}&{% endif %}status=inactive" class="filter-btn {% if status_filter == 'inactive' %}filter-btn--active{% endif %}" id="filter-inactive">Inativos</a>
+</div>
+
+<!-- Tabela de produtos -->
+{% if page_obj %}
+<div class="panel-table-wrapper" id="products-table-wrapper">
+  <div class="panel-table-header">
+    <h2 class="panel-table-header__title">{{ paginator.count }} produto{{ paginator.count|pluralize }}</h2>
+  </div>
+  <div style="overflow-x:auto;">
+    <table class="panel-table" aria-label="Lista de produtos do vendedor">
+      <thead>
+        <tr>
+          <th scope="col">Produto</th>
+          <th scope="col">Categoria</th>
+          <th scope="col">Preço</th>
+          <th scope="col">Estoque</th>
+          <th scope="col">Status</th>
+          <th scope="col">Ações</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for produto in page_obj %}
+        <tr id="product-row-{{ produto.pk }}">
+          <td>
+            <div style="display:flex;align-items:center;gap:var(--space-3);">
+              {% with img=produto.images.first %}
+              <div style="width:48px;height:48px;border:var(--border-width) solid var(--color-primary);overflow:hidden;flex-shrink:0;display:flex;align-items:center;justify-content:center;background:var(--color-bg);">
+                {% if img %}
+                  <img src="{{ img.image.url }}" alt="{{ img.alt_text|default:produto.name }}" style="width:100%;height:100%;object-fit:cover;">
+                {% else %}
+                  <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"/><line x1="7" y1="7" x2="7.01" y2="7"/></svg>
+                {% endif %}
+              </div>
+              {% endwith %}
+              <div>
+                <div style="font-family:var(--font-heading);font-weight:700;font-size:var(--text-sm);">{{ produto.name }}</div>
+                <div style="font-size:var(--text-xs);color:var(--color-muted);">{{ produto.brand }}</div>
+              </div>
+            </div>
+          </td>
+          <td style="font-size:var(--text-sm);">{{ produto.category.name|default:"—" }}</td>
+          <td style="font-family:var(--font-heading);font-weight:700;">R$&nbsp;{{ produto.price|floatformat:2 }}</td>
+          <td>
+            {% with total=produto.stock_items.all %}
+            {% if total %}
+              <div class="stock-size-badges">
+                {% for s in total %}
+                <span class="stock-size-tag {% if s.quantity == 0 %}stock-size-tag--empty{% elif s.quantity < 5 %}stock-size-tag--low{% endif %}"
+                      title="Tamanho {{ s.size }}: {{ s.quantity }} unidades">
+                  <span class="stock-size-tag__size">{{ s.size }}</span>
+                  <span class="stock-size-tag__qty">{{ s.quantity }}</span>
+                </span>
+                {% endfor %}
+              </div>
+            {% else %}
+              <span style="font-size:var(--text-xs);color:var(--color-muted);">Sem estoque cadastrado</span>
+            {% endif %}
+            {% endwith %}
+          </td>
+          <td>
+            {% if produto.is_active %}
+              <span class="stock-badge stock-badge--ok">Ativo</span>
+            {% else %}
+              <span class="stock-badge stock-badge--empty">Inativo</span>
+            {% endif %}
+          </td>
+          <td>
+            <div style="display:flex;gap:var(--space-2);flex-wrap:wrap;">
+              <a href="{% url 'sellers:product-edit' produto.pk %}"
+                 class="btn-panel btn-panel--outline btn-panel--sm"
+                 id="btn-edit-{{ produto.pk }}"
+                 aria-label="Editar {{ produto.name }}">Editar</a>
+              <a href="{% url 'products:product-detail' produto.pk %}"
+                 class="btn-panel btn-panel--outline btn-panel--sm"
+                 id="btn-view-{{ produto.pk }}"
+                 target="_blank"
+                 aria-label="Ver produto {{ produto.name }} no marketplace">Ver</a>
+              <form method="post" action="{% url 'sellers:product-toggle' produto.pk %}" style="display:inline;">
+                {% csrf_token %}
+                <button type="submit"
+                        class="btn-panel btn-panel--sm {% if produto.is_active %}btn-panel--danger{% else %}btn-panel--success{% endif %}"
+                        id="btn-toggle-{{ produto.pk }}"
+                        aria-label="{% if produto.is_active %}Desativar{% else %}Ativar{% endif %} {{ produto.name }}">
+                  {% if produto.is_active %}Desativar{% else %}Ativar{% endif %}
+                </button>
+              </form>
+            </div>
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Paginação -->
+  {% if is_paginated %}
+  <div class="panel-pagination">
+    <span class="panel-pagination__info">Página {{ page_obj.number }} de {{ paginator.num_pages }}</span>
+    <div class="panel-pagination__controls">
+      {% if page_obj.has_previous %}
+        <a href="?page=1{% if q %}&q={{ q }}{% endif %}{% if status_filter %}&status={{ status_filter }}{% endif %}" class="panel-pagination__btn" id="page-first">&laquo;</a>
+        <a href="?page={{ page_obj.previous_page_number }}{% if q %}&q={{ q }}{% endif %}{% if status_filter %}&status={{ status_filter }}{% endif %}" class="panel-pagination__btn" id="page-prev">&lsaquo;</a>
+      {% else %}
+        <span class="panel-pagination__btn panel-pagination__btn--disabled">&laquo;</span>
+        <span class="panel-pagination__btn panel-pagination__btn--disabled">&lsaquo;</span>
+      {% endif %}
+      {% for num in paginator.page_range %}
+        {% if num == page_obj.number %}<span class="panel-pagination__btn panel-pagination__btn--active" aria-current="page">{{ num }}</span>
+        {% elif num >= page_obj.number|add:"-2" and num <= page_obj.number|add:"2" %}<a href="?page={{ num }}{% if q %}&q={{ q }}{% endif %}{% if status_filter %}&status={{ status_filter }}{% endif %}" class="panel-pagination__btn" id="page-{{ num }}">{{ num }}</a>{% endif %}
+      {% endfor %}
+      {% if page_obj.has_next %}
+        <a href="?page={{ page_obj.next_page_number }}{% if q %}&q={{ q }}{% endif %}{% if status_filter %}&status={{ status_filter }}{% endif %}" class="panel-pagination__btn" id="page-next">&rsaquo;</a>
+        <a href="?page={{ paginator.num_pages }}{% if q %}&q={{ q }}{% endif %}{% if status_filter %}&status={{ status_filter }}{% endif %}" class="panel-pagination__btn" id="page-last">&raquo;</a>
+      {% else %}
+        <span class="panel-pagination__btn panel-pagination__btn--disabled">&rsaquo;</span>
+        <span class="panel-pagination__btn panel-pagination__btn--disabled">&raquo;</span>
+      {% endif %}
+    </div>
+  </div>
+  {% endif %}
+</div>
+
+{% else %}
+<div class="panel-card">
+  <div class="empty-panel">
+    <span class="empty-panel__icon">
+      <svg xmlns="http://www.w3.org/2000/svg" width="56" height="56" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"/><line x1="7" y1="7" x2="7.01" y2="7"/></svg>
+    </span>
+    <h2 class="empty-panel__title">{% if q %}Nenhum produto encontrado para "{{ q }}"{% else %}Você ainda não tem produtos{% endif %}</h2>
+    <p class="empty-panel__text">{% if q %}Tente outro termo de busca.{% else %}Cadastre seu primeiro produto e comece a vender!{% endif %}</p>
+    <a href="{% url 'sellers:product-create' %}" class="btn-panel btn-panel--accent" id="btn-first-product">+ Cadastrar Produto</a>
+  </div>
+</div>
+{% endif %}
+{% endblock %}

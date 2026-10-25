@@ -70,7 +70,9 @@
                     </div>
                   {% else %}
                     <div class="product-thumb__image product-thumb__image--placeholder"
-                         aria-hidden="true">👟</div>
+                         aria-hidden="true" style="display:flex;align-items:center;justify-content:center;">
+                      <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"/><line x1="7" y1="7" x2="7.01" y2="7"/></svg>
+                    </div>
                   {% endif %}
                 {% endwith %}
                 <div class="product-thumb__info">
@@ -199,7 +201,9 @@
   {% else %}
     <!-- Estado vazio -->
     <div class="empty-state" role="status">
-      <span class="empty-state__icon" aria-hidden="true">📦</span>
+      <span class="empty-state__icon" aria-hidden="true">
+        <svg xmlns="http://www.w3.org/2000/svg" width="56" height="56" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M16.5 9.4l-9-5.19M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><polyline points="3.27 6.96 12 12.01 20.73 6.96"/><line x1="12" y1="22.08" x2="12" y2="12"/></svg>
+      </span>
       <h2 class="empty-state__title">Nenhum produto cadastrado</h2>
       <p class="empty-state__text">
         Adicione seu primeiro calçado e comece a vender.

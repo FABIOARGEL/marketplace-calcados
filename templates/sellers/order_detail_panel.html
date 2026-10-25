@@ -1,0 +1,249 @@
+{% extends 'sellers/base.html' %}
+{% load static %}
+
+{% block title %}Pedido #{{ order.pk }} — Painel SoleStep{% endblock %}
+{% block nav_orders %}seller-nav__link--active{% endblock %}
+{% block breadcrumb %}Pedido #{{ order.pk }}{% endblock %}
+
+{% block extra_css %}<link rel="stylesheet" href="{% static 'css/seller_orders.css' %}">{% endblock %}
+
+{% block content %}
+
+<div class="detail-header">
+  <div>
+    <p style="font-family:var(--font-body);font-size:var(--text-xs);font-weight:700;text-transform:uppercase;letter-spacing:1.5px;color:var(--color-accent);margin:0 0 var(--space-1);">Detalhe do Pedido</p>
+    <h1 class="detail-header__id">Pedido <span>#{{ order.pk }}</span></h1>
+    <p class="detail-header__meta">
+      Realizado em {{ order.created_at|date:"d/m/Y \à\s H:i" }}
+      &mdash; Atualizado em {{ order.updated_at|date:"d/m/Y H:i" }}
+    </p>
+  </div>
+  <div style="display:flex;align-items:center;gap:var(--space-3);">
+    {% if order.status == 'PENDING' %}<span class="status-badge status-badge--pending">{{ order.get_status_display }}</span>
+    {% elif order.status == 'CONFIRMED' %}<span class="status-badge status-badge--confirmed">{{ order.get_status_display }}</span>
+    {% elif order.status == 'SHIPPED' %}<span class="status-badge status-badge--shipped">{{ order.get_status_display }}</span>
+    {% elif order.status == 'DELIVERED' %}<span class="status-badge status-badge--delivered">{{ order.get_status_display }}</span>
+    {% elif order.status == 'CANCELLED' %}<span class="status-badge status-badge--cancelled">{{ order.get_status_display }}</span>
+    {% endif %}
+    <a href="{% url 'sellers:order-list' %}" class="btn-panel btn-panel--outline btn-panel--sm" id="btn-back-orders">&larr; Todos os pedidos</a>
+  </div>
+</div>
+
+<div class="detail-layout">
+
+  <!-- COLUNA ESQUERDA -->
+  <div class="detail-main">
+
+    <!-- Seus itens -->
+    <div class="panel-card">
+      <div class="panel-card__header">
+        <h2 class="panel-card__title">
+          <span class="panel-card__title-icon" aria-hidden="true">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M16.5 9.4l-9-5.19M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><polyline points="3.27 6.96 12 12.01 20.73 6.96"/><line x1="12" y1="22.08" x2="12" y2="12"/></svg>
+          </span>
+          Seus Itens ({{ seller_items|length }} item{{ seller_items|length|pluralize }})
+        </h2>
+      </div>
+      <div class="panel-card__body">
+        {% for item in seller_items %}
+        <div class="detail-item" id="item-{{ item.pk }}">
+          <div class="detail-item__image">
+            {% with img=item.product.images.first %}
+            {% if img %}
+              <img src="{{ img.image.url }}" alt="{{ img.alt_text|default:item.product.name }}" loading="lazy">
+            {% else %}
+              <span class="detail-item__placeholder" aria-hidden="true">
+                <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"/><line x1="7" y1="7" x2="7.01" y2="7"/></svg>
+              </span>
+            {% endif %}
+            {% endwith %}
+          </div>
+          <div class="detail-item__info">
+            <h3 class="detail-item__name">
+              {% if item.product %}
+                <a href="{% url 'products:product-detail' item.product.pk %}">{{ item.product.name }}</a>
+              {% else %}
+                <em>[Produto indisponível]</em>
+              {% endif %}
+            </h3>
+            <div class="detail-item__meta">
+              <span class="detail-item__size-badge">Tam. {{ item.size }}</span>
+              <span class="detail-item__qty">Qtd: <strong>{{ item.quantity }}</strong></span>
+            </div>
+            <span class="detail-item__unit-price">R$&nbsp;{{ item.unit_price|floatformat:2 }} / unid. (preço snapshot)</span>
+          </div>
+          <div class="detail-item__subtotal">R$&nbsp;{{ item.subtotal|floatformat:2 }}</div>
+        </div>
+        {% endfor %}
+
+        <div class="seller-summary" id="seller-items-subtotal">
+          <span class="seller-summary__label">Seus produtos neste pedido</span>
+          <span class="seller-summary__value">R$&nbsp;{{ seller_subtotal|floatformat:2 }}</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Dados do comprador -->
+    <div class="panel-card">
+      <div class="panel-card__header">
+        <h2 class="panel-card__title">
+          <span class="panel-card__title-icon" aria-hidden="true">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+          </span>
+          Dados do Comprador
+        </h2>
+      </div>
+      <div class="panel-card__body">
+        <div class="data-row">
+          <span class="data-row__key">Nome</span>
+          <span class="data-row__val">{{ order.user.full_name }}</span>
+        </div>
+        <div class="data-row">
+          <span class="data-row__key">E-mail</span>
+          <span class="data-row__val">{{ order.user.email }}</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Endereço de entrega -->
+    <div class="panel-card">
+      <div class="panel-card__header">
+        <h2 class="panel-card__title">
+          <span class="panel-card__title-icon" aria-hidden="true">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+          </span>
+          Endereço de Entrega
+        </h2>
+      </div>
+      <div class="panel-card__body">
+        {% if order.shipping_address %}
+          <p style="font-family:var(--font-body);font-size:var(--text-sm);line-height:1.6;color:var(--color-primary);">
+            {% if order.shipping_address.nickname %}<strong>{{ order.shipping_address.nickname }}</strong><br>{% endif %}
+            Destinatário: <strong>{{ order.shipping_address.recipient_name }}</strong><br>
+            {{ order.shipping_address.street }}, {{ order.shipping_address.number }}
+            {% if order.shipping_address.complement %} ({{ order.shipping_address.complement }}){% endif %}<br>
+            {{ order.shipping_address.neighborhood }} — {{ order.shipping_address.city }}/{{ order.shipping_address.state }}<br>
+            CEP: {{ order.shipping_address.zip_code }}
+            {% if order.shipping_address.reference %}<br><span style="color:var(--color-muted);">Ref: {{ order.shipping_address.reference }}</span>{% endif %}
+          </p>
+        {% else %}
+          <p style="color:var(--color-muted);font-size:var(--text-sm);">Endereço não disponível.</p>
+        {% endif %}
+      </div>
+    </div>
+
+  </div>
+
+  <!-- COLUNA DIREITA -->
+  <div class="detail-sidebar">
+
+    <!-- Atualizar status -->
+    <div class="panel-card" id="status-update-card">
+      <div class="panel-card__header">
+        <h2 class="panel-card__title">
+          <span class="panel-card__title-icon" aria-hidden="true">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="23 4 23 10 17 10"/><polyline points="1 20 1 14 7 14"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></svg>
+          </span>
+          Atualizar Status
+        </h2>
+      </div>
+      <div class="panel-card__body">
+        <p style="font-family:var(--font-body);font-size:var(--text-xs);color:var(--color-muted);margin-bottom:var(--space-3);">Status atual:</p>
+        {% if order.status == 'PENDING' %}<span class="status-badge status-badge--pending">{{ order.get_status_display }}</span>
+        {% elif order.status == 'CONFIRMED' %}<span class="status-badge status-badge--confirmed">{{ order.get_status_display }}</span>
+        {% elif order.status == 'SHIPPED' %}<span class="status-badge status-badge--shipped">{{ order.get_status_display }}</span>
+        {% elif order.status == 'DELIVERED' %}<span class="status-badge status-badge--delivered">{{ order.get_status_display }}</span>
+        {% elif order.status == 'CANCELLED' %}<span class="status-badge status-badge--cancelled">{{ order.get_status_display }}</span>
+        {% endif %}
+
+        {% if next_statuses %}
+        <form method="post"
+              action="{% url 'orders:seller-order-update-status' order.pk %}"
+              id="form-update-status"
+              style="margin-top:var(--space-5);">
+          {% csrf_token %}
+          <label for="status-select" style="font-family:var(--font-body);font-size:var(--text-sm);font-weight:600;display:block;margin-bottom:var(--space-2);">Próximo status</label>
+          <select name="status" id="status-select" class="status-update-select" aria-label="Selecione o próximo status">
+            {% for value, label in next_statuses %}
+            <option value="{{ value }}">{{ label }}</option>
+            {% endfor %}
+          </select>
+          <button type="submit" class="btn-panel" id="btn-update-status" style="width:100%;justify-content:center;margin-top:var(--space-3);">
+            Avançar Status &rarr;
+          </button>
+        </form>
+        {% else %}
+        <div style="margin-top:var(--space-4);font-family:var(--font-body);font-size:var(--text-sm);color:var(--color-muted);display:flex;align-items:center;gap:var(--space-2);">
+          {% if order.status == 'DELIVERED' %}
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--color-success)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+            Pedido entregue. Sem alterações disponíveis.
+          {% elif order.status == 'CANCELLED' %}
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--color-error)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>
+            Pedido cancelado. Sem alterações disponíveis.
+          {% else %}
+            Nenhuma transição disponível.
+          {% endif %}
+        </div>
+        {% endif %}
+      </div>
+    </div>
+
+    <!-- Resumo financeiro -->
+    <div class="panel-card" id="order-financials">
+      <div class="panel-card__header">
+        <h2 class="panel-card__title">
+          <span class="panel-card__title-icon" aria-hidden="true">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+          </span>
+          Resumo do Pedido
+        </h2>
+      </div>
+      <div class="panel-card__body">
+        <div class="data-row">
+          <span class="data-row__key">Subtotal dos produtos</span>
+          <span class="data-row__val">R$&nbsp;{{ order.subtotal|floatformat:2 }}</span>
+        </div>
+        <div class="data-row">
+          <span class="data-row__key">Frete</span>
+          <span class="data-row__val">R$&nbsp;{{ order.shipping_cost|floatformat:2 }}</span>
+        </div>
+        <div class="data-row data-row--total">
+          <span class="data-row__key">Total do pedido</span>
+          <span class="data-row__val">R$&nbsp;{{ order.total|floatformat:2 }}</span>
+        </div>
+        <p style="font-family:var(--font-body);font-size:var(--text-xs);color:var(--color-muted);margin-top:var(--space-3);">
+          * Total inclui todos os vendedores. Seus itens: <strong>R$&nbsp;{{ seller_subtotal|floatformat:2 }}</strong>
+        </p>
+      </div>
+    </div>
+
+    <!-- Pagamento -->
+    <div class="panel-card">
+      <div class="panel-card__header">
+        <h2 class="panel-card__title">
+          <span class="panel-card__title-icon" aria-hidden="true">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="1" y="4" width="22" height="16" rx="2" ry="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg>
+          </span>
+          Pagamento
+        </h2>
+      </div>
+      <div class="panel-card__body">
+        <div class="data-row">
+          <span class="data-row__key">Método</span>
+          <span class="data-row__val">{{ order.get_payment_method_display }}</span>
+        </div>
+        <div class="data-row">
+          <span class="data-row__key">Status (simulado)</span>
+          <span class="data-row__val">{{ order.get_payment_status_display }}</span>
+        </div>
+        <p style="font-family:var(--font-body);font-size:var(--text-xs);color:var(--color-muted);margin-top:var(--space-3);display:flex;align-items:center;gap:4px;">
+          <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+          Pagamento simulado — fins acadêmicos
+        </p>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+{% endblock %}

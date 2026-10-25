@@ -15,7 +15,9 @@
     <!-- ── Cabeçalho de Confirmação ─────────────────────────────────── -->
     <header class="success-header">
       <div class="success-header__badge-wrap">
-        <div class="success-header__icon" aria-hidden="true">✓</div>
+        <div class="success-header__icon" aria-hidden="true" style="display:flex;align-items:center;justify-content:center;">
+          <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>
+        </div>
       </div>
       <div class="success-header__titles">
         <span class="success-header__kicker">Etapa 2 de 2 · Finalizado</span>
@@ -29,7 +31,9 @@
 
     <!-- ── Banner de Simulação Acadêmica ───────────────────────────── -->
     <div class="sim-banner" role="note" id="sim-payment-banner">
-      <span class="sim-banner__icon" aria-hidden="true">⚠️</span>
+      <span class="sim-banner__icon" aria-hidden="true" style="display:inline-flex;align-items:center;">
+        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+      </span>
       <div class="sim-banner__content">
         <strong class="sim-banner__title">Pagamento aprovado (simulação acadêmica)</strong>
         <p class="sim-banner__desc">
@@ -67,7 +71,9 @@
                        alt="{{ img.alt_text|default:item.product.name }}"
                        loading="lazy">
                 {% else %}
-                  <span class="success-item__placeholder" aria-hidden="true">👟</span>
+                  <span class="success-item__placeholder" aria-hidden="true" style="display:flex;align-items:center;justify-content:center;">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"/><line x1="7" y1="7" x2="7.01" y2="7"/></svg>
+                  </span>
                 {% endif %}
                 {% endwith %}
               </div>
@@ -124,7 +130,9 @@
             {% if order.shipping_address %}
             <div class="success-address" id="order-shipping-address">
               <div class="success-address__top">
-                <span class="success-address__icon" aria-hidden="true">📍</span>
+                <span class="success-address__icon" aria-hidden="true" style="display:inline-flex;align-items:center;">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+                </span>
                 <strong class="success-address__nickname">
                   {{ order.shipping_address.nickname|default:"Endereço selecionado" }}
                 </strong>
@@ -206,11 +214,13 @@
               <h3 class="success-payment-block__heading">Informações de Pagamento</h3>
 
               <div class="success-payment-method">
-                <span class="success-payment-method__icon" aria-hidden="true">
-                  {% if order.payment_method == 'CREDIT_CARD_SIM' %}💳
-                  {% elif order.payment_method == 'DEBIT_CARD_SIM' %}💳
-                  {% elif order.payment_method == 'PIX_SIM' %}⚡
-                  {% else %}🧾
+                <span class="success-payment-method__icon" aria-hidden="true" style="display:inline-flex;align-items:center;">
+                  {% if order.payment_method == 'CREDIT_CARD_SIM' or order.payment_method == 'DEBIT_CARD_SIM' %}
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="4" width="22" height="16" rx="2" ry="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg>
+                  {% elif order.payment_method == 'PIX_SIM' %}
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+                  {% else %}
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
                   {% endif %}
                 </span>
                 <span class="success-payment-method__name">

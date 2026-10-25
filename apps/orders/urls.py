@@ -4,13 +4,14 @@ URLs do app orders.
 Prefixo: /pedidos/ (definido em config/urls.py)
 
 Rotas:
-    checkout/                   → checkout              (GET)  — resumo + formulário
-    confirmar/                  → order_confirm         (POST) — processa pedido
-    sucesso/<pk>/               → order_success         (GET)  — página de confirmação
-    meus-pedidos/               → order_list            (GET)  — histórico do cliente
-    meus-pedidos/<pk>/          → order_detail          (GET)  — detalhe do pedido do cliente
-    vendedor/pedidos/           → seller_order_list     (GET)  — dashboard do vendedor
-    vendedor/pedidos/<pk>/      → seller_order_detail   (GET/POST) — detalhe + atualização de status
+    checkout/                           → checkout                    (GET)  — resumo + formulário
+    confirmar/                          → order_confirm               (POST) — processa pedido
+    sucesso/<pk>/                       → order_success               (GET)  — página de confirmação
+    meus-pedidos/                       → order_list                  (GET)  — histórico do cliente
+    meus-pedidos/<pk>/                  → order_detail                (GET)  — detalhe do pedido do cliente
+    vendedor/pedidos/                   → seller_order_list           (GET)  — dashboard do vendedor
+    vendedor/pedidos/<pk>/              → seller_order_detail         (GET)  — detalhe do pedido (vendedor)
+    vendedor/pedidos/<pk>/status/       → seller_order_update_status  (POST) — atualiza status do pedido
 """
 
 from django.urls import path
@@ -23,6 +24,7 @@ from .views import (
     order_success,
     seller_order_detail,
     seller_order_list,
+    seller_order_update_status,
 )
 
 app_name = 'orders'
@@ -35,4 +37,5 @@ urlpatterns = [
     path('meus-pedidos/<int:pk>/', order_detail, name='order-detail'),
     path('vendedor/pedidos/', seller_order_list, name='seller-order-list'),
     path('vendedor/pedidos/<int:pk>/', seller_order_detail, name='seller-order-detail'),
+    path('vendedor/pedidos/<int:pk>/status/', seller_order_update_status, name='seller-order-update-status'),
 ]

@@ -42,7 +42,15 @@ seller_order_detail: Detalhe de um pedido específico do ponto de vista do vende
     - Exige autenticação e que o usuário seja SELLER
     - Exibe apenas os itens do vendedor naquele pedido
     - Exibe dados do comprador e endereço de entrega
-    - Permite atualizar o status do pedido via POST
+    - Passa next_statuses ao template (apenas transições válidas)
+
+seller_order_update_status: Atualiza o status de um pedido (POST-only).
+    - Exige autenticação, SELLER e que o pedido contenha itens do vendedor
+    - Valida a transição de status segundo ciclo definido:
+        PENDING → CONFIRMED → SHIPPED → DELIVERED
+        QUALQUER → CANCELLED
+        Voltas de status são rejeitadas
+    - Salva o novo status e redireciona com mensagem de sucesso
 """
 
 from decimal import Decimal
@@ -427,13 +435,56 @@ def seller_order_list(request):
     return render(request, 'sellers/order_list.html', context)
 
 
+# ---------------------------------------------------------------------------
+# Tabela de transições válidas de status
+# ---------------------------------------------------------------------------
+
+#: Mapeamento de status atual → lista de status para os quais é permitido avançar.
+#: Regras:
+#:   - O ciclo linear é: PENDING → CONFIRMED → SHIPPED → DELIVERED
+#:   - CANCELLED é permitido a partir de qualquer status (exceto DELIVERED)
+#:   - Retroceder status é proibido
+STATUS_TRANSITIONS: dict[str, list[str]] = {
+    Order.Status.PENDING: [
+        Order.Status.CONFIRMED,
+        Order.Status.CANCELLED,
+    ],
+    Order.Status.CONFIRMED: [
+        Order.Status.SHIPPED,
+        Order.Status.CANCELLED,
+    ],
+    Order.Status.SHIPPED: [
+        Order.Status.DELIVERED,
+        Order.Status.CANCELLED,
+    ],
+    Order.Status.DELIVERED: [],   # estado final — sem transições
+    Order.Status.CANCELLED: [],   # estado final — sem transições
+}
+
+
+def _obter_proximos_status(status_atual: str) -> list[tuple[str, str]]:
+    """Retorna lista de (value, label) dos status para os quais é possível avançar.
+
+    Args:
+        status_atual: Valor do status atual do pedido (ex: 'PENDING').
+
+    Returns:
+        Lista de tuplas (value, label) com os próximos status válidos.
+    """
+    proximos_valores = STATUS_TRANSITIONS.get(status_atual, [])
+    status_display = dict(Order.Status.choices)
+    return [(v, status_display[v]) for v in proximos_valores]
+
+
 @login_required
 def seller_order_detail(request, pk):
-    """Detalhe de um pedido do ponto de vista do vendedor.
+    """Detalhe de um pedido do ponto de vista do vendedor (somente GET).
 
     Apenas usuários com user_type == SELLER podem acessar.
     Exibe apenas os itens do vendedor naquele pedido.
-    Permite atualizar o status via POST.
+    Passa next_statuses ao template para exibir somente os próximos
+    status válidos conforme o ciclo de transições.
+    A atualização de status é feita via seller_order_update_status.
     """
     if not request.user.is_seller:
         messages.error(request, 'Acesso restrito a vendedores.')
@@ -445,7 +496,7 @@ def seller_order_detail(request, pk):
     seller_items = (
         OrderItem.objects
         .filter(order=order, product__seller=request.user)
-        .select_related('product', 'product__images')
+        .select_related('product')
         .prefetch_related('product__images')
     )
 
@@ -453,27 +504,81 @@ def seller_order_detail(request, pk):
         messages.error(request, 'Este pedido não contém produtos seus.')
         return redirect('orders:seller-order-list')
 
-    # Atualização de status via POST
-    if request.method == 'POST':
-        novo_status = request.POST.get('status', '').strip().upper()
-        status_validos = [s[0] for s in Order.Status.choices]
-        if novo_status in status_validos:
-            order.status = novo_status
-            order.save(update_fields=['status', 'updated_at'])
-            messages.success(
-                request,
-                f'Status atualizado para "{order.get_status_display()}".'
-            )
-        else:
-            messages.error(request, 'Status inválido.')
-        return redirect('orders:seller-order-detail', pk=pk)
-
     seller_subtotal = sum(item.subtotal for item in seller_items)
+    next_statuses = _obter_proximos_status(order.status)
 
     context = {
         'order': order,
         'seller_items': seller_items,
         'seller_subtotal': seller_subtotal,
         'status_choices': Order.Status.choices,
+        'next_statuses': next_statuses,
     }
     return render(request, 'sellers/order_detail.html', context)
+
+
+@login_required
+@require_POST
+def seller_order_update_status(request, pk):
+    """Atualiza o status de um pedido via POST (apenas vendedores autorizados).
+
+    Validações realizadas (ordem de execução):
+        1. Usuário é SELLER
+        2. O pedido existe
+        3. O pedido contém ao menos um item do vendedor logado
+        4. O novo status é um valor válido do enum Order.Status
+        5. A transição do status atual para o novo status é permitida
+           conforme STATUS_TRANSITIONS (sem pular etapas, sem voltar)
+
+    Em caso de sucesso, salva o novo status e exibe mensagem de sucesso.
+    Em qualquer erro, exibe mensagem de erro e redireciona para o detalhe.
+
+    Args:
+        pk: Chave primária do pedido a ser atualizado.
+    """
+    if not request.user.is_seller:
+        messages.error(request, 'Acesso restrito a vendedores.')
+        return redirect('home')
+
+    order = get_object_or_404(Order, pk=pk)
+
+    # Garantir que o vendedor tem itens neste pedido
+    tem_itens = OrderItem.objects.filter(
+        order=order,
+        product__seller=request.user,
+    ).exists()
+
+    if not tem_itens:
+        messages.error(request, 'Este pedido não contém produtos seus.')
+        return redirect('orders:seller-order-list')
+
+    novo_status = request.POST.get('status', '').strip().upper()
+
+    # Validar que o novo status é um valor reconhecido pelo enum
+    status_validos = {s[0] for s in Order.Status.choices}
+    if novo_status not in status_validos:
+        messages.error(request, 'Status inválido.')
+        return redirect('orders:seller-order-detail', pk=pk)
+
+    # Validar que a transição é permitida
+    transicoes_permitidas = STATUS_TRANSITIONS.get(order.status, [])
+    if novo_status not in transicoes_permitidas:
+        if novo_status == order.status:
+            messages.error(request, 'O pedido já está neste status.')
+        else:
+            messages.error(
+                request,
+                f'Transição de "{order.get_status_display()}" para '
+                f'"{dict(Order.Status.choices)[novo_status]}" não é permitida.',
+            )
+        return redirect('orders:seller-order-detail', pk=pk)
+
+    # Atualizar status
+    order.status = novo_status
+    order.save(update_fields=['status', 'updated_at'])
+
+    messages.success(
+        request,
+        f'Status do pedido #{pk} atualizado para "{order.get_status_display()}".'
+    )
+    return redirect('orders:seller-order-detail', pk=pk)

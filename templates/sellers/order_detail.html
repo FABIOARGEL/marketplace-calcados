@@ -205,31 +205,45 @@
             {% endif %}
           </div>
 
-          <form method="post"
-                action="{% url 'orders:seller-order-detail' order.pk %}"
-                class="status-update-form"
-                id="form-update-status"
-                style="margin-top: var(--space-4);">
-            {% csrf_token %}
+          {% if next_statuses %}
+            <form method="post"
+                  action="{% url 'orders:seller-order-update-status' order.pk %}"
+                  class="status-update-form"
+                  id="form-update-status"
+                  style="margin-top: var(--space-4);">
+              {% csrf_token %}
 
-            <label for="status-select" class="filter-label">Novo status</label>
-            <select name="status"
-                    id="status-select"
-                    class="status-select"
-                    aria-label="Selecione o novo status do pedido">
-              {% for value, label in status_choices %}
-              <option value="{{ value }}" {% if value == order.status %}selected{% endif %}>
-                {{ label }}
-              </option>
-              {% endfor %}
-            </select>
+              <label for="status-select" class="filter-label">Próximo status</label>
+              <select name="status"
+                      id="status-select"
+                      class="status-select"
+                      aria-label="Selecione o próximo status do pedido">
+                {% for value, label in next_statuses %}
+                <option value="{{ value }}">{{ label }}</option>
+                {% endfor %}
+              </select>
 
-            <button type="submit"
-                    class="btn-update-status"
-                    id="btn-update-status">
-              Atualizar Status →
-            </button>
-          </form>
+              <button type="submit"
+                      class="btn-update-status"
+                      id="btn-update-status">
+                Avançar Status →
+              </button>
+            </form>
+          {% else %}
+            <p class="status-update-form__final"
+               style="margin-top: var(--space-4);
+                      font-family: var(--font-body);
+                      font-size: var(--text-sm);
+                      color: var(--color-muted);">
+              {% if order.status == 'DELIVERED' %}
+                ✅ Pedido entregue. Nenhuma alteração de status disponível.
+              {% elif order.status == 'CANCELLED' %}
+                ❌ Pedido cancelado. Nenhuma alteração de status disponível.
+              {% else %}
+                Nenhuma transição de status disponível.
+              {% endif %}
+            </p>
+          {% endif %}
         </div>
       </div>
 

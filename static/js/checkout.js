@@ -58,6 +58,14 @@
   setupOptionHighlight('payment_method', '.payment-option');
 
   /* ─────────────────────────────────────────────────────────────────────────
+     2b. Impede propagação nos links de edição dentro das opções de endereço
+         (substitui onclick inline removido do template)
+  ───────────────────────────────────────────────────────────────────────── */
+  qsa('[data-stop-propagation="true"]').forEach((el) => {
+    el.addEventListener('click', (e) => e.stopPropagation());
+  });
+
+  /* ─────────────────────────────────────────────────────────────────────────
      3. Validação e submit
   ───────────────────────────────────────────────────────────────────────── */
   const form = qs('#checkout-form');

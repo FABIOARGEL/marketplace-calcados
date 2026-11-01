@@ -1,4 +1,4 @@
-﻿{% load static %}
+{% load static %}
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
@@ -188,5 +188,7 @@
     document.addEventListener('keydown', function (e) { if (e.key === 'Escape' && sidebar.classList.contains('seller-sidebar--open')) { closeSidebar(); } });
   })();
 </script>
+  {% block extra_js %}{% endblock %}
 </body>
 </html>
+

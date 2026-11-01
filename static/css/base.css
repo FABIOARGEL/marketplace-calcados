@@ -77,6 +77,28 @@
     /* Transições */
     --transition-fast: 150ms;
     --transition-normal: 200ms;
+
+    /* Status de pedido — badges */
+    --color-status-pending-bg: #FFF3CD;
+    --color-status-pending-text: #7A5000;
+    --color-status-confirmed-bg: #CCE5FF;
+    --color-status-confirmed-text: #003E80;
+    --color-status-shipped-bg: #D4EDDA;
+    --color-status-shipped-text: #0E5E2B;
+    --color-status-delivered-bg: #D4EDDA;
+    --color-status-delivered-text: #0E5E2B;
+    --color-status-cancelled-bg: #F8D7DA;
+    --color-status-cancelled-text: #6B0000;
+
+    /* Superfícies secundárias */
+    --color-bg-warm: #FAF7F2;
+    --color-bg-warm-dark: #E8E3DB;
+    --color-bg-danger-light: #fff5f5;
+    --color-bg-success-light: #E8F5E9;
+    --color-bg-info-light: #EBF3FF;
+    --color-bg-warning-light: #FFF8E6;
+    --color-text-warning-dark: #8A5200;
+    --color-text-info-dark: #1A5FA8;
 }
 
 

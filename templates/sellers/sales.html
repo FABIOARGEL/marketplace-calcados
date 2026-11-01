@@ -20,7 +20,7 @@
     <a href="?periodo=7d" class="period-btn {% if periodo == '7d' %}period-btn--active{% endif %}" id="period-7d">7 dias</a>
     <a href="?periodo=30d" class="period-btn {% if periodo == '30d' %}period-btn--active{% endif %}" id="period-30d">30 dias</a>
     <a href="?periodo=mes" class="period-btn {% if periodo == 'mes' %}period-btn--active{% endif %}" id="period-mes">Este mês</a>
-    <span class="period-btn {% if periodo == 'custom' %}period-btn--active{% endif %}" id="period-custom-label" style="cursor:pointer;" onclick="document.getElementById('custom-period-form').style.display='flex'">Personalizado</span>
+    <button type="button" class="period-btn {% if periodo == 'custom' %}period-btn--active{% endif %}" id="period-custom-label" data-target="custom-period-form">Personalizado</button>
   </div>
   <span style="font-family:var(--font-body);font-size:var(--text-sm);color:var(--color-muted);">
     {{ data_inicio|date:"d/m/Y" }} — {{ data_fim|date:"d/m/Y" }}
@@ -205,4 +205,18 @@
   </div>
   {% endif %}
 </div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+  /* Seletor de período personalizado */
+  const customBtn = document.getElementById('period-custom-label');
+  const customForm = document.getElementById('custom-period-form');
+  if (customBtn && customForm) {
+    customBtn.addEventListener('click', () => {
+      customForm.style.display = 'flex';
+      customBtn.setAttribute('aria-expanded', 'true');
+    });
+  }
+</script>
 {% endblock %}

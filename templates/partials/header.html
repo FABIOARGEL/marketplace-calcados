@@ -8,7 +8,8 @@
 
         <!-- Navegação -->
         <nav class="navbar__links" aria-label="Navegação principal">
-            <a href="/" class="navbar__link navbar__link--active">Início</a>
+            <a href="{% url 'home' %}" class="navbar__link navbar__link--active">Início</a>
+            <a href="{% url 'products:product-list' %}" class="navbar__link">Produtos</a>
         </nav>
 
         <!-- Autenticação -->
@@ -88,8 +89,8 @@
         class="navbar__mobile-menu"
         aria-label="Navegação mobile"
     >
-        <a href="/" class="navbar__link">Início</a>
-        <a href="/produtos/" class="navbar__link">Produtos</a>
+        <a href="{% url 'home' %}" class="navbar__link">Início</a>
+        <a href="{% url 'products:product-list' %}" class="navbar__link">Produtos</a>
 
         {% if user.is_authenticated %}
             {% if user.is_seller %}

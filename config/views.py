@@ -1,18 +1,13 @@
-﻿"""
-Views centrais do projeto (Landing page / Home).
+"""
+Views centrais do projeto (Página inicial / Catálogo de produtos).
 """
 
-from django.shortcuts import render
+from apps.products.views import product_list
 
 
 def home(request):
     """
-    Página inicial do marketplace.
-
-    Renderiza a landing page com contexto básico (seções de destaque,
-    categorias e chamada para ação).
+    Página inicial do marketplace — Catálogo de produtos.
     """
-    context = {
-        "title": "SoleStep — Calçados para o seu estilo",
-    }
-    return render(request, "home.html", context)
+    return product_list(request)
+

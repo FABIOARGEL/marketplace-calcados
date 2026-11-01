@@ -403,7 +403,7 @@
     gap: var(--space-3);
     padding: var(--space-4);
     border: var(--border-width) solid var(--color-error);
-    background-color: #fff5f5;
+    background-color: var(--color-bg-danger-light);
     color: var(--color-error);
 }
 

@@ -144,7 +144,7 @@
                   <a href="{% url 'users:address-edit' address.pk %}"
                      class="address-option__edit"
                      id="edit-address-{{ address.pk }}"
-                     onclick="event.stopPropagation()">
+                     data-stop-propagation="true">
                     Editar
                   </a>
                 </label>

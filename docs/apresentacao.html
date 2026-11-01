@@ -1,0 +1,722 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Marketplace de Calcados - Apresentacao Gerenciamento de Projetos</title>
+  <meta name="description" content="Apresentacao academica do projeto Marketplace de Calcados - Gerenciamento de Projetos 2026" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700;800&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+  <style>
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+    :root{
+      --c-bg:#F5F0E8;--c-primary:#0D0D0D;--c-accent:#1A5FA8;--c-accent2:#0F3F72;
+      --c-surface:#FFFFFF;--c-muted:#6B7280;--c-light:#E8E2D6;--c-blue-lt:#EFF6FF;
+      --c-success:#1A8C4E;--c-warn:#E8A000;--c-red:#CC2200;
+      --f-head:'Space Grotesk',sans-serif;--f-body:'Inter',sans-serif;
+      --border:2px solid var(--c-primary);
+      --sh-sm:3px 3px 0 var(--c-primary);--sh-md:4px 4px 0 var(--c-primary);
+      --sh-lg:6px 6px 0 var(--c-primary);--sh-blue:4px 4px 0 var(--c-accent2);
+    }
+    html,body{width:100%;height:100%;font-family:var(--f-body);background:#111;overflow:hidden}
+    #deck{width:100vw;height:100vh;display:flex;align-items:center;justify-content:center}
+    .slide{display:none;width:1280px;height:720px;background:var(--c-bg);border:var(--border);
+      box-shadow:var(--sh-lg);position:relative;overflow:hidden;flex-shrink:0}
+    .slide.active{display:flex;flex-direction:column}
+    #pb{position:fixed;top:0;left:0;height:4px;background:var(--c-accent);transition:width .4s ease;z-index:100}
+    #nav{position:fixed;bottom:20px;left:50%;transform:translateX(-50%);display:flex;
+      align-items:center;gap:12px;background:var(--c-primary);border:var(--border);
+      padding:8px 20px;z-index:100;box-shadow:var(--sh-sm)}
+    #nav button{font-family:var(--f-body);font-size:13px;font-weight:600;color:var(--c-bg);
+      background:transparent;border:none;cursor:pointer;padding:4px 12px;transition:color .2s}
+    #nav button:hover{color:#7DD3FC}
+    #nav button:disabled{opacity:.3;cursor:default}
+    #sc{font-family:var(--f-head);font-size:12px;font-weight:700;color:#7DD3FC;min-width:60px;text-align:center}
+    .sh{background:var(--c-primary);color:var(--c-bg);padding:18px 48px;display:flex;
+      align-items:center;gap:16px;flex-shrink:0}
+    .sh .ic{font-size:28px;line-height:1}
+    .sh h2{font-family:var(--f-head);font-size:22px;font-weight:700;letter-spacing:-.5px}
+    .sh .sub{font-size:12px;color:#A0AEC0;margin-top:2px}
+    .sn{margin-left:auto;font-family:var(--f-head);font-size:11px;font-weight:700;
+      background:var(--c-accent);color:white;padding:4px 10px;border-left:2px solid var(--c-bg)}
+    .sb{flex:1;padding:28px 48px;overflow:hidden;display:flex;flex-direction:column}
+    .ab{position:absolute;left:0;top:0;bottom:0;width:6px;background:var(--c-accent)}
+    .dg{position:absolute;right:0;bottom:0;width:260px;height:260px;opacity:.04;
+      background-image:linear-gradient(var(--c-primary) 1px,transparent 1px),
+        linear-gradient(90deg,var(--c-primary) 1px,transparent 1px);background-size:24px 24px}
+    .bx{display:inline-block;font-family:var(--f-head);font-size:11px;font-weight:700;
+      padding:3px 10px;letter-spacing:.5px;border:var(--border)}
+    .bx-b{background:var(--c-accent);color:white;border-color:var(--c-accent2)}
+    .bx-k{background:var(--c-primary);color:var(--c-bg)}
+    .bx-g{background:var(--c-success);color:white;border-color:#0f5c35}
+    .bx-w{background:var(--c-warn);color:var(--c-primary)}
+    .bx-l{background:var(--c-blue-lt);color:var(--c-accent2);border-color:#BFDBFE}
+    .pt{width:100%;border-collapse:collapse;font-size:13px}
+    .pt th{background:var(--c-primary);color:var(--c-bg);font-family:var(--f-head);
+      font-size:12px;font-weight:700;padding:8px 12px;text-align:left;letter-spacing:.5px}
+    .pt td{padding:7px 12px;border-bottom:1px solid var(--c-light);vertical-align:top}
+    .pt tr:nth-child(even) td{background:var(--c-blue-lt)}
+    .cd{background:var(--c-surface);border:var(--border);box-shadow:var(--sh-md);padding:18px 20px}
+    .cd-b{background:var(--c-blue-lt);border-color:var(--c-accent);box-shadow:var(--sh-blue)}
+    .ct{font-family:var(--f-head);font-size:13px;font-weight:700;color:var(--c-accent);
+      margin-bottom:8px;text-transform:uppercase;letter-spacing:.5px}
+    .g2{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+    .ri{display:flex;align-items:flex-start;gap:10px;background:var(--c-surface);
+      border:var(--border);padding:12px 14px;box-shadow:var(--sh-sm)}
+    .ri .ric{font-size:22px;flex-shrink:0}
+    .ri strong{font-family:var(--f-head);font-size:13px;font-weight:700;display:block;margin-bottom:3px}
+    .ri p{font-size:12px;color:var(--c-muted)}
+    .so{font-size:13px;font-weight:500;background:var(--c-blue-lt);
+      border-left:4px solid var(--c-accent);padding:8px 14px;margin-bottom:14px;
+      border:1.5px solid #BFDBFE;border-left:4px solid var(--c-accent)}
+    .tl{display:grid;grid-template-columns:repeat(6,1fr);gap:10px;margin-top:10px}
+    .tli{display:flex;flex-direction:column;border:var(--border);
+      background:var(--c-surface);box-shadow:var(--sh-md);overflow:hidden}
+    .tlh{background:var(--c-primary);color:var(--c-bg);padding:8px 10px;text-align:center;
+      font-family:var(--f-head);font-size:12px;font-weight:700}
+    .tlh-d{background:var(--c-success)}
+    .tlb{padding:10px;flex:1}
+    .tlt{font-family:var(--f-head);font-size:11px;font-weight:700;color:var(--c-accent);
+      text-transform:uppercase;letter-spacing:.3px;margin-bottom:6px}
+    .till{list-style:none}
+    .till li{font-size:11px;line-height:1.5;padding:2px 0;
+      border-bottom:1px solid var(--c-light);display:flex;align-items:flex-start;gap:4px}
+    .till li::before{content:'\25b8';color:var(--c-accent);font-size:10px;margin-top:2px;flex-shrink:0}
+    .till li:last-child{border-bottom:none}
+    .pc{background:var(--c-surface);border:var(--border);box-shadow:var(--sh-md);overflow:hidden}
+    .pch{background:var(--c-primary);color:var(--c-bg);padding:10px 14px}
+    .pcn{font-family:var(--f-head);font-size:15px;font-weight:700}
+    .pcr{font-size:11px;color:#9CA3AF;margin-top:2px}
+    .pcb{padding:12px 14px}
+    .pcb ul{list-style:none}
+    .pcb li{font-size:12px;line-height:1.55;padding:3px 0;
+      border-bottom:1px solid var(--c-light);display:flex;gap:6px}
+    .pcb li::before{content:'\2192';color:var(--c-accent);flex-shrink:0}
+    .pcb li:last-child{border-bottom:none}
+    .ctb{width:100%;border-collapse:collapse;font-size:12px}
+    .ctb th{background:var(--c-primary);color:var(--c-bg);font-family:var(--f-head);
+      font-size:11px;font-weight:700;padding:7px 10px;text-align:left;letter-spacing:.5px}
+    .ctb td{padding:6px 10px;border-bottom:1px solid var(--c-light);vertical-align:top;line-height:1.45}
+    .ctb tr:nth-child(even) td{background:var(--c-blue-lt)}
+    .sf{display:flex;align-items:center;gap:6px}
+    .sfb{flex:1;text-align:center;background:var(--c-surface);border:var(--border);padding:14px 8px;box-shadow:var(--sh-sm)}
+    .sfb .ic{font-size:24px;margin-bottom:6px}
+    .sfb .lb{font-family:var(--f-head);font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.5px}
+    .sfa{font-size:22px;color:var(--c-accent);flex-shrink:0}
+    .di{display:flex;align-items:flex-start;gap:10px;padding:8px 0;border-bottom:1px solid var(--c-light)}
+    .di:last-child{border-bottom:none}
+    .di .tg{flex-shrink:0;font-family:var(--f-head);font-size:10px;font-weight:700;
+      padding:2px 7px;border:1.5px solid;text-transform:uppercase;letter-spacing:.5px}
+    .di .tg-c{color:var(--c-red);border-color:var(--c-red)}
+    .di .tg-l{color:var(--c-success);border-color:var(--c-success)}
+    .di p{font-size:13px;line-height:1.5}
+    .mn{background:var(--c-surface);border:var(--border);box-shadow:var(--sh-md);
+      padding:12px 16px;text-align:center;font-family:var(--f-head);font-size:12px;
+      font-weight:700;text-transform:uppercase;letter-spacing:.5px}
+    .mn-c{background:var(--c-primary);color:var(--c-bg);box-shadow:var(--sh-lg);font-size:14px}
+    .mn-a{background:var(--c-accent);color:white;border-color:var(--c-accent2)}
+    #s1{background:var(--c-primary);flex-direction:row;overflow:hidden}
+    .s1l{width:56%;padding:64px 56px;display:flex;flex-direction:column;justify-content:center;
+      position:relative;z-index:1}
+    .s1r{width:44%;background:var(--c-accent);display:flex;flex-direction:column;
+      align-items:center;justify-content:center;position:relative;border-left:3px solid #0F3F72}
+    .s1tg{font-family:var(--f-head);font-size:11px;font-weight:700;color:var(--c-accent);
+      letter-spacing:2px;text-transform:uppercase;margin-bottom:20px;
+      border-left:4px solid var(--c-accent);padding-left:12px}
+    .s1ti{font-family:var(--f-head);font-size:52px;font-weight:800;color:var(--c-bg);
+      line-height:1.05;letter-spacing:-2px;margin-bottom:8px}
+    .s1ti span{color:var(--c-accent)}
+    .s1su{font-size:15px;color:#9CA3AF;margin-bottom:36px;line-height:1.5}
+    .s1m{display:flex;flex-direction:column;gap:6px}
+    .s1mi{display:flex;align-items:center;gap:10px}
+    .s1mi .lb{font-size:11px;font-weight:700;color:#6B7280;text-transform:uppercase;
+      letter-spacing:1px;min-width:120px}
+    .s1mi .vl{font-size:13px;font-weight:500;color:var(--c-bg)}
+    .s1dc{position:absolute;inset:0;
+      background-image:linear-gradient(rgba(255,255,255,.04) 1px,transparent 1px),
+        linear-gradient(90deg,rgba(255,255,255,.04) 1px,transparent 1px);
+      background-size:32px 32px}
+    .s1bi{font-size:120px;opacity:.25;line-height:1;margin-bottom:20px}
+    .s1tm{position:relative;z-index:1;text-align:center}
+    .s1tmt{font-family:var(--f-head);font-size:12px;font-weight:700;
+      color:rgba(255,255,255,.6);letter-spacing:2px;text-transform:uppercase;margin-bottom:14px}
+    .s1tmi{font-family:var(--f-body);font-size:14px;font-weight:600;color:white;
+      padding:6px 0;border-bottom:1px solid rgba(255,255,255,.15)}
+    .s1tmi:last-child{border-bottom:none}
+    .s1tmr{font-size:11px;color:rgba(255,255,255,.55)}
+    #s18{background:var(--c-primary)}
+    .s18w{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;
+      text-align:center;padding:40px;gap:20px}
+    .s18b{font-size:72px}
+    .s18t{font-family:var(--f-head);font-size:46px;font-weight:800;color:var(--c-bg);
+      letter-spacing:-2px;line-height:1.1}
+    .s18t span{color:var(--c-accent);display:block}
+    .s18s{font-size:16px;color:#9CA3AF;max-width:480px;line-height:1.6}
+    .s18mb{font-family:var(--f-head);font-size:14px;font-weight:700;color:var(--c-bg);
+      background:rgba(255,255,255,.06);border:1.5px solid rgba(255,255,255,.15);padding:8px 20px}
+    .s18q{font-family:var(--f-head);font-size:22px;font-weight:700;color:var(--c-accent);
+      border:2px solid var(--c-accent);padding:10px 32px;margin-top:4px;
+      box-shadow:4px 4px 0 var(--c-accent2)}
+    #ht{position:fixed;top:16px;right:20px;font-size:11px;color:#555;
+      background:rgba(0,0,0,.6);padding:6px 12px;z-index:100}
+</style>
+</head>
+<body>
+<div id="pb"></div>
+<div id="ht">&#8592; &#8594; ou clique para navegar</div>
+<div id="nav">
+  <button id="bp" onclick="move(-1)">&#9664; Anterior</button>
+  <span style="color:#444">|</span>
+  <span id="sc">1 / 18</span>
+  <span style="color:#444">|</span>
+  <button id="bn" onclick="move(1)">Proximo &#9654;</button>
+</div>
+<div id="deck">
+<div class="slide active" id="s1">
+  <div class="s1l">
+    <div class="s1dc"></div>
+    <div class="s1tg">Gerenciamento de Projetos</div>
+    <div class="s1ti">Marketplace<br><span>de Calcados</span></div>
+    <div class="s1su">Plataforma de comercio eletronico desenvolvida como<br>projeto academico de desenvolvimento de software.</div>
+    <div class="s1m">
+      <div class="s1mi"><span class="lb">Disciplina</span><span class="vl">Gerenciamento de Projetos</span></div>
+      <div class="s1mi"><span class="lb">Professor</span><span class="vl">[PREENCHER]</span></div>
+      <div class="s1mi"><span class="lb">Instituicao</span><span class="vl">[PREENCHER]</span></div>
+      <div class="s1mi"><span class="lb">Periodo</span><span class="vl">2026</span></div>
+      <div class="s1mi"><span class="lb">Repositorio</span><span class="vl">github.com/FABIOARGEL/marketplace-calcados</span></div>
+    </div>
+  </div>
+  <div class="s1r">
+    <div class="s1dc"></div>
+    <div class="s1bi">&#128161;</div>
+    <div class="s1tm">
+      <div class="s1tmt">Equipe do Projeto</div>
+      <div class="s1tmi">Fabio Argel<div class="s1tmr">CTO &mdash; Arquitetura &amp; Lideranca Tecnica</div></div>
+      <div class="s1tmi">Alessandro<div class="s1tmr">CEO &mdash; Validacao &amp; Aceite de Negocio</div></div>
+      <div class="s1tmi">Paula<div class="s1tmr">DEV &mdash; Backend &amp; Frontend</div></div>
+      <div class="s1tmi">Williams<div class="s1tmr">DEV &mdash; Backend &amp; Frontend</div></div>
+    </div>
+  </div>
+</div>
+<div class="slide" id="s2">
+  <div class="ab"></div><div class="dg"></div>
+  <div class="sh"><span class="ic">&#128269;</span><div><h2>Apresentacao do Problema</h2><div class="sub">Contexto, desafios e publico-alvo</div></div><div class="sn">02 / 18</div></div>
+  <div class="sb">
+    <div class="g2" style="gap:20px;flex:1">
+      <div style="display:flex;flex-direction:column;gap:14px">
+        <div class="cd"><div class="ct">Contexto</div>
+          <p style="font-size:13px;line-height:1.6">O comercio de calcados e um mercado relevante, mas vendedores independentes enfrentam dificuldade em <strong>alcancar clientes digitalmente</strong> sem uma plataforma integrada e acessivel.</p></div>
+        <div class="cd"><div class="ct">Problema Central</div>
+          <div style="display:flex;align-items:flex-start;gap:10px;margin-bottom:8px"><span style="font-size:20px">&#128230;</span><p style="font-size:13px"><strong>Vendedores:</strong> sem ferramenta unificada para cadastrar produtos, controlar estoque e acompanhar pedidos.</p></div>
+          <div style="display:flex;align-items:flex-start;gap:10px;margin-bottom:8px"><span style="font-size:20px">&#128270;</span><p style="font-size:13px"><strong>Compradores:</strong> dificuldade em encontrar, comparar e comprar de multiplos vendedores em um so lugar.</p></div>
+          <div style="display:flex;align-items:flex-start;gap:10px"><span style="font-size:20px">&#128202;</span><p style="font-size:13px"><strong>Gestao:</strong> ausencia de visibilidade sobre pedidos, status de entrega e historico de compras.</p></div>
+        </div>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:14px">
+        <div class="cd cd-b"><div class="ct">Publico-Alvo</div>
+          <div style="display:flex;gap:10px;margin-top:6px">
+            <div style="flex:1;background:var(--c-surface);border:var(--border);padding:12px">
+              <div style="font-family:var(--f-head);font-size:12px;font-weight:700;margin-bottom:8px;color:var(--c-accent)">CLIENTES</div>
+              <ul style="list-style:none;font-size:12px;line-height:1.7"><li>&#9658; Compradores de calcados online</li><li>&#9658; Usuarios que buscam variedade</li><li>&#9658; Clientes de multiplos vendedores</li><li>&#9658; Foco em praticidade e seguranca</li></ul>
+            </div>
+            <div style="flex:1;background:var(--c-surface);border:var(--border);padding:12px">
+              <div style="font-family:var(--f-head);font-size:12px;font-weight:700;margin-bottom:8px;color:var(--c-accent)">VENDEDORES</div>
+              <ul style="list-style:none;font-size:12px;line-height:1.7"><li>&#9658; Lojistas e empreendedores</li><li>&#9658; Vendas diretas ao consumidor</li><li>&#9658; Gestao propria de produtos</li><li>&#9658; Controle de pedidos e estoque</li></ul>
+            </div>
+          </div>
+        </div>
+        <div class="cd"><div class="ct">Solucao Proposta</div>
+          <p style="font-size:13px;line-height:1.6">Desenvolver um <strong>marketplace web integrado</strong> que conecta compradores e vendedores de calcados, com fluxo completo: catalogo &rarr; busca &rarr; carrinho &rarr; checkout &rarr; acompanhamento de pedidos.</p></div>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="slide" id="s3">
+  <div class="ab"></div><div class="dg"></div>
+  <div class="sh"><span class="ic">&#127919;</span><div><h2>Objetivos do Sistema</h2><div class="sub">Objetivo geral e objetivos especificos</div></div><div class="sn">03 / 18</div></div>
+  <div class="sb">
+    <div class="cd cd-b" style="margin-bottom:16px"><div class="ct">Objetivo Geral</div>
+      <p style="font-size:14px;font-weight:500;line-height:1.6">Construir um <strong>marketplace web de calcados funcional</strong>, com dois perfis distintos de usuario, fluxo completo de e-commerce e gerenciamento de pedidos, desenvolvido com Python, Django e PostgreSQL.</p></div>
+    <div class="g2" style="flex:1;gap:14px">
+      <div>
+        <div style="font-family:var(--f-head);font-size:13px;font-weight:700;color:var(--c-accent);margin-bottom:10px;text-transform:uppercase;letter-spacing:.5px">Para o Cliente</div>
+        <div style="display:flex;flex-direction:column;gap:6px">
+          <div class="ri"><span class="ric">&#128274;</span><div><strong>Criar conta e autenticar-se por e-mail</strong><p>Cadastro como cliente, login seguro e logout.</p></div></div>
+          <div class="ri"><span class="ric">&#128270;</span><div><strong>Pesquisar e filtrar calcados</strong><p>Busca por nome, filtros por categoria, marca, tamanho e preco.</p></div></div>
+          <div class="ri"><span class="ric">&#128717;</span><div><strong>Gerenciar carrinho e finalizar compra</strong><p>Adicionar, editar e remover itens. Checkout com frete simulado.</p></div></div>
+          <div class="ri"><span class="ric">&#128230;</span><div><strong>Acompanhar pedidos</strong><p>Historico detalhado com status, valores e endereco.</p></div></div>
+        </div>
+      </div>
+      <div>
+        <div style="font-family:var(--f-head);font-size:13px;font-weight:700;color:var(--c-accent);margin-bottom:10px;text-transform:uppercase;letter-spacing:.5px">Para o Vendedor</div>
+        <div style="display:flex;flex-direction:column;gap:6px">
+          <div class="ri"><span class="ric">&#10133;</span><div><strong>Cadastrar e gerenciar produtos</strong><p>Criar calcados com imagens, preco e estoque por tamanho.</p></div></div>
+          <div class="ri"><span class="ric">&#128451;</span><div><strong>Controlar estoque por tamanho</strong><p>Estoque individualizado. Soft delete para inativar produtos.</p></div></div>
+          <div class="ri"><span class="ric">&#128203;</span><div><strong>Visualizar pedidos dos seus produtos</strong><p>Dashboard exclusivo com pedidos que contem seus itens.</p></div></div>
+          <div class="ri"><span class="ric">&#128666;</span><div><strong>Atualizar status de entrega</strong><p>Ciclo: PENDING &rarr; CONFIRMED &rarr; SHIPPED &rarr; DELIVERED.</p></div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="slide" id="s4">
+  <div class="ab"></div><div class="dg"></div>
+  <div class="sh"><span class="ic">&#127959;</span><div><h2>Visao Geral da Solucao</h2><div class="sub">Modulos do sistema e suas relacoes</div></div><div class="sn">04 / 18</div></div>
+  <div class="sb" style="justify-content:center">
+    <div style="display:grid;grid-template-columns:1fr auto 1fr;grid-template-rows:auto auto auto;gap:10px;align-items:center;justify-items:center;max-width:900px;margin:0 auto">
+      <div class="mn mn-a" style="width:180px">Autenticacao<br><span style="font-size:10px;font-weight:400;opacity:.8">Cadastro - Login - Perfil</span></div>
+      <div style="font-size:22px;color:var(--c-accent)">&#8595;</div>
+      <div class="mn" style="width:180px">Enderecos<br><span style="font-size:10px;color:var(--c-muted)">Multiplos - Padrao</span></div>
+      <div class="mn" style="width:180px">Catalogo<br><span style="font-size:10px;color:var(--c-muted)">Listagem - Filtros - Busca</span></div>
+      <div class="mn mn-c" style="width:180px;padding:18px">MARKETPLACE<br><span style="font-size:10px;font-weight:400;opacity:.7">Django MVT</span></div>
+      <div class="mn" style="width:180px">Area do Vendedor<br><span style="font-size:10px;color:var(--c-muted)">CRUD Produto - Estoque</span></div>
+      <div class="mn" style="width:180px">Carrinho<br><span style="font-size:10px;color:var(--c-muted)">Adicionar - Editar - Subtotal</span></div>
+      <div style="font-size:22px;color:var(--c-accent)">&#8593;</div>
+      <div class="mn mn-a" style="width:180px">Pedidos<br><span style="font-size:10px;font-weight:400;opacity:.8">Checkout - Status - Historico</span></div>
+    </div>
+    <div style="display:flex;gap:10px;margin-top:20px;justify-content:center">
+      <div style="background:var(--c-primary);color:var(--c-bg);padding:6px 16px;font-family:var(--f-head);font-size:12px;font-weight:700;border:var(--border)">PostgreSQL</div>
+      <div style="background:var(--c-primary);color:var(--c-bg);padding:6px 16px;font-family:var(--f-head);font-size:12px;font-weight:700;border:var(--border)">Django 4.2 LTS</div>
+      <div style="background:var(--c-primary);color:var(--c-bg);padding:6px 16px;font-family:var(--f-head);font-size:12px;font-weight:700;border:var(--border)">Python 3.11+</div>
+      <div style="background:var(--c-accent);color:white;padding:6px 16px;font-family:var(--f-head);font-size:12px;font-weight:700;border:var(--border);border-color:var(--c-accent2)">HTML + CSS + JS</div>
+    </div>
+    <div style="display:flex;gap:10px;margin-top:10px;justify-content:center">
+      <div class="bx bx-l">apps/users</div><div class="bx bx-l">apps/products</div>
+      <div class="bx bx-l">apps/cart</div><div class="bx bx-l">apps/orders</div>
+      <div class="bx bx-l">apps/sellers</div><div class="bx bx-l">config/</div>
+    </div>
+  </div>
+</div>
+<div class="slide" id="s5">
+  <div class="ab"></div><div class="dg"></div>
+  <div class="sh"><span class="ic">&#9881;</span><div><h2>Tecnologias e Ferramentas</h2><div class="sub">Stack utilizada no desenvolvimento</div></div><div class="sn">05 / 18</div></div>
+  <div class="sb" style="justify-content:center">
+    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:14px;flex:1">
+      <div class="cd"><div style="font-size:36px;margin-bottom:10px">&#128013;</div><div class="ct">Python 3.11+ &amp; Django 4.2</div><p style="font-size:12px;line-height:1.6;color:var(--c-muted)">Backend principal. Django LTS garante estabilidade. Padrao MVT sem API REST separada. Autenticacao por e-mail com EmailBackend customizado.</p></div>
+      <div class="cd"><div style="font-size:36px;margin-bottom:10px">&#128024;</div><div class="ct">PostgreSQL 14+</div><p style="font-size:12px;line-height:1.6;color:var(--c-muted)">Banco relacional robusto. Garante integridade com constraints, transacoes atomicas no checkout e tipagem correta (DecimalField para precos).</p></div>
+      <div class="cd"><div style="font-size:36px;margin-bottom:10px">&#128295;</div><div class="ct">pgAdmin</div><p style="font-size:12px;line-height:1.6;color:var(--c-muted)">Interface grafica para gerenciamento do PostgreSQL. Utilizado para inspecionar tabelas, executar queries e verificar integridade dos dados.</p></div>
+      <div class="cd cd-b"><div style="font-size:36px;margin-bottom:10px">&#128025;</div><div class="ct">Git &amp; GitHub</div><p style="font-size:12px;line-height:1.6">Versionamento e colaboracao. Estrategia: main &rarr; develop &rarr; feature/*. Pull Requests com code review entre os membros da equipe.</p></div>
+      <div class="cd cd-b"><div style="font-size:36px;margin-bottom:10px">&#128203;</div><div class="ct">Linear</div><p style="font-size:12px;line-height:1.6">Gerenciamento de tarefas e acompanhamento de sprints. Todas as atividades das 6 sprints foram registradas, distribuidas e monitoradas no Linear.</p></div>
+      <div class="cd"><div style="font-size:36px;margin-bottom:10px">&#127912;</div><div class="ct">HTML + CSS Vanilla + JS</div><p style="font-size:12px;line-height:1.6;color:var(--c-muted)">Frontend sem frameworks externos. Design System Neo-Brutalism com variaveis CSS, convencao BEM, sombras solidas e tipografia Space Grotesk + Inter.</p></div>
+    </div>
+  </div>
+</div>
+<div class="slide" id="s6">
+  <div class="ab"></div><div class="dg"></div>
+  <div class="sh"><span class="ic">&#128101;</span><div><h2>Organizacao da Equipe</h2><div class="sub">Cargos, responsabilidades e divisao de trabalho</div></div><div class="sn">06 / 18</div></div>
+  <div class="sb">
+    <div class="g2" style="flex:1;gap:14px">
+      <div class="pc"><div class="pch"><div class="pcn">Fabio Argel</div><div class="pcr">CTO &mdash; Chief Technology Officer</div></div><div class="pcb"><ul>
+        <li>Definicao da arquitetura do sistema e stack tecnologica</li>
+        <li>Criacao e manutencao de toda a documentacao tecnica (docs/)</li>
+        <li>Revisao tecnica de codigo e integracao das branches</li>
+        <li>Organizacao das 6 sprints e planejamento de tarefas no Linear</li>
+        <li>Validacao e apresentacao das entregas ao CEO</li>
+        <li>Garantia do Design System e padroes de codigo</li>
+      </ul></div></div>
+      <div class="pc"><div class="pch"><div class="pcn">Alessandro</div><div class="pcr">CEO &mdash; Chief Executive Officer</div></div><div class="pcb"><ul>
+        <li>Validacao das entregas ao final de cada sprint</li>
+        <li>Aceite das funcionalidades desenvolvidas (aprovacao de negocio)</li>
+        <li>Acompanhamento geral do progresso do projeto</li>
+        <li>Definicao das prioridades de negocio</li>
+      </ul></div></div>
+      <div class="pc"><div class="pch"><div class="pcn">Paula</div><div class="pcr">DEV &mdash; Desenvolvedora Full-Stack</div></div><div class="pcb"><ul>
+        <li>Estrutura base de templates e CSS (base.html + Design System)</li>
+        <li>Login por e-mail, logout e CRUD de enderecos</li>
+        <li>Edicao/desativacao de produtos e testes de produtos</li>
+        <li>Busca de produtos e adicao ao carrinho</li>
+        <li>Processamento do pedido (checkout, estoque, limpar carrinho)</li>
+        <li>Atualizacao de status de pedido, UX e seguranca (Sprint 6)</li>
+      </ul></div></div>
+      <div class="pc"><div class="pch"><div class="pcn">Williams</div><div class="pcr">DEV &mdash; Desenvolvedor Full-Stack</div></div><div class="pcb"><ul>
+        <li>Formulario de cadastro de usuario e perfil</li>
+        <li>Cadastro de produtos e painel do vendedor</li>
+        <li>Filtros por categoria, tamanho, marca e preco</li>
+        <li>Pagina completa do carrinho (ver, alterar, remover)</li>
+        <li>Checkout (endereco, frete, pagamento simulado) e historico</li>
+        <li>Dashboard do vendedor, testes e2e e documentacao final</li>
+      </ul></div></div>
+    </div>
+    <div style="margin-top:12px;display:flex;align-items:center;gap:10px">
+      <div class="bx bx-k">Total Story Points</div>
+      <div class="bx bx-b">Paula: 60 pts</div>
+      <div class="bx bx-b">Williams: 58 pts</div>
+      <div class="bx bx-g">Diferenca de 2 pts &mdash; Excelente equilibrio</div>
+    </div>
+  </div>
+</div>
+<div class="slide" id="s7">
+  <div class="ab"></div><div class="dg"></div>
+  <div class="sh"><span class="ic">&#128260;</span><div><h2>Metodologia de Desenvolvimento</h2><div class="sub">Scrum adaptado com 6 Sprints</div></div><div class="sn">07 / 18</div></div>
+  <div class="sb">
+    <div class="sf" style="margin-bottom:18px">
+      <div class="sfb"><div class="ic">&#128203;</div><div class="lb">Planejamento</div></div>
+      <div class="sfa">&rarr;</div>
+      <div class="sfb"><div class="ic">&#128193;</div><div class="lb">Distribuicao</div></div>
+      <div class="sfa">&rarr;</div>
+      <div class="sfb"><div class="ic">&#128187;</div><div class="lb">Desenvolvimento</div></div>
+      <div class="sfa">&rarr;</div>
+      <div class="sfb"><div class="ic">&#129514;</div><div class="lb">Testes</div></div>
+      <div class="sfa">&rarr;</div>
+      <div class="sfb"><div class="ic">&#128269;</div><div class="lb">Revisao PR</div></div>
+      <div class="sfa">&rarr;</div>
+      <div class="sfb" style="background:var(--c-accent);color:white;border-color:var(--c-accent2)"><div class="ic">&#9989;</div><div class="lb">Entrega</div></div>
+    </div>
+    <div class="g2" style="flex:1;gap:14px">
+      <div style="display:flex;flex-direction:column;gap:10px">
+        <div class="cd"><div class="ct">O que e uma Sprint?</div><p style="font-size:13px;line-height:1.6">Um ciclo de desenvolvimento com <strong>periodo e objetivo definidos</strong>. Cada sprint entrega funcionalidades de ponta a ponta: desde o backend ate o template funcional no browser.</p></div>
+        <div class="cd"><div class="ct">Planejamento por Dependencias</div><p style="font-size:13px;line-height:1.6">Cada sprint foi planejada com base em <strong>analise de dependencias tecnicas</strong> (fatiamento vertical). Toda tarefa possui: objetivo, responsavel, Story Points, resultado esperado e DoD.</p></div>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:10px">
+        <div class="cd cd-b"><div class="ct">GitHub &mdash; Controle de Versao</div><ul style="list-style:none;font-size:12px;line-height:1.7"><li>&#9658; Branch feature/nome por funcionalidade</li><li>&#9658; Pull Request para develop com code review</li><li>&#9658; Merge em main apos validacao final</li><li>&#9658; Commits no padrao Conventional Commits</li></ul></div>
+        <div class="cd cd-b"><div class="ct">Linear &mdash; Gestao de Tarefas</div><ul style="list-style:none;font-size:12px;line-height:1.7"><li>&#9658; Todas as 27 tarefas registradas por sprint</li><li>&#9658; Atribuicao de responsavel e Story Points</li><li>&#9658; Acompanhamento de progresso em tempo real</li><li>&#9658; Status: To Do &rarr; In Progress &rarr; Done</li></ul></div>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="slide" id="s8">
+  <div class="ab"></div><div class="dg"></div>
+  <div class="sh"><span class="ic">&#128197;</span><div><h2>Planejamento das 6 Sprints</h2><div class="sub">Linha do tempo e evolucao do projeto</div></div><div class="sn">08 / 18</div></div>
+  <div class="sb">
+    <div class="tl">
+      <div class="tli"><div class="tlh tlh-d">S1 Concluida</div><div class="tlb"><div class="tlt">Fundacao</div><ul class="till"><li>Config. Django &amp; PostgreSQL</li><li>4 apps + Models</li><li>Migrations + Admin</li><li>EmailBackend</li><li>15 testes passando</li><li>Documentacao base</li></ul></div></div>
+      <div class="tli"><div class="tlh">S2 &mdash; Identidade</div><div class="tlb"><div class="tlt">Usuarios &amp; Auth</div><ul class="till"><li>base.html + CSS</li><li>Cadastro de usuario</li><li>Login por e-mail</li><li>Perfil &amp; SellerProfile</li><li>CRUD enderecos</li><li>Pagina inicial</li></ul></div></div>
+      <div class="tli"><div class="tlh">S3 &mdash; Produtos</div><div class="tlb"><div class="tlt">Catalogo</div><ul class="till"><li>Cadastro de produto</li><li>Edicao &amp; soft delete</li><li>Painel do vendedor</li><li>Catalogo publico</li><li>Detalhes do produto</li><li>Media &amp; categorias</li></ul></div></div>
+      <div class="tli"><div class="tlh">S4 &mdash; Busca</div><div class="tlb"><div class="tlt">Filtros &amp; Carrinho</div><ul class="till"><li>Busca por texto</li><li>Filtros combinados</li><li>Adicionar ao carrinho</li><li>Editar/remover item</li><li>Subtotal &amp; badge</li><li>Testes carrinho</li></ul></div></div>
+      <div class="tli"><div class="tlh">S5 &mdash; Compra</div><div class="tlb"><div class="tlt">Checkout &amp; Pedidos</div><ul class="till"><li>Checkout (endereco)</li><li>Calculo de frete</li><li>Pagamento simulado</li><li>Criar Order + Items</li><li>Desconto estoque</li><li>Historico cliente</li></ul></div></div>
+      <div class="tli"><div class="tlh">S6 &mdash; Final</div><div class="tlb"><div class="tlt">Integracao</div><ul class="till"><li>Dashboard vendedor</li><li>Atualizacao status</li><li>Testes e2e</li><li>Revisao UX/seguranca</li><li>Documentacao final</li><li>Preparacao entrega</li></ul></div></div>
+    </div>
+    <div style="margin-top:16px">
+      <div style="font-family:var(--f-head);font-size:12px;font-weight:700;color:var(--c-muted);margin-bottom:8px;text-transform:uppercase;letter-spacing:.5px">Story Points por Sprint</div>
+      <div style="display:flex;gap:8px;align-items:center">
+        <div class="bx bx-g">S1: Base</div>
+        <div class="bx bx-b">S2: 26 pts</div><div class="bx bx-b">S3: 19 pts</div>
+        <div class="bx bx-b">S4: 21 pts</div><div class="bx bx-b">S5: 18 pts</div>
+        <div class="bx bx-b">S6: 21 pts</div>
+        <div style="margin-left:auto" class="bx bx-k">Total: 118 Story Points</div>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="slide" id="s9">
+  <div class="ab" style="background:var(--c-success)"></div><div class="dg"></div>
+  <div class="sh"><span class="ic">&#127959;</span><div><h2>Sprint 1 &mdash; Fundacao e Arquitetura</h2><div class="sub">Base tecnica do projeto &mdash; Concluida</div></div><div class="sn">09 / 18</div></div>
+  <div class="sb">
+    <div class="so">Objetivo: Estabelecer a base tecnica &mdash; configuracao Django, PostgreSQL, estrutura de apps, models, migrations, admin e testes de fundacao.</div>
+    <div class="g2" style="flex:1;gap:14px">
+      <div>
+        <table class="pt" style="font-size:12px">
+          <thead><tr><th>Entregavel</th><th>Status</th></tr></thead>
+          <tbody>
+            <tr><td>Projeto Django + django-environ configurado</td><td><span class="bx bx-g">Concluido</span></td></tr>
+            <tr><td>PostgreSQL conectado (marketplace_calcados)</td><td><span class="bx bx-g">Concluido</span></td></tr>
+            <tr><td>4 apps criados: users, products, cart, orders</td><td><span class="bx bx-g">Concluido</span></td></tr>
+            <tr><td>11 Models implementados e migrados</td><td><span class="bx bx-g">Concluido</span></td></tr>
+            <tr><td>EmailBackend para auth por e-mail</td><td><span class="bx bx-g">Concluido</span></td></tr>
+            <tr><td>Admin configurado para todos os models</td><td><span class="bx bx-g">Concluido</span></td></tr>
+            <tr><td>Health check endpoint (/health/)</td><td><span class="bx bx-g">Concluido</span></td></tr>
+            <tr><td>15 testes de fundacao passando</td><td><span class="bx bx-g">Concluido</span></td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:10px">
+        <div class="cd cd-b"><div class="ct">Documentacao criada na Sprint 1</div><ul style="list-style:none;font-size:12px;line-height:1.7">
+          <li>&#9658; docs/architecture.md &mdash; Arquitetura e DER</li>
+          <li>&#9658; docs/design-system.md &mdash; Design System completo</li>
+          <li>&#9658; docs/development.md &mdash; Padroes de codigo e Git</li>
+          <li>&#9658; docs/requirements.md &mdash; 25 Requisitos Funcionais</li>
+          <li>&#9658; docs/sprints.md &mdash; Detalhamento das 6 sprints</li>
+          <li>&#9658; GEMINI.md &mdash; Regras operacionais da IA</li>
+        </ul></div>
+        <div class="cd"><div class="ct">Resultado</div><p style="font-size:13px;line-height:1.6">Projeto Django funcionando com <strong>PostgreSQL conectado</strong>, todos os models implementados e migrados, admin operacional e suite de testes passando. Base solida para todas as sprints seguintes.</p></div>
+        <div style="display:flex;gap:8px"><div class="bx bx-k">Responsavel</div><div class="bx bx-b">Fabio Argel (CTO)</div><div class="bx bx-g">Concluida</div></div>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="slide" id="s10">
+  <div class="ab"></div><div class="dg"></div>
+  <div class="sh"><span class="ic">&#128274;</span><div><h2>Sprint 2 &mdash; Autenticacao, Perfil e Enderecos</h2><div class="sub">Identidade do usuario &mdash; 26 Story Points</div></div><div class="sn">10 / 18</div></div>
+  <div class="sb">
+    <div class="so">Objetivo: Entregar o fluxo completo de identidade do usuario &mdash; cadastro, login por e-mail, logout, perfil, edicao de dados e CRUD de enderecos.</div>
+    <table class="pt" style="font-size:12px;margin-bottom:10px">
+      <thead><tr><th>Tarefa</th><th>Responsavel</th><th>SP</th><th>RFs</th></tr></thead>
+      <tbody>
+        <tr><td>T1 &mdash; Estrutura base de templates e CSS (base.html, Design System)</td><td><span class="bx bx-b">Paula</span></td><td>5</td><td>&mdash;</td></tr>
+        <tr><td>T2 &mdash; Formulario e view de cadastro de usuario (CLIENT/SELLER)</td><td><span class="bx bx-l">Williams</span></td><td>5</td><td>RF01</td></tr>
+        <tr><td>T3 &mdash; Login por e-mail e logout</td><td><span class="bx bx-b">Paula</span></td><td>3</td><td>RF02, RF21</td></tr>
+        <tr><td>T4 &mdash; Pagina de perfil e edicao de dados cadastrais</td><td><span class="bx bx-l">Williams</span></td><td>3</td><td>RF03</td></tr>
+        <tr><td>T5 &mdash; CRUD de enderecos de entrega (multiplos, padrao)</td><td><span class="bx bx-b">Paula</span></td><td>5</td><td>RF22</td></tr>
+        <tr><td>T6 &mdash; Testes de autenticacao e enderecos (12+ testes)</td><td><span class="bx bx-l">Williams</span></td><td>3</td><td>&mdash;</td></tr>
+        <tr><td>T7 &mdash; Pagina inicial (home) neo-brutalism</td><td><span class="bx bx-l">Williams</span></td><td>2</td><td>&mdash;</td></tr>
+      </tbody>
+    </table>
+    <div style="display:flex;gap:10px;flex-wrap:wrap;align-items:center">
+      <div class="bx bx-k">Entregaveis</div>
+      <div class="bx bx-l">Layout neo-brutalism</div><div class="bx bx-l">Cadastro Client/Seller</div>
+      <div class="bx bx-l">Login por e-mail</div><div class="bx bx-l">CRUD de enderecos</div>
+      <div style="margin-left:auto"><span class="bx bx-b">Paula: 13 pts</span>&nbsp;<span class="bx bx-l">Williams: 13 pts</span></div>
+    </div>
+  </div>
+</div>
+<div class="slide" id="s11">
+  <div class="ab"></div><div class="dg"></div>
+  <div class="sh"><span class="ic">&#128230;</span><div><h2>Sprint 3 &mdash; Catalogo de Produtos e Gestao do Vendedor</h2><div class="sub">Dominio de produtos &mdash; 19 Story Points</div></div><div class="sn">11 / 18</div></div>
+  <div class="sb">
+    <div class="so">Objetivo: Vendedor cadastra, edita e desativa calcados. Cliente visualiza o catalogo e os detalhes de cada produto. Catalogo funcional alimentado por vendedores reais.</div>
+    <table class="pt" style="font-size:12px;margin-bottom:10px">
+      <thead><tr><th>Tarefa</th><th>Responsavel</th><th>SP</th><th>RFs</th></tr></thead>
+      <tbody>
+        <tr><td>T8 &mdash; Formularios e views de cadastro de produto (imagens, estoque por tamanho)</td><td><span class="bx bx-l">Williams</span></td><td>5</td><td>RF08, RF20</td></tr>
+        <tr><td>T9 &mdash; Edicao e desativacao de produto (soft delete is_active=False)</td><td><span class="bx bx-b">Paula</span></td><td>3</td><td>RF09, RF10</td></tr>
+        <tr><td>T10 &mdash; Lista de produtos do vendedor (painel com paginacao)</td><td><span class="bx bx-l">Williams</span></td><td>3</td><td>&mdash;</td></tr>
+        <tr><td>T11 &mdash; Catalogo publico e pagina de detalhes do produto</td><td><span class="bx bx-b">Paula</span></td><td>3</td><td>RF04, RF05</td></tr>
+        <tr><td>T12 &mdash; Configuracao de media files e categorias seed</td><td><span class="bx bx-l">Williams</span></td><td>2</td><td>&mdash;</td></tr>
+        <tr><td>T13 &mdash; Testes de produtos (8+ testes, CRUD e catalogo)</td><td><span class="bx bx-b">Paula</span></td><td>3</td><td>&mdash;</td></tr>
+      </tbody>
+    </table>
+    <div style="display:flex;gap:10px;flex-wrap:wrap;align-items:center">
+      <div class="bx bx-k">Entregaveis</div>
+      <div class="bx bx-l">CRUD produto + imagens</div><div class="bx bx-l">Soft delete</div>
+      <div class="bx bx-l">Catalogo publico</div><div class="bx bx-l">Painel do vendedor</div>
+      <div style="margin-left:auto"><span class="bx bx-b">Paula: 9 pts</span>&nbsp;<span class="bx bx-l">Williams: 10 pts</span></div>
+    </div>
+  </div>
+</div>
+<div class="slide" id="s12">
+  <div class="ab"></div><div class="dg"></div>
+  <div class="sh"><span class="ic">&#128717;</span><div><h2>Sprint 4 &mdash; Busca, Filtros e Carrinho de Compras</h2><div class="sub">Navegacao e selecao de produtos &mdash; 21 Story Points</div></div><div class="sn">12 / 18</div></div>
+  <div class="sb">
+    <div class="so">Objetivo: Permitir que o cliente pesquise/filtre calcados e gerencie um carrinho de compras completo &mdash; adicionar, alterar quantidade, remover itens e ver subtotal.</div>
+    <table class="pt" style="font-size:12px;margin-bottom:10px">
+      <thead><tr><th>Tarefa</th><th>Responsavel</th><th>SP</th><th>RFs</th></tr></thead>
+      <tbody>
+        <tr><td>T14 &mdash; Busca por nome e descricao (icontains, campo no header)</td><td><span class="bx bx-b">Paula</span></td><td>3</td><td>RF06</td></tr>
+        <tr><td>T15 &mdash; Filtros por categoria, tamanho, marca e faixa de preco (combinados)</td><td><span class="bx bx-l">Williams</span></td><td>5</td><td>RF07</td></tr>
+        <tr><td>T16 &mdash; Adicionar produto ao carrinho (unique_together, validacao de estoque)</td><td><span class="bx bx-b">Paula</span></td><td>5</td><td>RF11</td></tr>
+        <tr><td>T17 &mdash; Pagina do carrinho (visualizar, alterar qty, remover, subtotal, badge)</td><td><span class="bx bx-l">Williams</span></td><td>5</td><td>RF12&ndash;RF14</td></tr>
+        <tr><td>T18 &mdash; Testes de busca, filtros e carrinho (12+ testes)</td><td><span class="bx bx-b">Paula</span></td><td>3</td><td>&mdash;</td></tr>
+      </tbody>
+    </table>
+    <div style="display:flex;gap:10px;flex-wrap:wrap;align-items:center">
+      <div class="bx bx-k">Destaques tecnicos</div>
+      <div class="bx bx-l">Filtros combinados (AND)</div>
+      <div class="bx bx-l">unique_together no CartItem</div>
+      <div class="bx bx-l">Validacao de estoque</div>
+      <div style="margin-left:auto"><span class="bx bx-b">Paula: 11 pts</span>&nbsp;<span class="bx bx-l">Williams: 10 pts</span></div>
+    </div>
+  </div>
+</div>
+<div class="slide" id="s13">
+  <div class="ab"></div><div class="dg"></div>
+  <div class="sh"><span class="ic">&#128179;</span><div><h2>Sprint 5 &mdash; Checkout, Pedidos e Historico</h2><div class="sub">Fluxo completo de compra &mdash; 18 Story Points</div></div><div class="sn">13 / 18</div></div>
+  <div class="sb">
+    <div class="so">Objetivo: Fluxo completo de compra &mdash; endereco, frete calculado, pagamento simulado, criacao do pedido com snapshot de preco, desconto de estoque e historico do cliente.</div>
+    <div class="g2" style="gap:14px;flex:1">
+      <div>
+        <table class="pt" style="font-size:11.5px">
+          <thead><tr><th>Tarefa</th><th>Resp.</th><th>SP</th><th>RFs</th></tr></thead>
+          <tbody>
+            <tr><td>T19 &mdash; Checkout (endereco, frete, pagamento simulado)</td><td><span class="bx bx-l">Williams</span></td><td>5</td><td>RF15,RF23,RF24</td></tr>
+            <tr><td>T20 &mdash; Processamento do pedido (Order + Items + desconto estoque)</td><td><span class="bx bx-b">Paula</span></td><td>5</td><td>RF16,RF20,RF25</td></tr>
+            <tr><td>T21 &mdash; Historico de pedidos do cliente (lista + detalhes)</td><td><span class="bx bx-l">Williams</span></td><td>3</td><td>RF17</td></tr>
+            <tr><td>T22 &mdash; Testes de integracao do checkout e pedidos (10+ testes)</td><td><span class="bx bx-b">Paula</span></td><td>5</td><td>&mdash;</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:10px">
+        <div class="cd cd-b"><div class="ct">Fluxo do Checkout</div>
+          <div style="font-size:12px;line-height:2">
+            Carrinho &rarr; Selecionar endereco &rarr; Calcular frete<br>
+            &rarr; Escolher pagamento simulado &rarr; Confirmar pedido<br>
+            &rarr; Order criado + Estoque descontado + Carrinho limpo
+          </div>
+        </div>
+        <div class="cd"><div class="ct">Destaques Tecnicos</div><ul style="list-style:none;font-size:12px;line-height:1.7">
+          <li>&#9658; transaction.atomic() &mdash; rollback se falhar</li>
+          <li>&#9658; Snapshot de preco em OrderItem.unit_price</li>
+          <li>&#9658; Frete: shipping_distance_km &times; rate_per_km</li>
+          <li>&#9658; Pagamento simulado: payment_status = APPROVED</li>
+          <li>&#9658; Aviso explicito de simulacao exibido na tela</li>
+        </ul></div>
+        <div style="display:flex;gap:6px"><span class="bx bx-b">Paula: 10 pts</span>&nbsp;<span class="bx bx-l">Williams: 8 pts</span></div>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="slide" id="s14">
+  <div class="ab"></div><div class="dg"></div>
+  <div class="sh"><span class="ic">&#127937;</span><div><h2>Sprint 6 &mdash; Dashboard, Integracao e Finalizacao</h2><div class="sub">Ciclo completo do marketplace &mdash; 21 Story Points</div></div><div class="sn">14 / 18</div></div>
+  <div class="sb">
+    <div class="so">Objetivo: Completar o ciclo com o dashboard do vendedor, testes e2e, ajustes finais de UX, seguranca e documentacao para apresentacao.</div>
+    <table class="pt" style="font-size:12px;margin-bottom:10px">
+      <thead><tr><th>Tarefa</th><th>Responsavel</th><th>SP</th><th>RFs</th></tr></thead>
+      <tbody>
+        <tr><td>T23 &mdash; Dashboard do vendedor (pedidos dos seus produtos, filtro por status)</td><td><span class="bx bx-l">Williams</span></td><td>5</td><td>RF18</td></tr>
+        <tr><td>T24 &mdash; Atualizacao de status do pedido (PENDING &rarr; CONFIRMED &rarr; SHIPPED &rarr; DELIVERED)</td><td><span class="bx bx-b">Paula</span></td><td>3</td><td>RF19</td></tr>
+        <tr><td>T25 &mdash; Testes de integracao end-to-end (fluxo completo)</td><td><span class="bx bx-l">Williams</span></td><td>5</td><td>&mdash;</td></tr>
+        <tr><td>T26 &mdash; Ajustes de UX, seguranca e responsividade (WCAG AA)</td><td><span class="bx bx-b">Paula</span></td><td>5</td><td>&mdash;</td></tr>
+        <tr><td>T27 &mdash; Documentacao final e preparacao para apresentacao</td><td><span class="bx bx-l">Williams</span></td><td>3</td><td>&mdash;</td></tr>
+      </tbody>
+    </table>
+    <div style="display:flex;gap:10px;flex-wrap:wrap;align-items:center">
+      <div class="bx bx-k">Ciclo de status</div>
+      <span class="bx bx-w">PENDING</span>
+      <span style="font-weight:700;color:var(--c-accent)">&rarr;</span>
+      <span class="bx bx-b">CONFIRMED</span>
+      <span style="font-weight:700;color:var(--c-accent)">&rarr;</span>
+      <span class="bx bx-l">SHIPPED</span>
+      <span style="font-weight:700;color:var(--c-accent)">&rarr;</span>
+      <span class="bx bx-g">DELIVERED</span>
+      <div style="margin-left:auto"><span class="bx bx-b">Paula: 8 pts</span>&nbsp;<span class="bx bx-l">Williams: 13 pts</span></div>
+    </div>
+  </div>
+</div>
+<div class="slide" id="s15">
+  <div class="ab"></div><div class="dg"></div>
+  <div class="sh"><span class="ic">&#128202;</span><div><h2>Contribuicoes Individuais</h2><div class="sub">O que cada integrante desenvolveu no projeto</div></div><div class="sn">15 / 18</div></div>
+  <div class="sb">
+    <table class="ctb">
+      <thead><tr><th style="width:14%">Integrante</th><th style="width:12%">Cargo</th><th>Principais Atividades</th><th style="width:22%">Sprints</th></tr></thead>
+      <tbody>
+        <tr>
+          <td><strong>Fabio Argel</strong></td>
+          <td><span class="bx bx-k">CTO</span></td>
+          <td>Arquitetura, todos os models e migrations, EmailBackend, Admin, documentacao tecnica completa (5 docs), organizacao e planejamento das 6 sprints, revisao de codigo</td>
+          <td><span class="bx bx-g">Sprint 1 (fundacao)</span><br><small style="color:var(--c-muted)">Revisao tecnica S2&ndash;S6</small></td>
+        </tr>
+        <tr>
+          <td><strong>Alessandro</strong></td>
+          <td><span class="bx bx-k">CEO</span></td>
+          <td>Validacao das entregas ao final de cada sprint, aceite de negocio das funcionalidades, acompanhamento geral do projeto, aprovacao de prioridades</td>
+          <td><span class="bx bx-l">Todas as sprints</span><br><small style="color:var(--c-muted)">Validacao &amp; aceite</small></td>
+        </tr>
+        <tr>
+          <td><strong>Paula</strong></td>
+          <td><span class="bx bx-b">DEV</span></td>
+          <td><strong>S2:</strong> base.html, CSS, login, enderecos | <strong>S3:</strong> edicao produto, catalogo, testes | <strong>S4:</strong> busca, adicionar carrinho, testes | <strong>S5:</strong> processamento pedido, testes integracao | <strong>S6:</strong> status pedido, UX/seguranca</td>
+          <td><span class="bx bx-b">S2 &mdash; S6</span><br><small style="color:var(--c-muted)">60 Story Points</small></td>
+        </tr>
+        <tr>
+          <td><strong>Williams</strong></td>
+          <td><span class="bx bx-b">DEV</span></td>
+          <td><strong>S2:</strong> cadastro usuario, perfil, testes, home | <strong>S3:</strong> cadastro produto, painel, media | <strong>S4:</strong> filtros, pagina carrinho | <strong>S5:</strong> checkout, historico pedidos | <strong>S6:</strong> dashboard vendedor, testes e2e, docs</td>
+          <td><span class="bx bx-b">S2 &mdash; S6</span><br><small style="color:var(--c-muted)">58 Story Points</small></td>
+        </tr>
+      </tbody>
+    </table>
+    <div style="margin-top:10px;display:flex;gap:8px;align-items:center;flex-wrap:wrap">
+      <div class="bx bx-k">118 Story Points no total</div>
+      <div class="bx bx-g">27 Tarefas distribuidas</div>
+      <div class="bx bx-b">25 Requisitos Funcionais cobertos</div>
+      <div class="bx bx-l">Equilibrio: apenas 2 pts de diferenca entre devs</div>
+    </div>
+  </div>
+</div>
+<div class="slide" id="s16">
+  <div class="ab"></div><div class="dg"></div>
+  <div class="sh"><span class="ic">&#128187;</span><div><h2>Resultados e Demonstracao do Sistema</h2><div class="sub">Funcionalidades implementadas e fluxos de uso</div></div><div class="sn">16 / 18</div></div>
+  <div class="sb">
+    <div class="g2" style="gap:14px;flex:1">
+      <div>
+        <div style="font-family:var(--f-head);font-size:13px;font-weight:700;color:var(--c-accent);margin-bottom:10px;text-transform:uppercase;letter-spacing:.5px">Fluxo do Cliente</div>
+        <div style="display:flex;flex-direction:column;gap:6px">
+          <div class="ri"><span class="ric">1&#65039;&#8419;</span><div><strong>Cadastro e Login por e-mail</strong><p>Cria conta como cliente, autentica por e-mail e senha.</p></div></div>
+          <div class="ri"><span class="ric">2&#65039;&#8419;</span><div><strong>Navega e pesquisa no catalogo</strong><p>Filtros por categoria, marca, tamanho e faixa de preco.</p></div></div>
+          <div class="ri"><span class="ric">3&#65039;&#8419;</span><div><strong>Adiciona ao carrinho e finaliza compra</strong><p>Seleciona tamanho, gerencia carrinho, faz checkout.</p></div></div>
+          <div class="ri"><span class="ric">4&#65039;&#8419;</span><div><strong>Acompanha pedidos</strong><p>Historico com status, valores e endereco de entrega.</p></div></div>
+        </div>
+      </div>
+      <div>
+        <div style="font-family:var(--f-head);font-size:13px;font-weight:700;color:var(--c-accent);margin-bottom:10px;text-transform:uppercase;letter-spacing:.5px">Fluxo do Vendedor</div>
+        <div style="display:flex;flex-direction:column;gap:6px">
+          <div class="ri"><span class="ric">1&#65039;&#8419;</span><div><strong>Cadastra e gerencia produtos</strong><p>Cria calcados com imagens, estoque por tamanho e preco.</p></div></div>
+          <div class="ri"><span class="ric">2&#65039;&#8419;</span><div><strong>Painel de produtos</strong><p>Lista, edita e desativa (soft delete) seus calcados.</p></div></div>
+          <div class="ri"><span class="ric">3&#65039;&#8419;</span><div><strong>Visualiza pedidos dos seus produtos</strong><p>Dashboard exclusivo com itens vendidos e dados do comprador.</p></div></div>
+          <div class="ri"><span class="ric">4&#65039;&#8419;</span><div><strong>Atualiza status de entrega</strong><p>Avanca o status do pedido conforme o ciclo definido.</p></div></div>
+        </div>
+      </div>
+    </div>
+    <div style="margin-top:12px;background:var(--c-surface);border:2px dashed #C0B9AC;padding:12px;display:flex;gap:12px;align-items:center;justify-content:center">
+      <span style="font-size:20px">&#128247;</span>
+      <span style="font-family:var(--f-head);font-size:13px;font-weight:600;color:var(--c-muted)">[ Inserir capturas de tela do sistema neste espaco durante a apresentacao ]</span>
+    </div>
+  </div>
+</div>
+<div class="slide" id="s17">
+  <div class="ab"></div><div class="dg"></div>
+  <div class="sh"><span class="ic">&#128161;</span><div><h2>Dificuldades e Aprendizados</h2><div class="sub">Desafios enfrentados e crescimento da equipe</div></div><div class="sn">17 / 18</div></div>
+  <div class="sb">
+    <div class="g2" style="gap:18px;flex:1">
+      <div>
+        <div style="font-family:var(--f-head);font-size:13px;font-weight:700;color:var(--c-red);margin-bottom:10px;text-transform:uppercase;letter-spacing:.5px">Principais Desafios</div>
+        <div class="di"><div class="tg tg-c">Integracao</div><p>Integrar codigo de diferentes integrantes exigiu disciplina com branches e revisao de Pull Requests para evitar conflitos.</p></div>
+        <div class="di"><div class="tg tg-c">Banco de dados</div><p>Modelagem do DER, relacoes entre apps e constraints do PostgreSQL (unique_together, DecimalField, transacoes atomicas).</p></div>
+        <div class="di"><div class="tg tg-c">Dependencias</div><p>Respeitar a ordem das sprints &mdash; nenhuma funcionalidade podia ser desenvolvida antes de sua dependencia estar pronta.</p></div>
+        <div class="di"><div class="tg tg-c">Tempo</div><p>Gerenciamento de tempo equilibrado entre as demandas academicas e as 118 Story Points das 6 sprints.</p></div>
+        <div class="di"><div class="tg tg-c">Testes</div><p>Criar testes automatizados significativos que cobrissem cenarios reais de erro, nao apenas o caminho feliz.</p></div>
+      </div>
+      <div>
+        <div style="font-family:var(--f-head);font-size:13px;font-weight:700;color:var(--c-success);margin-bottom:10px;text-transform:uppercase;letter-spacing:.5px">Aprendizados</div>
+        <div class="di"><div class="tg tg-l">Scrum</div><p>Planejamento por sprints com objetivos claros torna o desenvolvimento mais organizado e previsivel.</p></div>
+        <div class="di"><div class="tg tg-l">Git Flow</div><p>Branches por funcionalidade e Pull Requests garantem qualidade e rastreabilidade do codigo desenvolvido.</p></div>
+        <div class="di"><div class="tg tg-l">Django</div><p>O padrao MVT com autenticacao, ORM, forms e middleware facilita o desenvolvimento de sistemas web completos.</p></div>
+        <div class="di"><div class="tg tg-l">Arquitetura</div><p>Separar responsabilidades em apps independentes e respeitar camadas evita acoplamento e facilita a manutencao.</p></div>
+        <div class="di"><div class="tg tg-l">Equipe</div><p>Divisao clara de responsabilidades, comunicacao constante e revisao mutua foram fundamentais para a entrega.</p></div>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="slide" id="s18">
+  <div class="s18w">
+    <div class="s18b">&#127891;</div>
+    <div class="s18t">Obrigado!<span>Marketplace de Calcados</span></div>
+    <div class="s18s">Um projeto desenvolvido com planejamento, trabalho em equipe e comprometimento com boas praticas de engenharia de software.</div>
+    <div style="display:flex;gap:12px;flex-wrap:wrap;justify-content:center;margin-top:4px">
+      <div style="background:rgba(255,255,255,.06);border:1.5px solid rgba(255,255,255,.12);padding:8px 16px;font-family:var(--f-head);font-size:12px;font-weight:600;color:#9CA3AF">Python + Django 4.2</div>
+      <div style="background:rgba(255,255,255,.06);border:1.5px solid rgba(255,255,255,.12);padding:8px 16px;font-family:var(--f-head);font-size:12px;font-weight:600;color:#9CA3AF">PostgreSQL</div>
+      <div style="background:rgba(255,255,255,.06);border:1.5px solid rgba(255,255,255,.12);padding:8px 16px;font-family:var(--f-head);font-size:12px;font-weight:600;color:#9CA3AF">Git &amp; GitHub</div>
+      <div style="background:rgba(255,255,255,.06);border:1.5px solid rgba(255,255,255,.12);padding:8px 16px;font-family:var(--f-head);font-size:12px;font-weight:600;color:#9CA3AF">Linear (Scrum)</div>
+    </div>
+    <div style="display:flex;gap:24px;flex-wrap:wrap;justify-content:center;margin-top:8px">
+      <div class="s18mb">Fabio Argel &mdash; CTO</div>
+      <div class="s18mb">Alessandro &mdash; CEO</div>
+      <div class="s18mb">Paula &mdash; DEV</div>
+      <div class="s18mb">Williams &mdash; DEV</div>
+    </div>
+    <div class="s18q">Perguntas?</div>
+    <div style="font-size:12px;color:#4B5563;margin-top:8px">github.com/FABIOARGEL/marketplace-calcados &nbsp;|&nbsp; Disciplina de Gerenciamento de Projetos &mdash; 2026</div>
+  </div>
+</div>
+</div>
+<script>
+  const slides=document.querySelectorAll(".slide"),total=slides.length;
+  let cur=0;
+  function scale(){
+    const d=document.getElementById("deck");
+    const s=Math.min(window.innerWidth/1280,window.innerHeight/720,1);
+    d.style.transform="scale("+s+")";
+  }
+  function show(i){
+    slides[cur].classList.remove("active");
+    cur=(i+total)%total;
+    slides[cur].classList.add("active");
+    document.getElementById("sc").textContent=(cur+1)+" / "+total;
+    document.getElementById("bp").disabled=cur===0;
+    document.getElementById("bn").disabled=cur===total-1;
+    document.getElementById("pb").style.width=(((cur+1)/total)*100)+"%";
+  }
+  function move(d){show(cur+d);}
+  document.addEventListener("keydown",function(e){
+    if(e.key==="ArrowRight"||e.key==="ArrowDown"||e.key===" ")move(1);
+    if(e.key==="ArrowLeft"||e.key==="ArrowUp")move(-1);
+    if(e.key==="Home")show(0);if(e.key==="End")show(total-1);
+  });
+  document.getElementById("deck").addEventListener("click",function(e){
+    if(e.clientX>window.innerWidth/2)move(1);else move(-1);
+  });
+  window.addEventListener("resize",scale);
+  scale();show(0);
+</script>
+</body>
+</html>

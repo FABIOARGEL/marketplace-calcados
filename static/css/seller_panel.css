@@ -119,10 +119,10 @@
   margin-left: auto;
   background-color: var(--color-accent);
   color: var(--color-surface);
-  font-size: 10px;
-  font-weight: 700;
-  padding: 2px 6px;
-  border-radius: 10px;
+  font-size: var(--text-badge);
+  font-weight: var(--font-weight-bold);
+  padding: var(--space-1) var(--space-2);
+  border-radius: var(--border-radius-sm);
   min-width: 20px;
   text-align: center;
 }

@@ -38,7 +38,7 @@
             <form
                 id="catalog-search-form"
                 class="catalog-search"
-                action="{% url 'products:product-list' %}"
+                action=""
                 method="get"
                 role="search"
                 aria-label="Buscar produtos"
@@ -105,7 +105,7 @@
                 R$ {{ preco_min|default:"0" }} - {{ preco_max|default:"MAX" }} <span aria-hidden="true">&#x00D7;</span>
             </a>
             {% endif %}
-            <a href="{% url 'products:product-list' %}" class="catalog-active-filters__clear" id="catalog-clear-all-btn">
+            <a href="{{ request.path }}" class="catalog-active-filters__clear" id="catalog-clear-all-btn">
                 Limpar tudo
             </a>
         </div>
@@ -142,7 +142,7 @@
                 <form
                     id="catalog-filter-form"
                     class="filter-form"
-                    action="{% url 'products:product-list' %}"
+                    action=""
                     method="get"
                 >
                     {% if query %}<input type="hidden" name="q" value="{{ query }}">{% endif %}
@@ -150,7 +150,7 @@
                     <div class="filter-form__header">
                         <span class="filter-form__title">Filtros</span>
                         {% if filtros_ativos %}
-                        <a href="{% url 'products:product-list' %}{% if query %}?q={{ query }}{% endif %}" class="filter-form__clear-link" id="filter-clear-link">
+                        <a href="{{ request.path }}{% if query %}?q={{ query }}{% endif %}" class="filter-form__clear-link" id="filter-clear-link">
                             Limpar filtros
                         </a>
                         {% endif %}
@@ -319,7 +319,13 @@
                                 {% if img %}
                                     <img src="{{ img.image.url }}" alt="{{ img.alt_text|default:produto.name }}" loading="lazy">
                                 {% else %}
-                                    <div class="catalog-card__image--placeholder" aria-hidden="true">&#x1F45F;</div>
+                                    <div class="catalog-card__image--placeholder" aria-hidden="true">
+                                        <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                                            <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
+                                            <circle cx="8.5" cy="8.5" r="1.5"></circle>
+                                            <polyline points="21 15 16 10 5 21"></polyline>
+                                        </svg>
+                                    </div>
                                 {% endif %}
                             {% endwith %}
                             {% if produto.category %}
@@ -392,13 +398,18 @@
                 {% else %}
                 <!-- EMPTY STATE -->
                 <div class="catalog-empty" id="catalog-empty-state" role="status" aria-live="polite">
-                    <div class="catalog-empty__icon" aria-hidden="true">&#x1F50D;</div>
+                    <div class="catalog-empty__icon" aria-hidden="true">
+                        <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                            <circle cx="11" cy="11" r="8"></circle>
+                            <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                        </svg>
+                    </div>
                     {% if query or filtros_ativos %}
                     <h2 class="catalog-empty__title">Nenhum resultado encontrado</h2>
                     <p class="catalog-empty__text">
                         Tente remover alguns filtros ou usar palavras diferentes.
                     </p>
-                    <a href="{% url 'products:product-list' %}" id="catalog-empty-clear" class="btn">
+                    <a href="{{ request.path }}" id="catalog-empty-clear" class="btn">
                         Limpar filtros
                     </a>
                     {% else %}

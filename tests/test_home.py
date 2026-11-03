@@ -1,5 +1,8 @@
-﻿"""
+
+"""
 Testes da página inicial (Home) — Marketplace de Calçados.
+
+A home foi unificada com o catálogo de produtos (apps.products.views.product_list).
 """
 
 from django.conf import settings
@@ -11,7 +14,7 @@ User = get_user_model()
 
 
 class HomePageTest(TestCase):
-    """Testes da landing page / home do marketplace."""
+    """Testes da landing page / catálogo inicial do marketplace."""
 
     def setUp(self):
         self.client = Client()
@@ -30,48 +33,38 @@ class HomePageTest(TestCase):
         self.assertEqual(self.home_url, "/")
 
     def test_home_status_code_and_templates(self):
-        """Acessar '/' deve retornar 200 e utilizar home.html e base.html."""
+        """Acessar '/' deve retornar 200 e utilizar product_list.html e base.html."""
         response = self.client.get(self.home_url)
         self.assertEqual(response.status_code, 200)
-        self.assertTemplateUsed(response, "home.html")
+        self.assertTemplateUsed(response, "products/product_list.html")
         self.assertTemplateUsed(response, "base.html")
 
-    def test_home_contains_hero_section(self):
-        """A home deve conter a seção hero com título e botão de ação."""
+    def test_home_contains_search_and_catalog(self):
+        """A home deve conter o cabeçalho do catálogo e campo de busca."""
         response = self.client.get(self.home_url)
-        self.assertContains(response, "Calçados que")
-        self.assertContains(response, "hero__btn--primary")
-        self.assertContains(response, "Explorar produtos")
+        self.assertContains(response, "Catálogo")
+        self.assertContains(response, "catalog-search")
+        self.assertContains(response, "Buscar calçados")
 
-    def test_home_contains_featured_products_placeholder(self):
-        """A home deve exibir a seção de produtos em destaque (placeholder)."""
+    def test_home_contains_filters_sidebar(self):
+        """A home deve exibir o painel de filtros do catálogo."""
         response = self.client.get(self.home_url)
-        self.assertContains(response, "Produtos em destaque")
-        self.assertContains(response, "product-placeholder")
-        self.assertContains(response, "Sprint 3")
-
-    def test_home_contains_categories_section(self):
-        """A home deve exibir as categorias em destaque."""
-        response = self.client.get(self.home_url)
-        self.assertContains(response, "Categorias")
-        self.assertContains(response, "category-card")
-        self.assertContains(response, "Tênis")
-        self.assertContains(response, "Botas")
+        self.assertContains(response, "catalog-sidebar")
+        self.assertContains(response, "Filtros")
 
     def test_home_unauthenticated_state(self):
-        """Quando não autenticado, deve exibir links de login e cadastro."""
+        """Quando não autenticado, deve exibir links de login e cadastro no header."""
         response = self.client.get(self.home_url)
         self.assertContains(response, "Login")
         self.assertContains(response, "Cadastro")
-        self.assertContains(response, "Criar conta grátis")
 
     def test_home_authenticated_state(self):
-        """Quando autenticado, deve exibir o nome do usuário e botão de logout."""
+        """Quando autenticado, deve exibir o primeiro nome do usuário e botão de logout."""
         self.client.login(username="cliente@teste.com", password="SenhaForte@123")
         response = self.client.get(self.home_url)
-        self.assertContains(response, "João Silva")
+        self.assertContains(response, "João")
         self.assertContains(response, "Sair")
-        self.assertNotContains(response, "Criar conta grátis")
+        self.assertNotContains(response, 'href="/usuarios/login/"')
 
     def test_redirect_urls_configured(self):
         """LOGIN_REDIRECT_URL e LOGOUT_REDIRECT_URL devem apontar para a home."""

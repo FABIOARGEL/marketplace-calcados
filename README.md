@@ -1,131 +1,127 @@
+
 # Marketplace de Calçados
 
 Marketplace web para venda de calçados, desenvolvido como projeto acadêmico de desenvolvimento de software.
 
-Permite que **clientes** descubram e comprem calçados e que **vendedores** gerenciem seus produtos, estoque e pedidos — tudo em uma única plataforma integrada.
-
----
+A plataforma permite que clientes encontrem e comprem calçados e que vendedores gerenciem produtos, estoque e pedidos.
 
 ## Índice
 
 - [Objetivo](#objetivo)
-- [Funcionalidades Previstas](#funcionalidades-previstas)
-- [Stack Tecnológica](#stack-tecnologica)
+- [Funcionalidades](#funcionalidades)
+- [Stack Tecnológica](#stack-tecnológica)
 - [Estrutura do Projeto](#estrutura-do-projeto)
-- [Pré-requisitos](#pre-requisitos)
-- [Instalação](#instalacao)
-- [Configuração do Ambiente](#configuracao-do-ambiente)
-- [Configuração do PostgreSQL](#configuracao-do-postgresql)
-- [Execução Local](#execucao-local)
-- [Migrations](#migrations)
-- [Superusuário](#superusuario)
+- [Pré-requisitos](#pré-requisitos)
+- [Instalação](#instalação)
+- [Configuração do Ambiente](#configuração-do-ambiente)
+- [Configuração do PostgreSQL](#configuração-do-postgresql)
+- [Migrations e Dados Iniciais](#migrations-e-dados-iniciais)
+- [Execução Local](#execução-local)
+- [Superusuário](#superusuário)
 - [Testes Automatizados](#testes-automatizados)
-- [Fluxo de Contribuição](#fluxo-de-contribuicao)
-- [Estratégia de Branches](#estrategia-de-branches)
-- [Documentação](#documentacao)
-- [Design System](#design-system)
-- [Licença](#licenca)
+- [Fluxo de Contribuição](#fluxo-de-contribuição)
+- [Documentação Técnica](#documentação-técnica)
+- [Licença](#licença)
 
 ---
 
-<a id="objetivo"></a>
 ## Objetivo
 
-Construir um marketplace web de calçados com dois perfis de usuário:
+Construir um marketplace web de calçados com dois perfis principais:
 
-- **Cliente**: cria conta, pesquisa produtos por filtros (marca, categoria, tamanho, preço), adiciona ao carrinho e realiza pedidos.
-- **Vendedor**: cadastra produtos, gerencia estoque por tamanho e acompanha/atualiza pedidos dos seus produtos.
+- **Cliente:** realiza cadastro, pesquisa produtos, adiciona itens ao carrinho, finaliza compras e acompanha pedidos.
+- **Vendedor:** cadastra produtos, administra estoque por tamanho, acompanha pedidos e atualiza seus status.
 
----
-
-<a id="funcionalidades-previstas"></a>
-## Funcionalidades Previstas
+## Funcionalidades
 
 ### Cliente
-- Criar conta e realizar autenticação (login/logout)
-- Visualizar catálogo de calçados ativos
-- Pesquisar e filtrar por categoria, marca, tamanho e preço
-- Adicionar produtos e tamanhos específicos ao carrinho
-- Finalizar compras e acompanhar pedidos
-- Consultar histórico detalhado de compras
+
+- Cadastro e autenticação por e-mail e senha.
+- Visualização do catálogo de produtos ativos.
+- Pesquisa e filtros por categoria, marca, tamanho e faixa de preço.
+- Visualização dos detalhes dos produtos.
+- Gerenciamento de endereços de entrega.
+- Adição, atualização e remoção de itens do carrinho.
+- Finalização de pedidos.
+- Consulta ao histórico e aos detalhes dos pedidos.
 
 ### Vendedor
-- Cadastrar, editar e desativar produtos (soft-delete)
-- Controlar estoque individualizado por tamanho
-- Visualizar pedidos contendo seus produtos
-- Atualizar status de envio dos pedidos
 
----
+- Cadastro e gerenciamento de produtos.
+- Edição e desativação de produtos.
+- Controle de estoque por tamanho.
+- Visualização de pedidos relacionados aos seus produtos.
+- Atualização do status dos pedidos.
+- Painel de gerenciamento da loja e acompanhamento de vendas.
 
-<a id="stack-tecnologica"></a>
+### Observações sobre simulações
+
+- **Frete:** calculado com base na distância e na tarifa por quilômetro configuradas pelo vendedor. Não utiliza integração com serviços de mapas.
+- **Pagamento:** os métodos disponíveis são simulados. O projeto não realiza transações financeiras reais nem utiliza gateway de pagamento.
+
 ## Stack Tecnológica
 
-| Camada | Tecnologia | Versão / Descrição |
-|--------|-----------|--------------------|
-| Linguagem | Python | 3.11+ (testado em 3.14) |
-| Framework Web | Django | 4.2 LTS |
-| Banco de Dados | PostgreSQL | 14+ |
-| Driver BD | psycopg2-binary | 2.9+ |
-| Variáveis de Ambiente | django-environ | 0.11+ |
-| Versionamento | Git + GitHub | GitHub Flow / Gitflow simplificado |
-| Gestão de Tarefas | Linear | Acompanhamento de Sprints |
-| Comunicação | WhatsApp | Alinhamento do time |
+| Camada | Tecnologia | Descrição |
+|---|---|---|
+| Linguagem | Python | 3.11 ou superior |
+| Framework Web | Django | 4.2 |
+| Banco de Dados | PostgreSQL | 14 ou superior |
+| Driver do banco | psycopg2-binary | Conexão com PostgreSQL |
+| Ambiente | django-environ | Leitura de variáveis do `.env` |
+| Imagens | Pillow | Processamento de imagens |
+| Versionamento | Git e GitHub | Controle de versão |
+| Front-end | HTML, CSS e JavaScript | Interface web com templates Django |
 
----
-
-<a id="estrutura-do-projeto"></a>
 ## Estrutura do Projeto
 
-```
+```text
 marketplace-calcados/
 │
-├── manage.py               ← Utilitário de linha de comando do Django
-├── README.md               ← Documentação principal do repositório
-├── .gitignore              ← Arquivos e diretórios ignorados pelo Git
-├── .env.example            ← Modelo de variáveis de ambiente (sem credenciais reais)
-├── requirements.txt        ← Dependências do projeto Python
+├── manage.py
+├── README.md
+├── .env.example
+├── .gitignore
+├── requirements.txt
 │
-├── config/                 ← Configuração central do projeto Django
-│   ├── __init__.py
-│   ├── settings.py         ← Configurações (banco, apps, middleware, auth)
-│   ├── urls.py             ← Roteamento principal e health check
-│   ├── wsgi.py             ← Ponto de entrada WSGI
-│   └── asgi.py             ← Ponto de entrada ASGI
+├── config/
+│   ├── settings.py
+│   ├── urls.py
+│   ├── wsgi.py
+│   └── asgi.py
 │
-├── apps/                   ← Aplicações modulares do domínio
-│   ├── __init__.py
-│   ├── users/              ← Usuários customizados (Cliente/Vendedor) e perfis
-│   ├── products/           ← Produtos, categorias, imagens e estoque por tamanho
-│   ├── cart/               ← Carrinho de compras e itens do carrinho
-│   └── orders/             ← Pedidos, itens do pedido e histórico
+├── apps/
+│   ├── users/       # Usuários, autenticação, perfis e endereços
+│   ├── products/    # Produtos, categorias, imagens e estoque
+│   │   └── fixtures/
+│   │       └── categories.json
+│   ├── cart/        # Carrinho e itens
+│   ├── orders/      # Pedidos, itens e histórico
+│   └── sellers/     # Painel e gerenciamento do vendedor
 │
-├── docs/                   ← Documentação técnica e de engenharia
-│   ├── REQUISITOS.md       ← Especificação de requisitos (RF e RNF)
-│   ├── requirements.md     ← Requisitos funcionais (RF), status e rastreabilidade
-│   ├── architecture.md     ← Arquitetura do sistema e responsabilidades
-│   ├── vertical-slicing.md ← Planejamento de fatias verticais por Sprint
-│   ├── development.md      ← Padrões de código, Git e convenção de commits
-│   └── design-system.md    ← Design System: paleta, tipografia, componentes e padrões visuais
+├── templates/       # Templates HTML do Django
+├── static/          # Arquivos estáticos
+├── tests/           # Testes de fundação
 │
-└── tests/                  ← Testes automatizados
-    ├── __init__.py
-    └── test_foundation.py  ← Testes de fundação e integridade (Sprint 1)
+└── docs/
+    ├── apresentacao.html
+    ├── architecture.md
+    ├── design-system.md
+    ├── development.md
+    ├── requirements.md
+    ├── REQUISITOS.md
+    ├── sprints.md
+    └── vertical-slicing.md
 ```
 
----
-
-<a id="pre-requisitos"></a>
 ## Pré-requisitos
 
-Certifique-se de ter instalado em sua máquina:
+Antes de iniciar, instale:
 
-- **Python 3.11+** (com `pip` configurado)
-- **PostgreSQL 14+** em execução localmente
-- **Git**
+- Python 3.11 ou superior.
+- PostgreSQL 14 ou superior.
+- Git.
+- pip, gerenciador de pacotes do Python.
 
----
-
-<a id="instalacao"></a>
 ## Instalação
 
 ### 1. Clonar o repositório
@@ -135,25 +131,31 @@ git clone https://github.com/FABIOARGEL/marketplace-calcados.git
 cd marketplace-calcados
 ```
 
-### 2. Criar e ativar o ambiente virtual
+### 2. Criar o ambiente virtual
 
-#### No Windows:
-```bash
-# Criar ambiente virtual
+**Windows — PowerShell:**
+
+```powershell
 python -m venv venv
-
-# Ativação via PowerShell:
 venv\Scripts\Activate.ps1
-# (Se houver restrição de execução no PowerShell: Set-ExecutionPolicy -Scope Process -ExecutionPolicy Bypass)
-
-# Ativação via Prompt de Comando (CMD):
-venv\Scripts\activate.bat
-
-# Ativação via Git Bash:
-source venv/Scripts/activate
 ```
 
-#### No Linux / macOS:
+Se houver restrição de execução:
+
+```powershell
+Set-ExecutionPolicy -Scope Process -ExecutionPolicy Bypass
+venv\Scripts\Activate.ps1
+```
+
+**Windows — CMD:**
+
+```cmd
+python -m venv venv
+venv\Scripts\activate.bat
+```
+
+**Linux ou macOS:**
+
 ```bash
 python3 -m venv venv
 source venv/bin/activate
@@ -161,270 +163,253 @@ source venv/bin/activate
 
 ### 3. Instalar as dependências
 
+Com o ambiente virtual ativado:
+
 ```bash
+python -m pip install --upgrade pip
 pip install -r requirements.txt
 ```
 
----
-
-<a id="configuracao-do-ambiente"></a>
 ## Configuração do Ambiente
 
-### 1. Criar o arquivo `.env` a partir do modelo
+### 1. Criar o arquivo `.env`
 
-```bash
-# Windows (PowerShell) / Linux / macOS:
-cp .env.example .env
+Copie o arquivo de exemplo:
 
-# Windows (CMD):
+**PowerShell:**
+
+```powershell
+Copy-Item .env.example .env
+```
+
+**CMD:**
+
+```cmd
 copy .env.example .env
 ```
 
-### 2. Gerar uma `SECRET_KEY` segura
+**Linux ou macOS:**
 
-Execute no terminal:
+```bash
+cp .env.example .env
+```
+
+### 2. Gerar uma SECRET_KEY
+
+Execute:
+
 ```bash
 python -c "from django.core.management.utils import get_random_secret_key; print(get_random_secret_key())"
 ```
 
-### 3. Configurar os valores no `.env`
+Copie a chave gerada e utilize-a no arquivo `.env`.
 
-Abra o arquivo `.env` gerado e defina suas credenciais:
+### 3. Configurar as variáveis
+
+Edite o arquivo `.env`:
 
 ```env
-SECRET_KEY=cole_aqui_a_chave_gerada
+SECRET_KEY=sua-chave-secreta-gerada
 DEBUG=True
 ALLOWED_HOSTS=localhost,127.0.0.1
 
 DB_NAME=marketplace_calcados
-DB_USER=marketplace_user
-DB_PASSWORD=sua_senha_aqui
+DB_USER=postgres
+DB_PASSWORD=sua-senha-do-postgresql
 DB_HOST=localhost
 DB_PORT=5432
 ```
 
----
+As variáveis correspondem às configurações utilizadas em `config/settings.py`.
 
-<a id="configuracao-do-postgresql"></a>
+**Importante:** o arquivo `.env` contém configurações locais e credenciais. Não o envie para o Git. Utilize apenas o `.env.example` como modelo compartilhado.
+
 ## Configuração do PostgreSQL
 
-### 1. Acessar o terminal do PostgreSQL (psql)
+### 1. Acessar o PostgreSQL
+
+No terminal:
 
 ```bash
 psql -U postgres
 ```
 
-### 2. Criar usuário e banco de dados
+Informe a senha do usuário administrador quando solicitada.
 
-Recomenda-se criar o banco definindo o usuário como proprietário (`OWNER`), garantindo permissões totais no PostgreSQL 15+:
+### 2. Criar o banco de dados
+
+Execute no terminal `psql`:
 
 ```sql
-CREATE USER marketplace_user WITH PASSWORD 'sua_senha_aqui';
-CREATE DATABASE marketplace_calcados OWNER marketplace_user;
-GRANT ALL PRIVILEGES ON DATABASE marketplace_calcados TO marketplace_user;
+CREATE DATABASE marketplace_calcados;
+```
+
+O exemplo utiliza o usuário `postgres`. Caso utilize outro usuário, configure os valores correspondentes em `.env` e conceda as permissões necessárias no PostgreSQL.
+
+Para sair:
+
+```sql
 \q
 ```
 
-> **Dica:** Se preferir utilizar o usuário padrão `postgres`, basta manter `DB_USER=postgres` e a senha correspondente no arquivo `.env`.
+## Migrations e Dados Iniciais
 
----
+### 1. Aplicar as migrations
 
-<a id="execucao-local"></a>
-## Execução Local
-
-### 1. Iniciar o servidor de desenvolvimento
-
-```bash
-python manage.py runserver
-```
-
-### 2. Endpoints disponíveis
-
-- **Health Check:** [http://localhost:8000/health/](http://localhost:8000/health/) *(Retorna JSON de validação operacional)*
-- **Painel Administrativo:** [http://localhost:8000/admin/](http://localhost:8000/admin/)
-- **Raiz do projeto (`/`):** [http://localhost:8000](http://localhost:8000) *(As rotas visuais de catálogo e vitrine serão integradas na Sprint 2)*
-
----
-
-<a id="migrations"></a>
-## Migrations
-
-### Aplicar migrations ao banco de dados
+Na raiz do projeto:
 
 ```bash
 python manage.py migrate
 ```
 
-### Criar novas migrations (após alterar modelos em `apps/`)
+Esse comando cria ou atualiza as tabelas do banco de dados conforme as migrations das aplicações.
+
+### 2. Carregar as categorias iniciais
+
+O projeto disponibiliza uma fixture com oito categorias de calçados:
+
+- Tênis
+- Sandália
+- Bota
+- Sapatilha
+- Sapato Social
+- Chinelo
+- Chuteira
+- Mocassim
+
+Para carregá-las:
 
 ```bash
-python manage.py makemigrations
+python manage.py loaddata apps/products/fixtures/categories.json
 ```
 
-### Verificar o status das migrations
+Execute a carga após aplicar as migrations. Se a fixture já tiver sido carregada, evite executá-la novamente sem verificar os registros existentes.
+
+### 3. Verificar as migrations
 
 ```bash
 python manage.py showmigrations
 ```
 
----
+### 4. Criar novas migrations
 
-<a id="superusuario"></a>
+Após alterações nos modelos:
+
+```bash
+python manage.py makemigrations
+python manage.py migrate
+```
+
+## Execução Local
+
+Com o ambiente virtual ativado, PostgreSQL configurado e migrations aplicadas:
+
+```bash
+python manage.py runserver
+```
+
+O servidor de desenvolvimento ficará disponível em:
+
+http://127.0.0.1:8000/
+
+### Principais rotas
+
+| Rota | Descrição |
+|---|---|
+| `/` | Página inicial |
+| `/admin/` | Painel administrativo Django |
+| `/health/` | Verificação de funcionamento |
+| `/usuarios/` | Cadastro, autenticação, perfil e endereços |
+| `/produtos/` | Catálogo e gerenciamento de produtos |
+| `/carrinho/` | Carrinho de compras |
+| `/pedidos/` | Checkout e pedidos |
+| `/painel/` | Painel do vendedor |
+
+As rotas internas de cada aplicação estão organizadas em seus respectivos arquivos `urls.py`.
+
 ## Superusuário
 
-Para acessar o painel Django Admin (`/admin/`), crie um usuário administrador:
+Para criar uma conta administrativa:
 
 ```bash
 python manage.py createsuperuser
 ```
 
-Siga as instruções para definir username, e-mail e senha.
+Siga as instruções do terminal para informar os dados solicitados.
 
----
+Depois, acesse:
 
-<a id="testes-automatizados"></a>
+http://127.0.0.1:8000/admin/
+
 ## Testes Automatizados
 
-### Executar a suíte completa de testes
+### Executar todos os testes
 
 ```bash
 python manage.py test
 ```
 
-### Executar os testes de fundação (Sprint 1)
+### Executar os testes de uma aplicação específica
+
+Exemplo:
 
 ```bash
-python manage.py test tests
+python manage.py test apps.products
 ```
 
-### Checagem de integridade do Django (sem rodar testes)
+Outras aplicações podem ser verificadas utilizando seus respectivos caminhos:
+
+```bash
+python manage.py test apps.users
+python manage.py test apps.cart
+python manage.py test apps.orders
+python manage.py test apps.sellers
+```
+
+### Verificar a integridade do projeto
 
 ```bash
 python manage.py check
 ```
 
----
-
-<a id="fluxo-de-contribuicao"></a>
 ## Fluxo de Contribuição
 
-1. **Atualize sua base local:**
-   ```bash
-   git checkout main
-   git pull origin main
-   ```
-   *(Caso utilize branch `develop`, sincronize com `git checkout develop && git pull origin develop`)*
+1. Atualize sua branch de trabalho com as alterações mais recentes da equipe.
+2. Crie uma branch específica para a tarefa.
+3. Implemente as alterações seguindo os padrões do projeto.
+4. Execute os testes relacionados.
+5. Faça commits com mensagens descritivas.
+6. Envie a branch para o repositório remoto.
+7. Abra um Pull Request para revisão.
 
-2. **Crie uma branch específica para a funcionalidade:**
-   ```bash
-   git checkout -b feature/nome-da-funcionalidade
-   ```
+Exemplo de criação de branch:
 
-3. **Desenvolva e realize commits seguindo o padrão Conventional Commits:**
-   ```bash
-   git add .
-   git commit -m "feat: adicionar listagem de produtos com filtros"
-   ```
-
-4. **Envie a branch para o repositório remoto:**
-   ```bash
-   git push origin feature/nome-da-funcionalidade
-   ```
-
-5. **Abra um Pull Request (PR)** detalhando as alterações para revisão da equipe.
-
-> Consulte o guia completo em [docs/development.md](docs/development.md) para convenções detalhadas de código e commits.
-
----
-
-<a id="estrategia-de-branches"></a>
-## Estratégia de Branches
-
-| Branch | Finalidade |
-|--------|------------|
-| `main` | Código estável, homologado e pronto para apresentação |
-| `develop` | Branch de integração de novas funcionalidades |
-| `feature/<nome>` | Branches de trabalho para cada funcionalidade ou fatia |
-
-**Exemplos de nomenclatura de branches:**
-```
-feature/user-authentication
-feature/product-catalog
-feature/shopping-cart
-feature/order-checkout
-feature/seller-dashboard
+```bash
+git checkout -b feature/nome-da-funcionalidade
 ```
 
----
+Exemplo de commit:
 
-<a id="documentacao"></a>
+```bash
+git add .
+git commit -m "feat: adicionar gerenciamento de produtos"
+```
+
+Consulte `docs/development.md` para conhecer os padrões de desenvolvimento e versionamento.
+
 ## Documentação Técnica
 
 | Documento | Descrição |
-|-----------|-----------|
-| [docs/REQUISITOS.md](docs/REQUISITOS.md) | Lista oficial de requisitos funcionais (RF) e não funcionais (RNF) |
-| [docs/requirements.md](docs/requirements.md) | Requisitos funcionais (RF), status e rastreabilidade por Sprint |
-| [docs/architecture.md](docs/architecture.md) | Arquitetura do sistema, diagrama DER (Mermaid) e responsabilidades |
-| [docs/vertical-slicing.md](docs/vertical-slicing.md) | Planejamento de fatias verticais por Sprint |
-| [docs/development.md](docs/development.md) | Padrões de código PEP 8, convenções de commits e Git |
-| [docs/design-system.md](docs/design-system.md) | **Design System** — paleta de cores, tipografia, componentes, padrões visuais e checklist de telas |
-| [docs/AI-STANDARDS.md](docs/AI-STANDARDS.md) | **Contrato da IA** — padrões, decisões, lacunas e checklist completo para desenvolvimento com IA |
-| [docs/PROMPT-RULES.md](docs/PROMPT-RULES.md) | **Regras compactas para IA** — versão resumida para colar no chat do Antigravity |
+|---|---|
+| [REQUISITOS.md](docs/REQUISITOS.md) | Especificação dos requisitos funcionais e não funcionais |
+| [requirements.md](docs/requirements.md) | Status dos requisitos funcionais e rastreabilidade por Sprint |
+| [architecture.md](docs/architecture.md) | Arquitetura, componentes, rotas e modelo de dados |
+| [sprints.md](docs/sprints.md) | Planejamento e organização das Sprints |
+| [vertical-slicing.md](docs/vertical-slicing.md) | Planejamento das fatias verticais |
+| [development.md](docs/development.md) | Padrões de código, Git e commits |
+| [design-system.md](docs/design-system.md) | Identidade visual e padrões de interface |
+| [apresentacao.html](docs/apresentacao.html) | Material de apresentação do projeto |
 
----
-
-<a id="design-system"></a>
-## Design System
-
-O projeto adota um **Design System** oficial que define a identidade visual e os padrões de implementação para toda a equipe.
-
-**Conceito:** Neo-Brutalism + Streetwear + E-commerce moderno
-
-**O documento cobre:**
-- Paleta de cores com tokens CSS (`--color-bg`, `--color-primary`, `--color-accent` …)
-- Hierarquia tipográfica (Space Grotesk + Inter)
-- Sistema de espaçamento em escala de 4px
-- Bordas 2px e sombras sólidas (sem blur) — estilo neo-brutalista
-- Especificação completa de componentes: Navbar, Botões, Inputs, Cards, Badges, Alerts, Toasts, Modais
-- Padrão do Product Card com HTML de exemplo
-- Nomenclatura de produtos, imagens e campos de cadastro
-- Estrutura de arquivos CSS e templates Django
-- Regras de responsividade (mobile-first, 375 / 768 / 1280px)
-- Requisitos de acessibilidade (WCAG AA)
-- Design Tokens e checklist de 40+ itens para validação de novas telas
-
-> **Consulte [docs/design-system.md](docs/design-system.md) antes de criar qualquer nova tela ou componente.**
-
----
-
-<a id="ia"></a>
-## Desenvolvimento com IA (Antigravity)
-
-Este projeto utiliza o **Antigravity IDE** como assistente de desenvolvimento. Para garantir consistência entre sessões, o projeto inclui um sistema de regras automáticas.
-
-### Como funciona
-
-| Arquivo | Função | Quando usar |
-|---|---|---|
-| `GEMINI.md` | Regras carregadas **automaticamente** pelo Antigravity em toda nova conversa | Sempre ativo — não precisa fazer nada |
-| `docs/AI-STANDARDS.md` | Referência completa com todos os padrões e decisões | Consulte para dúvidas detalhadas |
-
-### Regras automáticas (GEMINI.md)
-
-O arquivo `GEMINI.md` na raiz do projeto é carregado automaticamente pelo Antigravity em toda nova conversa. Ele instrui a IA a:
-
-- Consultar `docs/` antes de implementar qualquer coisa
-- Seguir a stack: Django 4.2 LTS + PostgreSQL + CSS vanilla
-- Respeitar o Design System Neo-Brutalism (bordas 2px, sombras sólidas, tokens CSS)
-- Não criar APIs REST, não usar SQLite, não usar jQuery
-- Registrar lacunas explicitamente em vez de inventar padrões
-
-> **Para o Antigravity:** as regras já estão ativas via `GEMINI.md`. Nenhuma configuração adicional é necessária.
-
----
-
-<a id="licenca"></a>
 ## Licença
 
 Projeto acadêmico desenvolvido para fins educacionais. Todos os direitos reservados aos autores.
-
